@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تفاصيل الحلقة - {{ halaqa.name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .hifz-progress {
+            height: 20px;
+            margin-top: 5px;
+        }
+        .student-card {
+            transition: all 0.3s;
+        }
+        .student-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .badge-custom {
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <!-- رأس الصفحة -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="text-primary">
+                <i class="fas fa-mosque"></i> {{ halaqa.name }}
+            </h1>
+            <div>
+                <span class="badge bg-success fs-6">
+                    <i class="fas fa-user-shield"></i> 
+                    {% for teacher in halaqa.teachers.all %}
+                        {{ teacher.full_name }}{% if not forloop.last %}، {% endif %}
+                    {% endfor %}
+                </span>
+                <button class="btn btn-sm btn-outline-secondary ms-2" onclick="copyLink()">
+                    <i class="fas fa-link"></i> نسخ رابط الحلقة
+                </button>
+            </div>
+        </div>
+
+        <!-- إحصائيات الحلقة -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card border-primary">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">عدد الطلاب</h5>
+                        <p class="display-6 text-primary">{{ dashboard_data|length }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-success">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">متوسط الحفظ</h5>
+                        <p class="display-6 text-success">
+                            {{ dashboard_data|dictsum:'memorized'|floatformat:0 }} آية
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-info">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">متوسط النقاط</h5>
+                        <p class="display-6 text-info">
+                            {{ dashboard_data|dictsum:'points'|floatformat:0 }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-warning">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">نسبة الحضور</h5>
+                        <p class="display-6 text-warning">
+                            {{ dashboard_data|attendance_rate }}%
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- قائمة الطلاب -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-users"></i> طلاب الحلقة
+                </h5>
+                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addStudentModal">
+                    <i class="fas fa-plus"></i> إضافة طالب
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>الاسم</th>
+                                <th>الحفظ</th>
+                                <th>النقاط</th>
+                                <th>الحضور</th>
+                                <th>الخطة</th>
+                                <th>إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in dashboard_data %}
+                            <tr>
+                                <td>
+                                    <strong>{{ item.student.name }}</strong>
+                                    <div class="text-muted small">{{ item.student.parent_phone }}</div>
+                                </td>
+                                <td>
+                                    <div class="progress hifz-progress">
+                                        <div class="progress-bar bg-success" 
+                                             style="width: {{ item.memorized|progress_percentage:600 }}%">
+                                            {{ item.memorized }} آية
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-primary badge-custom">
+                                        {{ item.points }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-success badge-custom">{{ item.present }}</span>
+                                    <span class="badge bg-danger badge-custom">{{ item.absent }}</span>
+                                </td>
+                                <td>
+                                    {% if item.plan %}
+                                    <span class="badge bg-info badge-custom">
+                                        {{ item.plan.target|truncatechars:20 }}
+                                    </span>
+                                    {% else %}
+                                    <span class="badge bg-secondary badge-custom">لا يوجد</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#editStudentModal"
+                                                onclick="loadStudentData('{{ item.student.id }}')">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger"
+                                                onclick="confirmDelete('{{ item.student.id }}', '{{ item.student.name }}')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة إضافة طالب -->
+    <div class="modal fade" id="addStudentModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="{% url 'add_student_to_halaqa' halaqa.id %}">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title">إضافة طالب جديد</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">اسم الطالب</label>
+                            <input type="text" name="name" class="form-control" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label">هاتف ولي الأمر</label>
+                                <input type="text" name="parent_phone" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">العمر</label>
+                                <input type="number" name="age" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                        <button type="submit" class="btn btn-primary">حفظ</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script>
+        function copyLink() {
+            const link = window.location.href;
+            navigator.clipboard.writeText(link).then(() => {
+                alert('تم نسخ رابط الحلقة: ' + link);
+            });
+        }
+
+        function confirmDelete(studentId, studentName) {
+            if (confirm(`هل أنت متأكد من حذف الطالب ${studentName}؟`)) {
+                window.location.href = `/students/${studentId}/delete/`;
+            }
+        }
+
+        function loadStudentData(studentId) {
+            fetch(`/api/students/${studentId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('editStudentId').value = data.id;
+                    document.getElementById('editStudentName').value = data.name;
+                    // ... تعبئة بقية الحقول
+                });
+        }
+    </script>
+</body>
+</html>

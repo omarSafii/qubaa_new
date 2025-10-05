@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تأكيد تسجيل الطالب - معهد عمر لتحفيظ القرآن الكريم</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --color-primary: #0B3C54;
+      --color-secondary: #31617F;
+      --color-accent: #968960;
+      --color-light: #F2D8A1;
+      --color-success: #4CAF50;
+      --color-warning: #FFC107;
+      --color-danger: #F44336;
+      --color-info: #2196F3;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #f8f9fa 0%, #f1f3f5 100%);
+      color: var(--color-primary);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      padding: 20px 0;
+    }
+    
+    .institute-header {
+      background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+      padding: 30px 0;
+      color: white;
+      border-radius: 0 0 30px 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 40px;
+      text-align: center;
+    }
+    
+    .confirmation-card {
+      max-width: 1000px;
+      margin: 0 auto;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+      background: white;
+      transition: all 0.3s ease;
+    }
+    
+    .confirmation-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+    
+    .confirmation-header {
+      background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-light) 100%);
+      color: white;
+      padding: 25px 30px;
+      text-align: center;
+    }
+    
+    .confirmation-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 2.5rem;
+    }
+    
+    .confirmation-body {
+      padding: 40px;
+    }
+    
+    .student-info {
+      display: flex;
+      align-items: center;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: rgba(242, 216, 161, 0.1);
+      border-radius: 15px;
+      border-left: 4px solid var(--color-accent);
+    }
+    
+    .student-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--color-light);
+      margin-left: 30px;
+      background: linear-gradient(45deg, var(--color-light), var(--color-accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 3rem;
+    }
+    
+    .info-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .info-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(11, 60, 84, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 20px;
+      color: var(--color-primary);
+      flex-shrink: 0;
+    }
+    
+    .info-content h5 {
+      margin-bottom: 5px;
+      color: var(--color-primary);
+    }
+    
+    .info-content p {
+      margin: 0;
+      color: #666;
+      font-size: 1.1rem;
+    }
+    
+    .action-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 40px;
+    }
+    
+    .btn-action {
+      padding: 12px 30px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-print {
+      background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+      color: white;
+      border: none;
+    }
+    
+    .btn-dashboard {
+      background: white;
+      color: var(--color-primary);
+      border: 2px solid var(--color-primary);
+    }
+    
+    .btn-action:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    
+    .footer {
+      text-align: center;
+      padding: 30px 0;
+      color: #666;
+      font-size: 0.9rem;
+      margin-top: 40px;
+    }
+    
+    .decoration {
+      position: absolute;
+      font-size: 7rem;
+      opacity: 0.05;
+      color: var(--color-primary);
+      z-index: 0;
+    }
+    
+    .dec-1 {
+      top: 20px;
+      right: 30px;
+    }
+    
+    .dec-2 {
+      bottom: 20px;
+      left: 30px;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animate-fadeIn {
+      animation: fadeIn 0.8s ease forwards;
+    }
+    
+    .section-title {
+      color: var(--color-primary);
+      border-right: 4px solid var(--color-accent);
+      padding-right: 15px;
+      margin: 40px 0 20px;
+      font-weight: 600;
+      font-size: 1.5rem;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+    
+    .stat-card {
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      border-top: 4px solid var(--color-accent);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+    
+    .stat-card i {
+      font-size: 2.5rem;
+      color: var(--color-accent);
+      margin-bottom: 15px;
+    }
+    
+    .stat-card h3 {
+      font-size: 2.2rem;
+      margin: 10px 0;
+      color: var(--color-primary);
+    }
+    
+    .stat-card p {
+      color: #666;
+      margin-bottom: 0;
+    }
+    
+    .stat-status {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 5px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: white;
+    }
+    
+    .status-success {
+      background-color: var(--color-success);
+    }
+    
+    .status-warning {
+      background-color: var(--color-warning);
+    }
+    
+    .status-danger {
+      background-color: var(--color-danger);
+    }
+    
+    .charts-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 30px 0;
+    }
+    
+    .chart-card {
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      border: 1px solid rgba(0,0,0,0.05);
+      position: relative;
+    }
+    
+    .chart-title {
+      text-align: center;
+      margin-bottom: 20px;
+      color: var(--color-primary);
+      font-weight: 600;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .no-data-message {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: #888;
+      font-size: 1.1rem;
+      width: 100%;
+      padding: 0 20px;
+      z-index: 1;
+    }
+    
+    .additional-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+    
+    .info-card {
+      background: rgba(242, 216, 161, 0.1);
+      border-radius: 15px;
+      padding: 20px;
+      border-left: 4px solid var(--color-accent);
+      position: relative;
+    }
+    
+    .info-card h5 {
+      color: var(--color-primary);
+      margin-top: 0;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .info-card ul {
+      padding-right: 20px;
+      margin-bottom: 0;
+    }
+    
+    .info-card li {
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .info-card li i {
+      color: var(--color-accent);
+      font-size: 1.2rem;
+    }
+    
+    .no-data-placeholder {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: #888;
+      font-size: 1rem;
+      width: 100%;
+      padding: 0 20px;
+      z-index: 1;
+    }
+    
+    .condition-list {
+      padding-right: 0;
+    }
+    
+    .condition-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    
+    .condition-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(11, 60, 84, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 15px;
+      color: var(--color-primary);
+      flex-shrink: 0;
+      font-size: 1.2rem;
+    }
+    
+    .condition-content {
+      flex: 1;
+    }
+    
+    .condition-status {
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+    
+    .status-achieved {
+      background-color: rgba(76, 175, 80, 0.2);
+      color: var(--color-success);
+    }
+    
+    .status-pending {
+      background-color: rgba(255, 193, 7, 0.2);
+      color: var(--color-warning);
+    }
+    
+    @media (max-width: 768px) {
+      .student-info {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .student-avatar {
+        margin-left: 0;
+        margin-bottom: 20px;
+      }
+      
+      .action-buttons {
+        flex-direction: column;
+      }
+      
+      .btn-action {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .charts-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ترويسة المعهد -->
+  <header class="institute-header">
+    <div class="container">
+      <h1 class="display-4 mb-3"><i class="fas fa-book-quran"></i> معهد قباء لتحفيظ القرآن الكريم</h1>
+      <p class="lead">نور القرآن يضيء حياتنا</p>
+    </div>
+  </header>
+  
+  <div class="container">
+    <div class="confirmation-card animate-fadeIn">
+      <div class="confirmation-header">
+        <div class="confirmation-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <h2><i class="fas fa-user-graduate me-2"></i> بطاطا</h2>
+        <p class="mb-0">تمت عملية التسجيل بنجاح وتم إضافة الطالب إلى قاعدة بيانات المعهد</p>
+      </div>
+      
+      <div class="confirmation-body">
+        <div class="student-info">
+          <div class="student-avatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <div>
+            <h3 class="mb-3">{{ student.name }}</h3>
+            <p class="lead">طالب جديد في حلقة {{ student.halaqa }}</p>
+            <p class="mb-0">تاريخ التسجيل: {{ student.created_at }}</p>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-md-6">
+            <div class="info-item">
+              <div class="info-icon">
+                <i class="fas fa-calendar-day"></i>
+              </div>
+              <div class="info-content">
+                <h5>تاريخ الميلاد</h5>
+                <p>{{ student.birth_date }}</p>
+              </div>
+            </div>
+            
+            <div class="info-item">
+              <div class="info-icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="info-content">
+                <h5>اسم ولي الأمر</h5>
+                <p>{{ parent_name }}</p>
+              </div>
+            </div>
+            
+            <div class="info-item">
+              <div class="info-icon">
+                <i class="fas fa-phone-alt"></i>
+              </div>
+              <div class="info-content">
+                <h5>جوال ولي الأمر</h5>
+                <p>{{ parent_phone }}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-6">
+            <div class="info-item">
+              <div class="info-icon">
+                <i class="fas fa-map-marker-alt"></i>
+              </div>
+              <div class="info-content">
+                <h5>العنوان</h5>
+                <p>{{ student.address }}</p>
+              </div>
+            </div>
+            
+            <div class="info-item">
+              <div class="info-icon">
+                <i class="fas fa-graduation-cap"></i>
+              </div>
+              <div class="info-content">
+                <h5>الصف الدراسي</h5>
+                <p>{{ student.grade }}</p>
+              </div>
+            </div>
+            
+            <div class="info-item">
+              <div class="info-icon">
+                <i class="fas fa-book-quran"></i>
+              </div>
+              <div class="info-content">
+                <h5>الحلقة الدراسية</h5>
+                <p>{{ student.halaqa }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- قسم المعلومات المهمة للأهل -->
+<h3 class="section-title">المعلومات المهمة للأهل</h3>
+
+<div class="stats-grid">
+  <!-- بطاقة آخر حضور -->
+  <div class="stat-card">
+    {% if present_count > 0 %}
+      <div class="stat-status status-success">ممتاز</div>
+    {% else %}
+      <div class="stat-status status-warning">تحت المتابعة</div>
+    {% endif %}
+    <i class="fas fa-calendar-check"></i>
+    <h3>آخر حضور</h3>
+    <p>
+      {% if current_session %}
+        {{ current_session.date|date:"Y-m-d" }} الساعة {{ current_session.start_time|time:"H:i" }}
+      {% else %}
+        لا يوجد بيانات حضور
+      {% endif %}
+    </p>
+  </div>
+  
+  <!-- بطاقة تحقيق الشروط -->
+  <div class="stat-card">
+    {% if total_points > 50 %}
+      <div class="stat-status status-success">ممتاز</div>
+    {% else %}
+      <div class="stat-status status-warning">تحت المتابعة</div>
+    {% endif %}
+    <i class="fas fa-clipboard-check"></i>
+    <h3>تحقيق الشروط</h3>
+    <p>
+      {% if current_plan %}
+        من {{ current_plan.start_date|date:"Y-m-d" }} إلى {{ current_plan.end_date|date:"Y-m-d" }}
+      {% else %}
+        لا يوجد خطة حالية
+      {% endif %}
+    </p>
+  </div>
+  
+  <!-- بطاقة الأجزاء المحفوظة -->
+  <div class="stat-card">
+    <i class="fas fa-book-quran"></i>
+    <h3>الأجزاء المحفوظة</h3>
+    <p>
+      {% if memorized > 0 %}
+        {{ memorized_parts }} جزء ({{ memorized }} آية)
+      {% else %}
+        لا يوجد أجزاء محفوظة
+      {% endif %}
+    </p>
+  </div>
+  
+  <!-- بطاقة النقاط المتراكمة -->
+  <div class="stat-card">
+    <i class="fas fa-star"></i>
+    <h3>النقاط المتراكمة</h3>
+    <p>{{ total_points }} نقطة</p>
+  </div>
+  
+  <!-- بطاقة نسبة الحضور -->
+  <div class="stat-card">
+    <i class="fas fa-percentage"></i>
+    <h3>نسبة الحضور</h3>
+    <p>
+      {% if present_count or absent_count %}
+        {{ attendance_percentage }}% ({{ present_count }} حضور - {{ absent_count }} غياب)
+      {% else %}
+        0%
+      {% endif %}
+    </p>
+  </div>
+  
+  <!-- بطاقة الشهادات -->
+  <div class="stat-card">
+    <i class="fas fa-award"></i>
+    <h3>الشهادات</h3>
+    <p>
+      {% if total_points > 100 %}
+        1 شهادة
+      {% else %}
+        لا يوجد شهادات
+      {% endif %}
+    </p>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <!-- بطاقة الشهادات -->
+  <div class="stat-card">
+    <i class="fas fa-award"></i>
+    <h3>الشهادات</h3>
+    <p>
+      {% if total_points > 100 %}
+        1 شهادة
+      {% else %}
+        لا يوجد شهادات
+      {% endif %}
+    </p>
+  </div>
+</div>
+        
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle me-2"></i>
+          سيتم تحديث الإحصائيات بعد بدء الطالب دراسته في المعهد
+        </div>
+        
+        <!-- قسم إنجاز الشروط -->
+        <h3 class="section-title">تحقيق شروط المعهد</h3>
+        
+        <div class="condition-list">
+          <div class="condition-item">
+            <div class="condition-icon">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="condition-content">
+              <h6>الالتزام بالزي المدرسي</h6>
+              <p class="mb-0">الزي الإسلامي الموحد</p>
+            </div>
+            <div class="condition-status status-achieved">محقق</div>
+          </div>
+          
+          <div class="condition-item">
+            <div class="condition-icon">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="condition-content">
+              <h6>الحضور المنتظم</h6>
+              <p class="mb-0">4 أيام على الأقل أسبوعياً</p>
+            </div>
+            <div class="condition-status status-pending">قيد التقييم</div>
+          </div>
+          
+          <div class="condition-item">
+            <div class="condition-icon">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="condition-content">
+              <h6>إحضار المصحف</h6>
+              <p class="mb-0">نسخة شخصية من المصحف</p>
+            </div>
+            <div class="condition-status status-achieved">محقق</div>
+          </div>
+          
+          <div class="condition-item">
+            <div class="condition-icon">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="condition-content">
+              <h6>إكمال الواجبات</h6>
+              <p class="mb-0">الحفظ والتسميع اليومي</p>
+            </div>
+            <div class="condition-status status-pending">قيد التقييم</div>
+          </div>
+          
+          <div class="condition-item">
+            <div class="condition-icon">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="condition-content">
+              <h6>السلوك الحسن</h6>
+              <p class="mb-0">الالتزام بآداب طالب العلم</p>
+            </div>
+            <div class="condition-status status-achieved">محقق</div>
+          </div>
+        </div>
+        
+        <div class="alert alert-success mt-4">
+          <i class="fas fa-trophy me-2"></i>
+          الطالب حقق 80% من شروط المعهد حتى الآن
+        </div>
+        
+        <div class="action-buttons">
+          <button class="btn btn-action btn-print">
+            <i class="fas fa-print"></i> طباعة الاستمارة
+          </button>
+          <button class="btn btn-action btn-dashboard">
+            <i class="fas fa-tachometer-alt"></i> الانتقال للوحة التحكم
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="footer">
+    <div class="container">
+      <p>© 2023 معهد قباء لتحفيظ القرآن الكريم. جميع الحقوق محفوظة.</p>
+      <p>هاتف: 0123456789 | البريد الإلكتروني: info@quba-institute.edu.sa</p>
+    </div>
+  </div>
+  
+  <!-- الزخارف الخلفية -->
+  <div class="decoration dec-1">
+    <i class="fas fa-mosque"></i>
+  </div>
+  
+  <div class="decoration dec-2">
+    <i class="fas fa-book-quran"></i>
+  </div>
+  
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // رسالة توضيحية عندما لا توجد بيانات للرسوم البيانية
+      document.querySelectorAll('canvas').forEach(canvas => {
+        canvas.style.display = 'none';
+      });
+      
+      // إظهار رسائل عدم وجود بيانات
+      document.querySelectorAll('.no-data-message, .no-data-placeholder').forEach(el => {
+        el.style.display = 'block';
+      });
+      
+      // طباعة الاستمارة
+      document.querySelector('.btn-print').addEventListener('click', function() {
+        window.print();
+      });
+      
+      // الانتقال للوحة التحكم
+      document.querySelector('.btn-dashboard').addEventListener('click', function() {
+        alert('سيتم الانتقال إلى لوحة التحكم بعد تطويرها');
+      });
+      
+      // تأثيرات تفاعلية للأقسام
+      document.querySelectorAll('.condition-item').forEach(item => {
+        item.addEventListener('click', function() {
+          this.classList.toggle('bg-light');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

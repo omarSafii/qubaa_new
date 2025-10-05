@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>حلقة: {{ halaqa.name }}</h1>
+<p><strong>عدد الطلاب:</strong> {{ halaqa.members.count }}</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>الاسم</th>
+            <th>عدد الصفحات المحفوظة</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for member in halaqa.members.all %}
+            <tr>
+                <td>{{ member.student.full_name }}</td>
+                <td>{{ member.student.memorization_records.count }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<p><em>تم عرض هذه الصفحة عبر رابط المشاركة. بعض الميزات غير متاحة.</em></p>
+{% endblock %}

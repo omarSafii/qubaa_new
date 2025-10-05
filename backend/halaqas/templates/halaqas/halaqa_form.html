@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>العلم والدين - عرض تقديمي</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #2b5876, #4e4376);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .presentation-container {
+            width: 100%;
+            max-width: 1200px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .header {
+            background: linear-gradient(to right, #1a2a6c, #2b5876);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            border-bottom: 4px solid gold;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .slides-container {
+            padding: 30px;
+            height: 500px;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .slide {
+            margin-bottom: 40px;
+            padding: 25px;
+            border-radius: 15px;
+            background: white;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            border-right: 5px solid #2b5876;
+            animation: fadeIn 0.8s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .slide::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 8px;
+            height: 100%;
+            background: linear-gradient(to bottom, #1a2a6c, #2b5876);
+        }
+        
+        .slide-title {
+            color: #1a2a6c;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            border-bottom: 2px solid gold;
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .slide-title i {
+            margin-left: 10px;
+            color: #2b5876;
+        }
+        
+        .slide-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #444;
+        }
+        
+        .slide-content ul {
+            list-style-type: none;
+            padding: 10px 0;
+        }
+        
+        .slide-content li {
+            margin-bottom: 12px;
+            padding: 8px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-right: 3px solid #2b5876;
+            transition: transform 0.3s ease;
+        }
+        
+        .slide-content li:hover {
+            transform: translateX(-5px);
+            background: #e9ecef;
+        }
+        
+        .quote {
+            background: linear-gradient(135deg, #fdfcfb, #e2d1c3);
+            padding: 20px;
+            border-radius: 10px;
+            border-right: 4px solid #2b5876;
+            margin: 15px 0;
+            font-style: italic;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+        
+        .quote .author {
+            text-align: left;
+            font-weight: bold;
+            color: #1a2a6c;
+            margin-top: 10px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #ddd;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            margin: 0 10px;
+            background: linear-gradient(to right, #1a2a6c, #2b5876);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 15px;
+            background: #1a2a6c;
+            color: white;
+            font-size: 0.9rem;
+        }
+        
+        .video-placeholder {
+            background: linear-gradient(135deg, #2b5876, #4e4376);
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px;
+            margin: 20px 0;
+            color: white;
+        }
+        
+        .video-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2rem; }
+            .slide-title { font-size: 1.5rem; }
+            .slide-content { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <div class="header">
+            <h1>العلم والدين</h1>
+            <p>المحاضرة الأولى - مكان الانعقاد: المسجد - المدة: 45 دقيقة</p>
+        </div>
+        
+        <div class="slides-container">
+            <div class="slide">
+                <h2 class="slide-title"><i class="fas fa-play-circle"></i> فيديو افتتاحي</h2>
+                <div class="video-placeholder">
+                    <span class="video-icon">🎬</span>
+                    <p>فيديو: "من الذرة إلى المجرة" (5 دقائق)</p>
+                    <p>عظمة الخلق من أدق التفاصيل إلى أعظم المشاهد</p>
+                </div>
+                <div class="slide-content">
+                    <p>هل يكفي العلم وحده ليفسر لنا هذا الجمال والاتساق والغاية، أم أننا بحاجة إلى ما هو أعمق من مجرد المعادلات؟</p>
+                </div>
+            </div>
+            
+            <div class="slide">
+                <h2 class="slide-title"><i class="fas fa-question-circle"></i> السؤال المحوري</h2>
+                <div class="slide-content">
+                    <div class="quote">
+                        "لو وجدت ساعة في الصحراء، وقيمت تروسها وتزوس التروس، وعرفت كيف تتحرك الأجزاء، هل ستعلم فورًا لماذا صنعت الساعة؟ ومن صنعها؟"
+                    </div>
+                    <p>العلم يفسر الكيفية لكنه لا يجيب عن الغاية.</p>
+                </div>
+            </div>
+            
+            <div class="slide">
+                <h2 class="slide-title"><i class="fas fa-balance-scale"></i> الفرق بين العلم والدين</h2>
+                <div class="slide-content">
+                    <ul>
+                        <li><strong>العلم:</strong> يبحث في الكيفية (كيف تعمل الظواهر، كيف تتحرك الكواكب، كيف يعمل الدماغ)</li>
+                        <li><strong>الدين:</strong> يبحث في الغاية (لماذا وجد الكون؟ ما الهدف من وجود الإنسان؟ ما معنى الخير والشر؟)</li>
+                    </ul>
+                    <p>العلم أداة عظيمة لكنه بلا بوصلة، بينما الدين هو البوصلة التي تحدد الاتجاه.</p>
+                </div>
+            </div>
+            
+            <div class="slide">
+                <h2 class="slide-title"><i class="fas fa-cogs"></i> مجال عمل العلم</h2>
+                <div class="slide-content">
+                    <p>العلم يستطيع أن:</p>
+                    <ul>
+                        <li>يرفع دقة الكاميرات حتى نرى مسارًا على سطح القمر</li>
+                        <li>يبني ناطحات سحاب تخترق الغيوم</li>
+                        <li>يصنع أدوية تنقذ حياة الملايين</li>
+                    </ul>
+                    <p>لكنه لا يحدد لماذا تستخدم هذه الأدوات:</p>
+                    <ul>
+                        <li>هل نصنع الكاميرات لمراقبة الطبيعة أم للتجسس على الناس؟</li>
+                        <li>هل نستخدم ناطحات السحاب للتطوير أم للهيمنة الاقتصادية؟</li>
+                        <li>هل نصنع الطاقة النووية للخير أم للشر؟</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="slide">
+                <h2 class="slide-title"><i class="fas fa-exclamation-triangle"></i> العلم بلا ضوابط</h2>
+                <div class="slide-content">
+                    <p>حين يغيب الدين كمنظومة قيمية، يصبح العلم خادمًا للأهواء.</p>
+                    <div class="quote">
+                        "لقد أصبحت الموت، مدمر العوالم"
+                        <div class="author">- أوبنهايمر (بعد أول تجربة نووية)</div>
+                    </div>
+                    <p>هكذا يمكن للعلم أن يتحول إلى أداة للدمار، إذا لم يوجّه ببوصلة أخلاقية.</p>
+                </div>
+            </div>
+            
+            <div class="slide">
+                <h2 class="slide-title"><i class="fas fa-quote-right"></i> الاقتباسات المؤثرة</h2>
+                <div class="slide-content">
+                    <div class="quote">
+                        "العلم الجيد لا يقدم تعيينات نهائية، بل نظريات قابلة للدحض والاختيار والنقد"
+                        <div class="author">- كارل بوبر</div>
+                    </div>
+                    
+                    <div class="quote">
+                        "اللحظة النموذجية تكشف حقيقة المشروع الحضاري المادي حين ينفصل عن المعنى"
+                        <div class="author">- عبد الوهاب المسيري</div>
+                    </div>
+                    
+                    <div class="quote">
+                        "الاستشراق لم يكن مجرد دراسة، بل أداة قوة وسيطرة"
+                        <div class="author">- إدوارد سعيد</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="slide">
+                <h2 class="slide-title"><i class="fas fa-lightbulb"></i> الخاتمة</h2>
+                <div class="slide-content">
+                    <p>العلم نور، لكنه يحتاج إلى بوصلة.</p>
+                    <p>الدين يزودنا بالمعنى والغاية، ويجعل من العلم وسيلة للخير لا للشر.</p>
+                    <p>بدون الدين، يتحول العلم إلى سيف بيد مجنون.</p>
+                    <p>ومع الدين، يصبح العلم طريقًا إلى خدمة الإنسان والارتفاع به.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn">السابق</button>
+            <button class="btn">التالي</button>
+        </div>
+        
+        <div class="footer">
+            <p>قدمت لكم بأسلوب عصري وجذاب - العلم والدين (عرض تقديمي تفاعلي)</p>
+        </div>
+    </div>
+
+    <script>
+        // كود بسيط للتنقل بين الشرائح
+        document.addEventListener('DOMContentLoaded', function() {
+            const slides = document.querySelectorAll('.slide');
+            const nextBtn = document.querySelectorAll('.btn')[1];
+            const prevBtn = document.querySelectorAll('.btn')[0];
+            let currentSlide = 0;
+            
+            function showSlide(index) {
+                slides.forEach(slide => slide.style.display = 'none');
+                slides[index].style.display = 'block';
+                
+                // إخفاء أو إظهار الأزرار حسب الشريحة الحالية
+                prevBtn.style.display = index === 0 ? 'none' : 'block';
+                nextBtn.textContent = index === slides.length - 1 ? 'الختام' : 'التالي';
+            }
+            
+            nextBtn.addEventListener('click', function() {
+                if (currentSlide < slides.length - 1) {
+                    currentSlide++;
+                    showSlide(currentSlide);
+                }
+            });
+            
+            prevBtn.addEventListener('click', function() {
+                if (currentSlide > 0) {
+                    currentSlide--;
+                    showSlide(currentSlide);
+                }
+            });
+            
+            // إظهار الشريحة الأولى عند التحميل
+            showSlide(0);
+        });
+    </script>
+</body>
+</html>

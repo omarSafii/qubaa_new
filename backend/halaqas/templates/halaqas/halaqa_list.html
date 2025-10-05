@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h1>تفاصيل الحلقة: {{ halaqa.name }}</h1>
+
+<a href="{% url 'halaqas:halaqa_edit' halaqa.pk %}">تعديل الحلقة</a> |
+<a href="{% url 'halaqas:add_student_to_halaqa' halaqa.pk %}">إضافة طالب</a>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>الطالب</th>
+            <th>الحضور</th>
+            <th>الغياب</th>
+            <th>عدد النقاط</th>
+            <th>عدد الآيات المحفوظة</th>
+            <th>الخطة الحالية</th>
+            <th>إجراءات</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for entry in dashboard_data %}
+        <tr id="row-{{ entry.student.id }}">
+            <td>{{ entry.student.name }}</td>
+
+            <td id="present-{{ entry.student.id }}">{{ entry.present }}</td>
+            <td id="absent-{{ entry.student.id }}">{{ entry.absent }}</td>
+            <td id="points-{{ entry.student.id }}">{{ entry.points }}</td>
+            <td>{{ entry.memorized }}</td>
+            <td>
+                {% if entry.plan %}
+                    من {{ entry.plan.start_date }} إلى {{ entry.plan.end_date }}<br>
+                    الهدف: {{ entry.plan.target }}
+                {% else %}
+                    لا توجد خطة حالية
+                {% endif %}
+            </td>
+              
+            <td>
+    <!-- إضافة نقاط -->
+    <form class="ajax-form" data-type="points" action="{% url 'halaqas:api:points-list' %}">
+        {% csrf_token %}
+        <input type="hidden" name="student" value="{{ entry.student.id }}">
+        <input type="hidden" name="halaqa"  value="{{ halaqa.id }}">
+        <input type="text"   name="reason"  placeholder="سبب الإضافة" required>
+        <input type="number" name="value"   placeholder="+/- نقاط" required>
+        <button type="submit">إضافة نقاط</button>
+    </form>
+
+    <!-- إنشاء خطة حفظ -->
+    <form class="ajax-form" data-type="plans" action="{% url 'halaqas:api:plans-list' %}">
+        {% csrf_token %}
+        <input type="hidden"  name="student"    value="{{ entry.student.id }}">
+        <input type="hidden"  name="halaqa"     value="{{ halaqa.id }}">
+        <label>من: <input type="date"   name="start_date" required></label><br>
+        <label>إلى: <input type="date"   name="end_date"   required></label><br>
+        <input type="text"    name="target"     placeholder="هدف الخطة" required>
+        <button type="submit">إضافة خطة</button>
+    </form>
+
+    <!-- تسجيل حضور -->
+    <!-- تسجيل حضور -->
+{% if entry.current_session_id %}
+<form class="ajax-form" data-type="attendance" action="{% url 'halaqas:api:attendance-list' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="student" value="{{ entry.student.id }}">
+    <input type="hidden" name="session" value="{{ entry.current_session_id }}">
+    <select name="status" required>
+        <option value="" disabled selected>اختر حالة الحضور</option>
+        <option value="present">حاضر</option>
+        <option value="absent">غائب</option>
+        <option value="excused">معذور</option>
+    </select>
+    <input type="text" name="notes" placeholder="ملاحظات" autocomplete="off">
+    <button type="submit">تسجيل حضور</button>
+</form>
+{% else %}
+<em>لا توجد جلسة</em>
+{% endif %}
+
+
+    <!-- نموذج تسجيل حفظ جديد -->
+    <form class="ajax-form" data-type="memorization" action="{% url 'students:memorizationrecord-list' %}">
+        {% csrf_token %}
+        <input type="hidden" name="student" value="{{ entry.student.id }}">
+        <input type="text" name="surah" placeholder="السورة" required>
+        <input type="number" name="from_verse" placeholder="من آية" required min="1">
+        <input type="number" name="to_verse" placeholder="إلى آية" required min="1">
+        <button type="submit">تسجيل حفظ</button>
+    </form>
+</td>
+
+
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('form.ajax-form').forEach(form => {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const url = form.action;
+      const data = {};
+      form.querySelectorAll('input[name], select[name]').forEach(el => {
+        data[el.name] = el.value;
+      });
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => {
+        if (!response.ok) throw response;
+        return response.json();
+      })
+      .then(json => {
+        location.reload();
+      })
+      .catch(err => {
+        console.error('Request failed', err);
+        alert('حدث خطأ أثناء الحفظ.');
+      });
+    });
+  });
+});
+</script>
+{% endblock %}

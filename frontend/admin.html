@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>لوحة المدير - معهد قُباء</title>
+  <!-- Bootstrap RTL CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+  <!-- Animate.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --color-primary: #0B3C54;
+      --color-secondary: #31617F;
+      --color-accent: #968960;
+      --color-light: #F2D8A1;
+      --color-background: #CCC3B0;
+    }
+    body { background: var(--color-background); color: var(--color-primary); position: relative; overflow-x: hidden; }
+    .sidebar { background: var(--color-primary); color: white; min-height: 100vh; }
+    .sidebar .nav-link { color: var(--color-light); }
+    .sidebar .nav-link.active { background: var(--color-secondary); color: white; }
+    .navbar { background: var(--color-secondary); }
+    .card-custom { border: none; border-radius: 1rem; background: var(--color-light); box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1); position: relative; overflow: hidden; }
+    .card-custom::before { content: ''; position: absolute; width: 150%; height: 150%; background: radial-gradient(circle at top left, var(--color-secondary), transparent 70%); top: -50%; left: -50%; transform: rotate(45deg); opacity: 0.3; }
+    .card-custom .card-body { position: relative; z-index: 1; animation: fadeInUp 1s ease; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container-fluid">
+      <a class="navbar-brand text-light animate__animated animate__fadeInRight" href="#">لوحة المدير</a>
+    </div>
+  </nav>
+
+  <div class="container-fluid" style="padding-top:80px;">
+    <div class="row">
+      <nav class="col-md-2 d-none d-md-block sidebar py-3">
+        <ul class="nav flex-column">
+          <li class="nav-item mb-2"><a class="nav-link active" href="#">لوحة التحكم</a></li>
+          <li class="nav-item mb-2"><a class="nav-link" href="#">الحلقات</a></li>
+          <li class="nav-item mb-2"><a class="nav-link" href="#">الطلاب</a></li>
+          <li class="nav-item mb-2"><a class="nav-link" href="#">الحضور</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">الإعدادات</a></li>
+        </ul>
+      </nav>
+
+      <main class="col-md-10 ms-sm-auto px-md-4 py-4">
+        <!-- Cards -->
+        <div class="row g-4">
+          <div class="col-sm-6 col-lg-3">
+            <div class="card card-custom text-center">
+              <div class="card-body animate__animated animate__zoomIn">
+                <h5 class="card-title">عدد الحلقات</h5>
+                <p class="display-4" id="totalHalaqat">0</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="card card-custom text-center">
+              <div class="card-body animate__animated animate__zoomIn animate__delay-1s">
+                <h5 class="card-title">عدد الطلاب</h5>
+                <p class="display-4" id="totalStudents">0</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="card card-custom text-center">
+              <div class="card-body animate__animated animate__zoomIn animate__delay-2s">
+                <h5 class="card-title">نسبة الحضور</h5>
+                <p class="display-4" id="attendanceRate">0%</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="card card-custom text-center">
+              <div class="card-body animate__animated animate__zoomIn animate__delay-3s">
+                <h5 class="card-title">متوسط النقاط</h5>
+                <p class="display-4" id="averagePoints">0</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="mt-5">
+          <h4 class="animate__animated animate__fadeInDown">الرسوم البيانية</h4>
+          <div class="row g-4">
+            <div class="col-md-6"><canvas id="pieChart"></canvas></div>
+            <div class="col-md-6"><canvas id="barChart"></canvas></div>
+            <div class="col-md-6"><canvas id="hBarChart"></canvas></div>
+            <div class="col-md-6"><canvas id="lineChart"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="mt-5 card card-custom">
+          <div class="card-header animate__animated animate__fadeInDown">أحدث الطلاب المنضمين</div>
+          <div class="card-body animate__animated animate__fadeInUp">
+            <div class="table-responsive">
+              <table class="table table-striped table-hover text-center">
+                <thead class="table-dark">
+                  <tr><th>الاسم</th><th>الحلقة</th><th>انضم في</th></tr>
+                </thead>
+                <tbody id="studentsTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Dynamic Data Script -->
+  <script>
+    // API URLs بناءً على الباك إند الخاص بك
+    const API_URLS = {
+      halaqas: 'http://localhost:8000/api/halaqas/',
+      students: 'http://localhost:8000/api/students/',
+      attendance: 'http://localhost:8000/api/attendances/',
+      points: 'http://localhost:8000/api/points/'
+    };
+
+    async function fetchData(url) {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.json();
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        return [];
+      }
+    }
+
+    async function loadData() {
+      try {
+        // جلب جميع البيانات بشكل متوازي
+        const [halaqat, students, attendance, points] = await Promise.all([
+          fetchData(API_URLS.halaqas),
+          fetchData(API_URLS.students),
+          fetchData(API_URLS.attendance),
+          fetchData(API_URLS.points)
+        ]);
+
+        // تحديث البطاقات الإحصائية
+        updateCards(halaqat, students, attendance, points);
+        
+        // إنشاء الرسوم البيانية
+        createCharts(halaqat, students, attendance, points);
+        
+        // تحديث جدول الطلاب
+        updateStudentsTable(halaqat, students);
+        
+      } catch (error) {
+        console.error('Failed to load data:', error);
+      }
+    }
+
+    function updateCards(halaqat, students, attendance, points) {
+      document.getElementById('totalHalaqat').textContent = halaqat.length || 0;
+      document.getElementById('totalStudents').textContent = students.length || 0;
+      
+      // حساب نسبة الحضور
+      const presentCount = attendance.filter(a => a.is_present).length;
+      const attendancePercentage = attendance.length > 0 
+        ? Math.round((presentCount / attendance.length) * 100) 
+        : 0;
+      document.getElementById('attendanceRate').textContent = `${attendancePercentage}%`;
+      
+      // حساب متوسط النقاط
+      const totalPoints = points.reduce((sum, point) => sum + point.value, 0);
+      const averagePoints = points.length > 0 
+        ? Math.round(totalPoints / points.length) 
+        : 0;
+      document.getElementById('averagePoints').textContent = averagePoints;
+    }
+
+    function createCharts(halaqat, students, attendance, points) {
+      const colors = [
+        getComputedStyle(document.documentElement).getPropertyValue('--color-primary'),
+        getComputedStyle(document.documentElement).getPropertyValue('--color-secondary'),
+        getComputedStyle(document.documentElement).getPropertyValue('--color-accent'),
+        getComputedStyle(document.documentElement).getPropertyValue('--color-light')
+      ];
+
+      // 1. Pie Chart - نسبة الحضور والغياب
+      const presentCount = attendance.filter(a => a.is_present).length;
+      const absentCount = attendance.length - presentCount;
+      new Chart(document.getElementById('pieChart'), {
+        type: 'pie',
+        data: {
+          labels: ['حاضر', 'غائب'],
+          datasets: [{
+            data: [presentCount, absentCount],
+            backgroundColor: [colors[0], colors[1]]
+          }]
+        }
+      });
+
+      // 2. Bar Chart - عدد الطلاب في كل حلقة
+      const halaqaNames = halaqat.map(h => h.name);
+      const studentsPerHalaqa = halaqat.map(h => 
+        students.filter(s => s.halaqa === h.id).length
+      );
+      new Chart(document.getElementById('barChart'), {
+        type: 'bar',
+        data: {
+          labels: halaqaNames,
+          datasets: [{
+            label: 'عدد الطلاب',
+            data: studentsPerHalaqa,
+            backgroundColor: colors[2]
+          }]
+        }
+      });
+
+      // 3. Horizontal Bar Chart - توزيع النقاط
+      const pointValues = points.map(p => p.value);
+      const pointLabels = points.map((_, i) => `نقطة ${i+1}`);
+      new Chart(document.getElementById('hBarChart'), {
+        type: 'bar',
+        data: {
+          labels: pointLabels,
+          datasets: [{
+            label: 'قيمة النقاط',
+            data: pointValues,
+            backgroundColor: colors[3]
+          }]
+        },
+        options: {
+          indexAxis: 'y'
+        }
+      });
+
+      // 4. Line Chart - تطور الحضور مع الوقت
+      const attendanceDates = [...new Set(attendance.map(a => a.date))].sort();
+      const attendanceByDate = attendanceDates.map(date => 
+        attendance.filter(a => a.date === date && a.is_present).length
+      );
+      new Chart(document.getElementById('lineChart'), {
+        type: 'line',
+        data: {
+          labels: attendanceDates,
+          datasets: [{
+            label: 'عدد الحاضرين',
+            data: attendanceByDate,
+            borderColor: colors[0],
+            backgroundColor: colors[0],
+            fill: false
+          }]
+        }
+      });
+    }
+
+    function updateStudentsTable(halaqat, students) {
+      const tableBody = document.getElementById('studentsTable');
+      tableBody.innerHTML = '';
+      
+      // أخذ آخر 5 طلاب مسجلين
+      const recentStudents = [...students]
+        .sort((a, b) => new Date(b.enrollment_date) - new Date(a.enrollment_date))
+        .slice(0, 5);
+      
+      recentStudents.forEach(student => {
+        const halaqa = halaqat.find(h => h.id === student.halaqa);
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${student.name || 'غير معروف'}</td>
+          <td>${halaqa ? halaqa.name : 'غير معين'}</td>
+          <td>${student.enrollment_date || 'غير معروف'}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    // تحميل البيانات عند فتح الصفحة
+    document.addEventListener('DOMContentLoaded', loadData);
+  </script>
+</body>
+</html>
