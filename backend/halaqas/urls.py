@@ -1,8 +1,10 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+from .admin_dashboard import master_admin_dashboard, master_admin_dashboard_export
 from .views import (
     TeacherStudentViewSet,
     TeacherAttendanceViewSet,
+    TeacherHomeworkViewSet,
     TeacherPointViewSet,
     TeacherPlanViewSet,
     teacher_dashboard,
@@ -19,11 +21,14 @@ app_name = 'halaqas'
 router = DefaultRouter()
 router.register(r'students',   TeacherStudentViewSet,    basename='students')
 router.register(r'attendance', TeacherAttendanceViewSet, basename='attendance')
+router.register(r'homeworks',  TeacherHomeworkViewSet,   basename='homeworks')
 router.register(r'points',     TeacherPointViewSet,      basename='points')
 router.register(r'plans',      TeacherPlanViewSet,       basename='plans')
 
 urlpatterns = [
     # واجهات HTML التقليدية
+    path('admin-dashboard/',            master_admin_dashboard,   name='master_admin_dashboard'),
+    path('admin-dashboard/export/',     master_admin_dashboard_export, name='master_admin_dashboard_export'),
     path('dashboard/',                  teacher_dashboard,        name='teacher_dashboard'),
     path('halaqa/<int:pk>/',            halaqa_detail,            name='halaqa_detail'),
     path('halaqa/by-code/<str:join_code>/', halaqa_detail,       name='halaqa_by_code'),

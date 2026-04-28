@@ -19,12 +19,8 @@ def create_default_membership(sender, instance, created, **kwargs):
     if not created:
         return
 
-    # إذا كان الـ student عنده relation إلى halaqa_fk (قد تكون أضفتها في StudentRegistrationSerializer)
+    # عند تمرير الحلقة صراحةً، نترك مسار التسجيل/النقل ينشئ عضوية الطالب بنفسه.
     if hasattr(instance, 'halaqa') and instance.halaqa:
-        HalaqaMembership.objects.create(
-            student=instance,
-            halaqa=instance.halaqa,
-        )
         return
 
     # خلاف ذلك، استخدم الحلقة الافتراضية أو أنشئها

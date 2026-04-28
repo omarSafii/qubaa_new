@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.utils import timezone
 from .models import Halaqa, HalaqaMembership
 from students.models import Student
 
@@ -17,6 +18,7 @@ class HalaqaManager:
             # 2. إنشاء طالب افتراضي
             dummy_student = Student.objects.create(
                 name="طالب افتراضي - " + name,
+                birth_date=timezone.localdate(),
                 parent_phone="0000000000"
             )
             

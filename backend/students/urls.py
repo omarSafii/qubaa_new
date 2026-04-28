@@ -5,8 +5,8 @@ from .views import StudentViewSet, MemorizationRecordViewSet
 app_name = 'students'
 
 router = DefaultRouter()
-router.register(r'', StudentViewSet, basename='student')
 router.register(r'memorization-records', MemorizationRecordViewSet, basename='memorizationrecord')
+router.register(r'', StudentViewSet, basename='student')
 
 
 urlpatterns = [
@@ -18,7 +18,7 @@ urlpatterns = [
 
     # (اختياري) مسار عرض بيانات الطالب بشكل منفصل إذا كنت تستخدم action detail=True
     path('students_data/<uuid:access_token>/', 
-         StudentViewSet.as_view({'get': 'students_data'}), 
+         StudentViewSet.as_view({'get': 'retrieve'}), 
          name='students_data'),
 
     # المسارات الخاصة بالـ router

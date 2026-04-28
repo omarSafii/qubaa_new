@@ -1,0 +1,2893 @@
+{% extends "halaqas/admin/base_admin.html" %}
+
+{% block brand_link %}{% url 'halaqas:master_admin_dashboard' %}{% endblock %}
+
+{% block title %}لوحة الإدارة المركزية{% endblock %}
+
+{% block extra_styles %}
+<style>
+    html {
+        scroll-behavior: smooth;
+    }
+
+    :root {
+        --admin-nav-h: 84px;
+        --admin-section-nav-h: 64px;
+        --admin-stack-offset: 172px;
+    }
+
+    .section-anchor {
+        position: static;
+        top: auto;
+        scroll-margin-top: calc(var(--admin-stack-offset) + 18px);
+    }
+
+    .admin-section-nav-wrap {
+        position: sticky;
+        top: var(--admin-nav-h);
+        z-index: 1020;
+        padding-top: 12px;
+        margin-bottom: 18px;
+    }
+
+    .admin-section-nav {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        padding: 10px 12px;
+        border-radius: 18px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(249, 246, 240, 0.95));
+        border: 1px solid rgba(11, 60, 84, 0.07);
+        box-shadow: 0 10px 24px rgba(11, 60, 84, 0.05);
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .admin-section-nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .admin-section-link {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap;
+        min-height: 42px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        border: 1px solid transparent;
+        background: rgba(11, 60, 84, 0.05);
+        color: var(--color-primary);
+        font-weight: 800;
+        transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .admin-section-link:hover {
+        background: rgba(11, 60, 84, 0.09);
+        color: var(--color-primary);
+        transform: translateY(-1px);
+    }
+
+    .admin-section-link.active {
+        background: linear-gradient(90deg, rgba(49, 97, 127, 0.94), rgba(11, 60, 84, 0.88));
+        color: #fff;
+        box-shadow: 0 8px 18px rgba(11, 60, 84, 0.14);
+    }
+
+    .admin-section-panels {
+        position: relative;
+        min-height: 360px;
+    }
+
+    .admin-dashboard-panel {
+        animation: adminPanelFade 0.24s ease;
+    }
+
+    .admin-dashboard-panel[hidden] {
+        display: none !important;
+    }
+
+    @keyframes adminPanelFade {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .panel-stack {
+        display: grid;
+        gap: 24px;
+    }
+
+    .section-focus {
+        border-color: rgba(150, 137, 96, 0.34) !important;
+        box-shadow: 0 0 0 3px rgba(150, 137, 96, 0.16), 0 18px 36px rgba(11, 60, 84, 0.12) !important;
+    }
+
+    .section-metric-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 18px;
+        margin-bottom: 18px;
+    }
+
+    .section-metric-card {
+        padding: 18px;
+        border-radius: var(--radius-lg);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(242, 216, 161, 0.08));
+        border: 1px solid rgba(11, 60, 84, 0.06);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .section-metric-card__label {
+        color: var(--color-ink-soft);
+        font-size: 0.88rem;
+        margin-bottom: 8px;
+    }
+
+    .section-metric-card__value {
+        font-size: 1.9rem;
+        font-weight: 800;
+        line-height: 1;
+        margin-bottom: 8px;
+        color: var(--color-primary);
+    }
+
+    .section-metric-card__detail {
+        color: var(--color-ink-soft);
+        font-size: 0.88rem;
+        line-height: 1.6;
+    }
+
+    .table-card__summary {
+        margin-top: 10px;
+        color: var(--color-ink-soft);
+        font-size: 0.88rem;
+        line-height: 1.7;
+    }
+
+    .foundation-panel {
+        margin-top: 0;
+    }
+
+    .detail-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.35fr) minmax(280px, 1fr);
+        gap: 18px;
+    }
+
+    .detail-stack {
+        display: grid;
+        gap: 14px;
+    }
+
+    .detail-card {
+        padding: 18px;
+        border-radius: var(--radius-lg);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(242, 216, 161, 0.08));
+        border: 1px solid rgba(11, 60, 84, 0.06);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .detail-card__title {
+        margin: 0 0 6px;
+        color: var(--color-primary);
+        font-size: 1rem;
+        font-weight: 800;
+    }
+
+    .detail-card__subtitle {
+        margin: 0;
+        color: var(--color-ink-soft);
+        font-size: 0.88rem;
+        line-height: 1.7;
+    }
+
+    .detail-list,
+    .note-list {
+        display: grid;
+        gap: 10px;
+        margin-top: 14px;
+    }
+
+    .detail-item,
+    .note-item {
+        padding: 12px 14px;
+        border-radius: 16px;
+        border: 1px solid rgba(11, 60, 84, 0.07);
+        background: rgba(255, 255, 255, 0.9);
+    }
+
+    .note-item {
+        background: rgba(242, 216, 161, 0.11);
+    }
+
+    .detail-item__label {
+        color: var(--color-ink-soft);
+        font-size: 0.8rem;
+        margin-bottom: 6px;
+    }
+
+    .detail-item__value {
+        color: var(--color-primary);
+        font-weight: 800;
+        line-height: 1.6;
+    }
+
+    .detail-item__meta {
+        display: block;
+        margin-top: 6px;
+        color: var(--color-ink-soft);
+        font-size: 0.82rem;
+        line-height: 1.7;
+    }
+
+    .drill-link-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+    }
+
+    .drill-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 11px;
+        border-radius: 999px;
+        background: rgba(11, 60, 84, 0.06);
+        color: var(--color-primary);
+        font-size: 0.82rem;
+        font-weight: 800;
+        transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .drill-link:hover {
+        background: rgba(11, 60, 84, 0.1);
+        color: var(--color-primary);
+        transform: translateY(-1px);
+    }
+
+    .export-toolbar {
+        margin-top: 18px;
+        padding: 18px;
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(11, 60, 84, 0.07);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(49, 97, 127, 0.06));
+        box-shadow: var(--shadow-soft);
+    }
+
+    .export-toolbar__grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) repeat(3, auto);
+        gap: 12px;
+        align-items: end;
+    }
+
+    .export-toolbar__note {
+        margin: 12px 0 0;
+        color: var(--color-ink-soft);
+        font-size: 0.88rem;
+        line-height: 1.7;
+    }
+
+    .btn-export {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 44px;
+        padding: 0 16px;
+        border-radius: 14px;
+        border: 1px solid rgba(11, 60, 84, 0.08);
+        background: rgba(11, 60, 84, 0.06);
+        color: var(--color-primary);
+        font-weight: 800;
+        transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .btn-export:hover {
+        background: rgba(11, 60, 84, 0.1);
+        color: var(--color-primary);
+        transform: translateY(-1px);
+    }
+
+    .btn-export--accent {
+        background: linear-gradient(90deg, rgba(49, 97, 127, 0.94), rgba(11, 60, 84, 0.88));
+        color: #fff;
+        border-color: transparent;
+    }
+
+    .btn-export--accent:hover {
+        color: #fff;
+        background: linear-gradient(90deg, rgba(49, 97, 127, 1), rgba(11, 60, 84, 0.92));
+    }
+
+    .focus-banner {
+        padding: 16px 18px;
+        border-radius: var(--radius-lg);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(49, 97, 127, 0.08));
+        border: 1px solid rgba(11, 60, 84, 0.08);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .focus-banner__meta {
+        margin-top: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    @media (max-width: 1200px) {
+        .detail-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 1200px) {
+        .section-metric-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 768px) {
+        .admin-section-nav-wrap {
+            padding-top: 8px;
+            margin-bottom: 14px;
+        }
+
+        .admin-section-nav {
+            padding: 8px 10px;
+            border-radius: 16px;
+        }
+
+        .admin-section-link {
+            min-height: 40px;
+            padding: 9px 12px;
+            font-size: 0.92rem;
+        }
+
+        .section-metric-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .export-toolbar__grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block page_content %}
+<span class="section-anchor" id="top"></span>
+
+<section class="hero-panel surface-card" data-surface>
+    <div class="hero-grid">
+        <div>
+            <div class="hero-kicker">
+                <i class="fas fa-sparkles"></i>
+                مساحة تشغيل موحدة للمعهد بالكامل
+            </div>
+            <h1 class="hero-title">{{ page_title }}</h1>
+            <p class="hero-subtitle">
+                واجهة إدارة تنفيذية تجمع الأداء والتشغيل والمتابعة والوصول في مكان واحد مع نفس
+                الهوية البصرية الحالية للمنتج.
+            </p>
+
+            <div class="hero-meta">
+                <span class="meta-pill">
+                    <i class="fas fa-building-columns"></i>
+                    {{ page_subtitle }}
+                </span>
+                <span class="meta-pill">
+                    <i class="fas fa-calendar-day"></i>
+                    نافذة التحليل: {{ date_window_label }}
+                </span>
+                <span class="meta-pill">
+                    <i class="fas fa-shield-check"></i>
+                    التنقل الآن مقسم بحسب مهام الإدارة
+                </span>
+            </div>
+
+            <div class="hero-actions">
+                {% for action in hero_actions %}
+                <a href="{{ action.href }}" class="btn-hero {% if forloop.first %}btn-hero--light{% else %}btn-hero--ghost{% endif %}">
+                    <i class="fas {{ action.icon }}"></i>
+                    {{ action.title }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <aside class="insight-card">
+            <div class="insight-card__title">
+                <i class="fas fa-diagram-project"></i>
+                قواعد التصميم والتشغيل
+            </div>
+            <div class="insight-list">
+                {% for note in foundation_notes %}
+                <div class="insight-list__item">
+                    <i class="fas fa-circle-notch"></i>
+                    <span>{{ note }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </aside>
+    </div>
+</section>
+
+<section class="filter-panel surface-card" data-surface>
+    <div class="section-head">
+        <div>
+            <h2 class="section-head__title">
+                <i class="fas fa-sliders"></i>
+                فلاتر الإدارة
+            </h2>
+            <p class="section-head__subtitle">تحكم في نطاق العرض حسب الفئة الرسمية والحلقة والطالب والمعلم والفترة الزمنية والحالة.</p>
+        </div>
+        <div class="note-badge">
+            <i class="fas fa-layer-group"></i>
+            التقارير مبنية على الفئات الرسمية مع إظهار الحالات غير المحسومة بوضوح
+        </div>
+    </div>
+
+    <form method="get">
+        <div class="filter-grid">
+            <div class="filter-field">
+                <label for="category-filter">الفئة</label>
+                <select id="category-filter" name="category" class="filter-control">
+                    <option value="">كل الفئات</option>
+                    {% for category in filter_options.categories %}
+                    <option value="{{ category.value }}" {% if filters.category == category.value %}selected{% endif %}>
+                        {{ category.label }}{% if category.meta %} - {{ category.meta }}{% endif %}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label for="halaqa-filter">الحلقة</label>
+                <select id="halaqa-filter" name="halaqa" class="filter-control">
+                    <option value="">كل الحلقات</option>
+                    {% for halaqa in filter_options.halaqas %}
+                    <option value="{{ halaqa.id }}" {% if filters.halaqa == halaqa.id|stringformat:"s" %}selected{% endif %}>{{ halaqa.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label for="teacher-filter">المعلم</label>
+                <select id="teacher-filter" name="teacher" class="filter-control">
+                    <option value="">كل المعلمين</option>
+                    {% for teacher in filter_options.teachers %}
+                    <option value="{{ teacher.pk }}" {% if filters.teacher == teacher.pk|stringformat:"s" %}selected{% endif %}>{{ teacher.full_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label for="student-filter">الطالب</label>
+                <select id="student-filter" name="student" class="filter-control">
+                    <option value="">كل الطلاب</option>
+                    {% for student in filter_options.students %}
+                    <option value="{{ student.value }}" {% if filters.student == student.value %}selected{% endif %}>
+                        {{ student.label }} - {{ student.meta }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label for="range-filter">الفترة الزمنية</label>
+                <select id="range-filter" name="range" class="filter-control">
+                    <option value="7d" {% if filters.range == "7d" %}selected{% endif %}>آخر 7 أيام</option>
+                    <option value="30d" {% if filters.range == "30d" %}selected{% endif %}>آخر 30 يوما</option>
+                    <option value="90d" {% if filters.range == "90d" %}selected{% endif %}>آخر 90 يوما</option>
+                    <option value="year" {% if filters.range == "year" %}selected{% endif %}>آخر سنة</option>
+                    <option value="custom" {% if filters.range == "custom" %}selected{% endif %}>فترة مخصصة</option>
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label for="start-date-filter">من تاريخ</label>
+                <input id="start-date-filter" type="date" name="start_date" class="filter-control" value="{{ filters.start_date }}">
+            </div>
+
+            <div class="filter-field">
+                <label for="end-date-filter">إلى تاريخ</label>
+                <input id="end-date-filter" type="date" name="end_date" class="filter-control" value="{{ filters.end_date }}">
+            </div>
+
+            <div class="filter-field">
+                <label for="status-filter">الحالة</label>
+                <select id="status-filter" name="status" class="filter-control">
+                    <option value="all" {% if filters.status == "all" %}selected{% endif %}>كل الحالات</option>
+                    <option value="active" {% if filters.status == "active" %}selected{% endif %}>نشط</option>
+                    <option value="attention" {% if filters.status == "attention" %}selected{% endif %}>يحتاج متابعة</option>
+                    <option value="unassigned" {% if filters.status == "unassigned" %}selected{% endif %}>غير مسند</option>
+                </select>
+            </div>
+        </div>
+
+        {% if filters.focus_student and not filters.student %}
+        <input type="hidden" name="focus_student" value="{{ filters.focus_student }}">
+        {% endif %}
+
+        <div class="filter-actions mt-3">
+            <button type="submit" class="btn-filter">
+                <i class="fas fa-filter"></i>
+                تطبيق الفلاتر
+            </button>
+            <a href="{% url 'halaqas:master_admin_dashboard' %}" class="btn-reset">
+                <i class="fas fa-rotate-left"></i>
+                إعادة ضبط
+            </a>
+        </div>
+    </form>
+
+    <div class="export-toolbar">
+        <div class="section-head">
+            <div>
+                <h3 class="section-head__title">
+                    <i class="fas fa-file-export"></i>
+                    تصدير التقارير
+                </h3>
+                <p class="section-head__subtitle">تحترم جميع الصادرات نفس الفلاتر والنطاق الزمني الحالي، مع اختيار التقرير ومستوى التفصيل المناسبين للإدارة.</p>
+            </div>
+        </div>
+
+        <form method="get" action="{{ export_controls.endpoint }}" target="_blank">
+            <input type="hidden" name="category" value="{{ filters.category }}">
+            <input type="hidden" name="halaqa" value="{{ filters.halaqa }}">
+            <input type="hidden" name="teacher" value="{{ filters.teacher }}">
+            <input type="hidden" name="student" value="{{ filters.student }}">
+            <input type="hidden" name="status" value="{{ filters.status }}">
+            <input type="hidden" name="range" value="{{ filters.range }}">
+            <input type="hidden" name="start_date" value="{{ filters.start_date }}">
+            <input type="hidden" name="end_date" value="{{ filters.end_date }}">
+            <input type="hidden" name="focus_student" value="{{ filters.focus_student }}">
+            <input type="hidden" name="current_panel" id="export-current-panel" value="{{ export_controls.current_panel }}">
+
+            <div class="export-toolbar__grid">
+                <div class="filter-field">
+                    <label for="export-report">التقرير</label>
+                    <select id="export-report" name="report" class="filter-control">
+                        {% for option in export_controls.report_options %}
+                        <option value="{{ option.value }}" {% if option.value == export_controls.default_report %}selected{% endif %}>{{ option.label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-field">
+                    <label for="export-level">مستوى البيانات</label>
+                    <select id="export-level" name="level" class="filter-control">
+                        {% for option in export_controls.level_options %}
+                        <option value="{{ option.value }}" {% if option.value == export_controls.default_level %}selected{% endif %}>{{ option.label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" name="format" value="print" class="btn-export">
+                    <i class="fas fa-print"></i>
+                    طباعة
+                </button>
+
+                <button type="submit" name="format" value="pdf" class="btn-export">
+                    <i class="fas fa-file-pdf"></i>
+                    PDF
+                </button>
+
+                <button type="submit" name="format" value="csv" class="btn-export btn-export--accent">
+                    <i class="fas fa-file-csv"></i>
+                    CSV / Excel
+                </button>
+            </div>
+
+            <p class="export-toolbar__note">يفتح خياري الطباعة وPDF عرضا مهيأ للطباعة والحفظ بصيغة PDF، بينما ينزل خيار CSV بترميز UTF-8 مناسب للفتح في Excel.</p>
+        </form>
+    </div>
+</section>
+
+<div class="admin-section-nav-wrap">
+    <nav class="admin-section-nav" aria-label="أقسام لوحة الإدارة" role="tablist">
+        <button type="button" class="admin-section-link active" id="section-tab-overview" data-panel="overviewPanel" role="tab" aria-controls="overviewPanel" aria-selected="true">نظرة عامة</button>
+        <button type="button" class="admin-section-link" id="section-tab-halaqas" data-panel="halaqasPanel" role="tab" aria-controls="halaqasPanel" aria-selected="false">الحلقات</button>
+        <button type="button" class="admin-section-link" id="section-tab-students" data-panel="studentsPanel" role="tab" aria-controls="studentsPanel" aria-selected="false">الطلاب</button>
+        <button type="button" class="admin-section-link" id="section-tab-plans" data-panel="plansPanel" role="tab" aria-controls="plansPanel" aria-selected="false">الخطط</button>
+        <button type="button" class="admin-section-link" id="section-tab-attendance" data-panel="attendancePanel" role="tab" aria-controls="attendancePanel" aria-selected="false">الحضور</button>
+        <button type="button" class="admin-section-link" id="section-tab-homework" data-panel="homeworkPanel" role="tab" aria-controls="homeworkPanel" aria-selected="false">الواجب</button>
+        <button type="button" class="admin-section-link" id="section-tab-reports" data-panel="reportsPanel" role="tab" aria-controls="reportsPanel" aria-selected="false">التقارير</button>
+    </nav>
+</div>
+
+<div class="admin-section-panels" id="sectionPanels">
+    <section class="admin-dashboard-panel" id="overviewPanel" role="tabpanel" aria-labelledby="section-tab-overview">
+        <div class="panel-stack">
+            <section class="kpi-grid">
+                {% for kpi in kpis %}
+                <article class="surface-card metric-card" data-surface>
+                    <div class="metric-card__status tone-{{ kpi.tone }}"></div>
+                    <div class="metric-card__row">
+                        <div>
+                            <div class="metric-card__title">{{ kpi.title }}</div>
+                            <div class="metric-card__value">{{ kpi.value }}</div>
+                            <div class="metric-card__subtitle">{{ kpi.subtitle }}</div>
+                        </div>
+                        <div class="metric-card__icon">
+                            <i class="fas {{ kpi.icon }}"></i>
+                        </div>
+                    </div>
+                    {% if kpi.is_proxy %}
+                    <div class="mt-3">
+                        <span class="proxy-pill">
+                            <i class="fas fa-wand-magic-sparkles"></i>
+                            بيانات انتقالية
+                        </span>
+                    </div>
+                    {% endif %}
+                </article>
+                {% endfor %}
+            </section>
+
+            <section class="section-panel surface-card" data-surface>
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-head__title">
+                            <i class="fas fa-bolt"></i>
+                            اختصارات الإدارة السريعة
+                        </h2>
+                        <p class="section-head__subtitle">وصول سريع للمهام اليومية الأكثر استخداما من نفس لوحة الإدارة.</p>
+                    </div>
+                </div>
+
+                <div class="quick-grid">
+                    {% for action in quick_actions %}
+                    <a href="{{ action.href }}" class="quick-action" data-surface>
+                        <div>
+                            <div class="quick-action__icon tone-{{ action.tone }}">
+                                <i class="fas {{ action.icon }}"></i>
+                            </div>
+                            <div class="mt-3">
+                                <h3 class="quick-action__title">{{ action.title }}</h3>
+                                <p class="quick-action__subtitle">{{ action.subtitle }}</p>
+                            </div>
+                        </div>
+                        <div class="quick-action__footer">
+                            {% if action.is_proxy %}
+                            <span class="proxy-pill">
+                                <i class="fas fa-seedling"></i>
+                                Foundation
+                            </span>
+                            {% else %}
+                            <span>فتح</span>
+                            {% endif %}
+                            <i class="fas fa-arrow-left-long"></i>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <section class="section-panel surface-card" data-surface>
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-head__title">
+                            <i class="fas fa-triangle-exclamation"></i>
+                            التنبيهات ولوحات التحذير
+                        </h2>
+                        <p class="section-head__subtitle">ملخص تنفيذي سريع لأولويات التشغيل قبل الانتقال إلى الأقسام التفصيلية.</p>
+                    </div>
+                </div>
+
+                <div class="alert-grid">
+                    {% for alert in alerts %}
+                    <article class="alert-card" data-surface>
+                        <div>
+                            <span class="status-pill {% if alert.tone == 'success' %}status-pill--success{% elif alert.tone == 'warning' %}status-pill--warning{% elif alert.tone == 'danger' %}status-pill--danger{% else %}status-pill--info{% endif %}">
+                                <i class="fas {% if alert.tone == 'success' %}fa-circle-check{% elif alert.tone == 'warning' %}fa-bell{% elif alert.tone == 'danger' %}fa-fire{% else %}fa-circle-info{% endif %}"></i>
+                                {{ alert.title }}
+                            </span>
+                        </div>
+                        <div class="alert-card__count">{{ alert.count }}</div>
+                        <p class="alert-card__detail">{{ alert.detail }}</p>
+                        {% if alert.is_proxy %}
+                        <div class="mt-3">
+                            <span class="proxy-pill">
+                                <i class="fas fa-wave-square"></i>
+                                محسوبة انتقاليا
+                            </span>
+                        </div>
+                        {% endif %}
+                    </article>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+    </section>
+
+    <section class="admin-dashboard-panel" id="halaqasPanel" role="tabpanel" aria-labelledby="section-tab-halaqas" hidden>
+        <div class="panel-stack">
+            <section class="section-panel surface-card" data-surface>
+                <div id="halaqas-overview" class="section-head">
+                    <div>
+                        <h2 class="section-head__title">
+                            <i class="fas fa-mosque"></i>
+                            الحلقات والتوزيع التشغيلي
+                        </h2>
+                        <p class="section-head__subtitle">قراءة مركزة لتوزيع الطلاب والمعلمين وأفضل الحلقات وأماكن الضغط التشغيلي.</p>
+                    </div>
+                </div>
+
+                <div class="chart-grid">
+                    <article class="chart-card" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">الطلاب حسب الحلقة</h3>
+                                <p class="chart-card__subtitle">يعرض توزيع الحمل التشغيلي الفعلي بين الحلقات.</p>
+                            </div>
+                        </div>
+                        <div class="chart-shell">
+                            <canvas id="studentsByHalaqaChart"></canvas>
+                        </div>
+                    </article>
+
+                    <article class="chart-card chart-card--narrow" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">توزيع المعلمين</h3>
+                                <p class="chart-card__subtitle">عدد الطلاب المغطين بواسطة كل معلم.</p>
+                            </div>
+                        </div>
+                        <div class="chart-shell">
+                            <canvas id="teacherDistributionChart"></canvas>
+                        </div>
+                    </article>
+
+                    <article class="chart-card chart-card--narrow" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">أقوى الحلقات إشرافيا</h3>
+                                <p class="chart-card__subtitle">ترتيب مركب يعتمد على الحضور والحفظ والخطط والواجب والنقاط ضمن الفترة المحددة.</p>
+                            </div>
+                        </div>
+                        <div class="chart-shell">
+                            <canvas id="topHalaqasChart"></canvas>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="section-panel surface-card" data-surface>
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-head__title">
+                            <i class="fas fa-diagram-project"></i>
+                            ملخصات الحلقات من بيانات المعلمين
+                        </h2>
+                        <p class="section-head__subtitle">قراءة إشرافية مباشرة للحضور والحفظ والواجب والخطط والنقاط داخل كل حلقة من نفس البيانات التي يدخلها المعلمون في صفحة الحلقة.</p>
+                    </div>
+                </div>
+
+                <div class="table-shell">
+                    {% if halaqa_supervision_rows %}
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>الحلقة</th>
+                                <th>الطلاب والحضور</th>
+                                <th>الحفظ والخطط</th>
+                                <th>الواجب والنقاط</th>
+                                <th>الإشارات</th>
+                                <th>التنقل</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for halaqa in halaqa_supervision_rows %}
+                            <tr>
+                                <td>
+                                    <span class="cell-title">{{ halaqa.name }}</span>
+                                    <span class="cell-meta">{{ halaqa.category_name }}</span>
+                                    <span class="cell-meta">{{ halaqa.teacher_names }}</span>
+                                    <span class="cell-meta">آخر جلسة: {{ halaqa.latest_session_label }}</span>
+                                </td>
+                                <td>
+                                    {{ halaqa.student_count }} طالب
+                                    <span class="cell-meta">حضور {{ halaqa.attendance_rate }}% | حاضر {{ halaqa.attendance_present_total }} | غائب {{ halaqa.attendance_absent_total }} | معذور {{ halaqa.attendance_excused_total }}</span>
+                                    <span class="status-pill {% if halaqa.attendance_trend_tone == 'success' %}status-pill--success{% elif halaqa.attendance_trend_tone == 'danger' %}status-pill--danger{% else %}status-pill--warning{% endif %}">
+                                        {{ halaqa.attendance_trend_label }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {{ halaqa.memorized_total }} آية محفوظة
+                                    <span class="cell-meta">ضمن الفترة: {{ halaqa.memorized_in_range }} آية | خطط نشطة: {{ halaqa.active_plan_students }}</span>
+                                </td>
+                                <td>
+                                    نقاط {{ halaqa.points_total }}
+                                    <span class="cell-meta">تغير الفترة: {{ halaqa.points_in_range }} | واجبات معلقة: {{ halaqa.pending_homework_students }} | واجبات مقيمة: {{ halaqa.evaluated_homework_students }}</span>
+                                </td>
+                                <td>
+                                    <span class="status-pill {% if halaqa.signal_tone == 'success' %}status-pill--success{% elif halaqa.signal_tone == 'danger' %}status-pill--danger{% else %}status-pill--warning{% endif %}">
+                                        {{ halaqa.signal_label }}
+                                    </span>
+                                    <span class="status-pill {% if halaqa.strength_tone == 'success' %}status-pill--success{% elif halaqa.strength_tone == 'danger' %}status-pill--danger{% else %}status-pill--warning{% endif %}">
+                                        مؤشر القوة {{ halaqa.strength_score }}
+                                    </span>
+                                    <span class="cell-meta">طلاب يحتاجون متابعة: {{ halaqa.followup_students }}</span>
+                                    <span class="cell-meta">{{ halaqa.latest_note }}</span>
+                                </td>
+                                <td>
+                                    <div class="drill-link-group">
+                                        <a href="{{ halaqa.students_url }}" class="drill-link"><i class="fas fa-users"></i> الطلاب</a>
+                                        <a href="{{ halaqa.attendance_url }}" class="drill-link"><i class="fas fa-calendar-check"></i> الحضور</a>
+                                        <a href="{{ halaqa.plans_url }}" class="drill-link"><i class="fas fa-route"></i> الخطط</a>
+                                        <a href="{{ halaqa.homework_url }}" class="drill-link"><i class="fas fa-clipboard-list"></i> الواجب</a>
+                                        <a href="{{ halaqa.points_url }}" class="drill-link"><i class="fas fa-star"></i> النقاط</a>
+                                        <a href="{{ halaqa.reports_url }}" class="drill-link"><i class="fas fa-file-lines"></i> التقارير</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="empty-state">لا توجد حلقات مرئية ضمن هذا النطاق لعرض الملخصات الإشرافية.</div>
+                    {% endif %}
+                </div>
+            </section>
+
+            <section class="section-panel surface-card" data-surface>
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-head__title">
+                            <i class="fas fa-table-list"></i>
+                            حالة الحلقات
+                        </h2>
+                        <p class="section-head__subtitle">جدول مباشر يبرز الحلقات التي تحتاج إعادة توزيع أو دعم تشغيلي إضافي.</p>
+                    </div>
+                </div>
+
+                <div class="tables-grid">
+                    <article class="table-card table-card--wide" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">الحلقات المزدحمة</h3>
+                                <p class="chart-card__subtitle">تحديد الحلقات التي تحتاج إعادة توزيع أو دعم إضافي.</p>
+                            </div>
+                        </div>
+                        <div class="table-shell">
+                            {% if overloaded_halaqas %}
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>الحلقة</th>
+                                        <th>عدد الطلاب</th>
+                                        <th>المعلمون</th>
+                                        <th>حالة الحمل</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for halaqa in overloaded_halaqas %}
+                                    <tr>
+                                        <td><span class="cell-title">{{ halaqa.name }}</span></td>
+                                        <td>{{ halaqa.students }}</td>
+                                        <td>{{ halaqa.teachers }}</td>
+                                        <td>
+                                            <span class="status-pill {% if halaqa.load_state == 'مكتظة' %}status-pill--danger{% else %}status-pill--success{% endif %}">
+                                                {{ halaqa.load_state }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <div class="empty-state">لا توجد مؤشرات ازدحام حاليا ضمن هذا النطاق.</div>
+                            {% endif %}
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </div>
+    </section>
+
+    <section class="admin-dashboard-panel" id="studentsPanel" role="tabpanel" aria-labelledby="section-tab-students" hidden>
+        <div class="panel-stack">
+            <section class="section-panel surface-card" data-surface>
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-head__title">
+                            <i class="fas fa-user-graduate"></i>
+                            الطلاب والتصنيفات
+                        </h2>
+                        <p class="section-head__subtitle">تقسيم واضح لبيانات التسجيل والتصنيف والتميز الطلابي داخل النطاق الحالي.</p>
+                    </div>
+                </div>
+
+                <div class="chart-grid">
+                    <article class="chart-card" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">الطلاب حسب التصنيف</h3>
+                                <p class="chart-card__subtitle">بناء على الفئات الرسمية المعتمدة، مع إبقاء الحالات غير المحسومة ظاهرة للمتابعة.</p>
+                            </div>
+                            {% if charts.students_by_category.is_demo %}
+                            <span class="note-badge"><i class="fas fa-flask"></i> عينة</span>
+                            {% endif %}
+                        </div>
+                        <div class="chart-shell">
+                            <canvas id="studentsByCategoryChart"></canvas>
+                        </div>
+                    </article>
+
+                    <article class="chart-card chart-card--narrow" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">أفضل الطلاب</h3>
+                                <p class="chart-card__subtitle">مرتبون حسب النقاط والحفظ المسجل داخل نطاق الفلاتر.</p>
+                            </div>
+                        </div>
+                        <div class="table-shell">
+                            {% if top_students %}
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>الطالب</th>
+                                        <th>النقاط</th>
+                                        <th>الآيات</th>
+                                        <th>الحلقة</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for student in top_students %}
+                                    <tr>
+                                        <td>
+                                            <span class="cell-title">{{ student.name }}</span>
+                                            <span class="cell-meta">{{ student.category }}</span>
+                                        </td>
+                                        <td>{{ student.points_total }}</td>
+                                        <td>{{ student.memorized_verses }}</td>
+                                        <td>{{ student.halaqa_name }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <div class="empty-state">لا توجد بيانات كافية لترتيب الطلاب بعد.</div>
+                            {% endif %}
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="section-panel surface-card" data-surface>
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-head__title">
+                            <i class="fas fa-magnifying-glass-chart"></i>
+                            إشراف الطلاب بالتفصيل
+                        </h2>
+                        <p class="section-head__subtitle">كل صف هنا مبني على الحضور والتسميع والخطة والواجب والنقاط كما أدخلها المعلم داخل صفحة الحلقة، مع بطاقة تركيز للطالب المحدد عبر التنقل بين الأقسام.</p>
+                    </div>
+                </div>
+
+                <div class="detail-grid">
+                    <article class="table-card" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">قائمة الطلاب الإشرافية</h3>
+                                <p class="chart-card__subtitle">استخدم الروابط داخل كل صف للانتقال مباشرة إلى حضور الطالب أو خطته أو واجبه أو نقاطه داخل نفس لوحة الإدارة.</p>
+                            </div>
+                        </div>
+                        <div class="table-shell">
+                            {% if student_supervision_rows %}
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>الطالب</th>
+                                        <th>الحضور</th>
+                                        <th>التسميع</th>
+                                        <th>الخطة والواجب</th>
+                                        <th>النقاط</th>
+                                        <th>التنقل</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for student in student_supervision_rows %}
+                                    <tr>
+                                        <td>
+                                            <span class="cell-title">{{ student.name }}</span>
+                                            <span class="cell-meta">{{ student.halaqa_name }} | {{ student.grade }}</span>
+                                            <span class="cell-meta">
+                                                {{ student.category }}{% if not student.category_resolved and student.category_hint %} | {{ student.category_hint }}{% endif %}
+                                            </span>
+                                            <span class="status-pill {% if student.status_tone == 'success' %}status-pill--success{% elif student.status_tone == 'danger' %}status-pill--danger{% else %}status-pill--warning{% endif %}">
+                                                {{ student.status_label }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {{ student.attendance_rate }}%
+                                            <span class="cell-meta">حاضر {{ student.attendance_present_total }} | غائب {{ student.attendance_absent_total }} | معذور {{ student.attendance_excused_total }}</span>
+                                            <span class="cell-meta">مرجع {{ student.reference_attendance_label }}</span>
+                                        </td>
+                                        <td>
+                                            {{ student.last_memorization_text }}
+                                            <span class="cell-meta">{{ student.last_memorization_evaluation_label }}{% if student.last_memorization_date %} | {{ student.last_memorization_date|date:"Y-m-d" }}{% endif %}</span>
+                                            <span class="cell-meta">إجمالي الحفظ {{ student.memorized_total }} آية</span>
+                                        </td>
+                                        <td>
+                                            {{ student.plan_target }}
+                                            <span class="cell-meta">{{ student.homework_status_label }} | {{ student.homework_meta_text }}</span>
+                                        </td>
+                                        <td>
+                                            {{ student.points_total }}
+                                            <span class="cell-meta">ضمن الفترة: {{ student.points_in_range }}</span>
+                                        </td>
+                                        <td>
+                                            <div class="drill-link-group">
+                                                <a href="{{ student.focus_url }}" class="drill-link"><i class="fas fa-id-card"></i> البطاقة</a>
+                                                <a href="{{ student.attendance_url }}" class="drill-link"><i class="fas fa-calendar-check"></i> الحضور</a>
+                                                <a href="{{ student.plans_url }}" class="drill-link"><i class="fas fa-route"></i> الخطة</a>
+                                                <a href="{{ student.homework_url }}" class="drill-link"><i class="fas fa-clipboard-list"></i> الواجب</a>
+                                                <a href="{{ student.points_url }}" class="drill-link"><i class="fas fa-star"></i> النقاط</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <div class="empty-state">لا توجد بيانات طلاب ضمن هذا النطاق لعرض البطاقة الإشرافية.</div>
+                            {% endif %}
+                        </div>
+                    </article>
+
+                    <aside class="detail-stack">
+                        <article class="detail-card" data-surface>
+                            {% if focused_student %}
+                            <h3 class="detail-card__title">{{ focused_student.name }}</h3>
+                            <p class="detail-card__subtitle">{{ focused_student.halaqa_name }} | {{ focused_student.grade }} | {{ focused_student.category }}</p>
+
+                            <div class="detail-list">
+                                <div class="detail-item">
+                                    <div class="detail-item__label">الحضور</div>
+                                    <div class="detail-item__value">{{ focused_student.attendance_rate }}% - {{ focused_student.reference_attendance_label }}</div>
+                                    <span class="detail-item__meta">حاضر {{ focused_student.attendance_present_total }} | غائب {{ focused_student.attendance_absent_total }} | معذور {{ focused_student.attendance_excused_total }}</span>
+                                    {% if focused_student.reference_attendance_notes %}
+                                    <span class="detail-item__meta">{{ focused_student.reference_attendance_notes }}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-item__label">التسميع والتقييم</div>
+                                    <div class="detail-item__value">{{ focused_student.last_memorization_text }}</div>
+                                    <span class="detail-item__meta">{{ focused_student.last_memorization_evaluation_label }}{% if focused_student.last_memorization_date %} | {{ focused_student.last_memorization_date|date:"Y-m-d" }}{% endif %}</span>
+                                    <span class="detail-item__meta">إجمالي التسميعات {{ focused_student.memorization_records_total }} | إجمالي الحفظ {{ focused_student.memorized_total }} آية</span>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-item__label">الخطة والواجب</div>
+                                    <div class="detail-item__value">{{ focused_student.plan_target }}</div>
+                                    {% if focused_student.plan_window %}
+                                    <span class="detail-item__meta">{{ focused_student.plan_window }}</span>
+                                    {% endif %}
+                                    {% if focused_student.plan_notes %}
+                                    <span class="detail-item__meta">{{ focused_student.plan_notes }}</span>
+                                    {% endif %}
+                                    <span class="detail-item__meta">{{ focused_student.homework_status_label }} | {{ focused_student.homework_meta_text }}</span>
+                                    {% if focused_student.homework_detail_text %}
+                                    <span class="detail-item__meta">{{ focused_student.homework_detail_text }}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-item__label">النقاط</div>
+                                    <div class="detail-item__value">{{ focused_student.points_total }}</div>
+                                    <span class="detail-item__meta">ضمن الفترة الحالية {{ focused_student.points_in_range }}</span>
+                                </div>
+                            </div>
+
+                            <div class="note-list">
+                                {% for note in focused_student.notes %}
+                                <div class="note-item">{{ note }}</div>
+                                {% empty %}
+                                <div class="note-item">لا توجد ملاحظات أو تقارير نصية مرتبطة بهذا الطالب ضمن النطاق الحالي.</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="drill-link-group">
+                                {% if focused_student.halaqa_url %}
+                                <a href="{{ focused_student.halaqa_url }}" class="drill-link"><i class="fas fa-mosque"></i> الحلقة</a>
+                                {% endif %}
+                                <a href="{{ focused_student.attendance_url }}" class="drill-link"><i class="fas fa-calendar-check"></i> الحضور</a>
+                                <a href="{{ focused_student.plans_url }}" class="drill-link"><i class="fas fa-route"></i> الخطة</a>
+                                <a href="{{ focused_student.homework_url }}" class="drill-link"><i class="fas fa-clipboard-list"></i> الواجب</a>
+                                <a href="{{ focused_student.reports_url }}" class="drill-link"><i class="fas fa-file-lines"></i> التقارير</a>
+                            </div>
+                            {% else %}
+                            <h3 class="detail-card__title">بطاقة الطالب المحدد</h3>
+                            <p class="detail-card__subtitle">اختر طالباً من الجدول لعرض حضوره وتسميعه وخطته وواجبه ونقاطه في بطاقة واحدة.</p>
+                            {% endif %}
+                        </article>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="section-panel surface-card" data-surface>
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-head__title">
+                            <i class="fas fa-address-card"></i>
+                            التسجيلات والجاهزية
+                        </h2>
+                        <p class="section-head__subtitle">متابعة التسجيلات الحديثة وربط أولياء الأمور والتصنيفات الناقصة من شاشة واحدة.</p>
+                    </div>
+                </div>
+
+                <div class="tables-grid">
+                    <article class="table-card" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">أحدث تسجيلات الطلاب</h3>
+                                <p class="chart-card__subtitle">آخر الطلاب المضافين مع مؤشرات الجاهزية الإدارية.</p>
+                            </div>
+                        </div>
+                        <div class="table-shell">
+                            {% if latest_registrations %}
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>الطالب</th>
+                                        <th>الحلقة</th>
+                                        <th>ولي الأمر</th>
+                                        <th>الحالة</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for student in latest_registrations %}
+                                    <tr>
+                                        <td>
+                                            <span class="cell-title">{{ student.name }}</span>
+                                            <span class="cell-meta">{{ student.grade }}</span>
+                                        </td>
+                                        <td>{{ student.halaqa_name }}</td>
+                                        <td>
+                                            {{ student.parent_name }}
+                                            <span class="cell-meta">
+                                                {% if student.has_parent_access %}تم الربط{% else %}بدون حساب{% endif %}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="status-pill {% if student.status == 'active' %}status-pill--success{% elif student.status == 'attention' %}status-pill--warning{% else %}status-pill--danger{% endif %}">
+                                                {% if student.status == 'active' %}جاهز{% elif student.status == 'attention' %}متابعة{% else %}غير مسند{% endif %}
+                                            </span>
+                                            <span class="cell-meta">{{ student.created_at|date:"Y-m-d H:i" }}</span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <div class="empty-state">لا توجد تسجيلات حديثة ضمن هذا النطاق.</div>
+                            {% endif %}
+                        </div>
+                    </article>
+
+                    <article class="table-card" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">جاهزية التصنيفات والوصول</h3>
+                                <p class="chart-card__subtitle">مؤشرات مرتبطة بتصنيف الطلاب وربط أولياء الأمور في النظام.</p>
+                            </div>
+                        </div>
+
+                        <div class="foundation-grid" id="category-foundation">
+                            <div class="foundation-stat">
+                                <div class="foundation-stat__value">{{ category_foundation.derived_count }}</div>
+                                <div class="foundation-stat__label">فئات رسمية ظاهرة في هذا النطاق</div>
+                            </div>
+                            <div class="foundation-stat">
+                                <div class="foundation-stat__value">{{ category_foundation.missing_count }}</div>
+                                <div class="foundation-stat__label">طلاب بلا ربط فئة رسمي</div>
+                            </div>
+                            <div class="foundation-stat">
+                                <div class="foundation-stat__value">{{ category_foundation.halaqa_missing_count }}</div>
+                                <div class="foundation-stat__label">حلقات بلا ربط فئة رسمي</div>
+                            </div>
+                            <div class="foundation-stat">
+                                <div class="foundation-stat__value">{{ category_foundation.access_count }}</div>
+                                <div class="foundation-stat__label">ملفات تحتاج ربط حساب ولي أمر</div>
+                            </div>
+                        </div>
+
+                        <p class="table-card__summary">
+                            هذه المؤشرات تساعد على متابعة اكتمال الربط الرسمي بين الطالب والحلقة والفئة، دون إخفاء أي حالة تحتاج معالجة إدارية.
+                        </p>
+                    </article>
+                </div>
+            </section>
+        </div>
+    </section>
+
+    <section class="admin-dashboard-panel" id="plansPanel" role="tabpanel" aria-labelledby="section-tab-plans" hidden>
+        <div class="panel-stack">
+            {% if focused_student %}
+            <section class="focus-banner surface-card" data-surface>
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-head__title">
+                            <i class="fas fa-route"></i>
+                            متابعة الخطة للطالب المحدد
+                        </h2>
+                        <p class="section-head__subtitle">{{ focused_student.name }} | {{ focused_student.halaqa_name }} | {{ focused_student.plan_target }}</p>
+                    </div>
+                </div>
+                <div class="focus-banner__meta">
+                    <span class="meta-pill"><i class="fas fa-calendar-range"></i>{{ focused_student.plan_window|default:"لا توجد خطة زمنية نشطة" }}</span>
+                    <span class="meta-pill"><i class="fas fa-calendar-check"></i>حضور {{ focused_student.attendance_rate }}%</span>
+                    <span class="meta-pill"><i class="fas fa-star"></i>نقاط {{ focused_student.points_total }}</span>
+                </div>
+                {% if focused_student.plan_notes %}
+                <p class="table-card__summary">{{ focused_student.plan_notes }}</p>
+                {% endif %}
+            </section>
+            {% endif %}
+
+            <section class="section-panel surface-card" data-surface>
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-head__title">
+                            <i class="fas fa-route"></i>
+                            الخطط الدراسية
+                        </h2>
+                        <p class="section-head__subtitle">قسم مستقل لمتابعة حجم الخطط النشطة والطلاب المشمولين بها والحالات التي تحتاج متابعة.</p>
+                    </div>
+                </div>
+
+                <div class="section-metric-grid">
+                    <article class="section-metric-card" data-surface>
+                        <div class="section-metric-card__label">إجمالي الخطط النشطة</div>
+                        <div class="section-metric-card__value">{{ plan_overview.active_total }}</div>
+                        <div class="section-metric-card__detail">خطط مفتوحة ضمن نطاق الفلاتر الحالي.</div>
+                    </article>
+                    <article class="section-metric-card" data-surface>
+                        <div class="section-metric-card__label">طلاب داخل خطط نشطة</div>
+                        <div class="section-metric-card__value">{{ plan_overview.students_covered }}</div>
+                        <div class="section-metric-card__detail">عدد الطلاب الذين لديهم خطة واحدة أو أكثر.</div>
+                    </article>
+                    <article class="section-metric-card" data-surface>
+                        <div class="section-metric-card__label">حالات تحتاج متابعة</div>
+                        <div class="section-metric-card__value">{{ plan_overview.needs_followup }}</div>
+                        <div class="section-metric-card__detail">طلاب لديهم خطة لكن يحتاجون دعما في التنفيذ أو الحضور.</div>
+                    </article>
+                    <article class="section-metric-card" data-surface>
+                        <div class="section-metric-card__label">خطط مكتملة في الفترة</div>
+                        <div class="section-metric-card__value">{{ plan_overview.completed_in_range }}</div>
+                        <div class="section-metric-card__detail">خطة منتهية ومكتملة داخل النطاق الزمني المحدد.</div>
+                    </article>
+                </div>
+
+                <div class="tables-grid">
+                    <article class="table-card" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">طلاب لديهم خطط نشطة</h3>
+                                <p class="chart-card__subtitle">أولوية سريعة لمعرفة من يغطيهم التخطيط الحالي داخل الحلقة.</p>
+                            </div>
+                        </div>
+                        <div class="table-shell">
+                            {% if students_with_active_plans %}
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>الطالب</th>
+                                        <th>عدد الخطط</th>
+                                        <th>الحضور</th>
+                                        <th>الحلقة</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for student in students_with_active_plans %}
+                                    <tr>
+                                        <td>
+                                            <span class="cell-title">{{ student.name }}</span>
+                                            <span class="cell-meta">{{ student.category }}</span>
+                                        </td>
+                                        <td>{{ student.active_plans }}</td>
+                                        <td>{{ student.attendance_rate }}%</td>
+                                        <td>{{ student.halaqa_name }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <div class="empty-state">لا توجد خطط نشطة ظاهرة ضمن هذا النطاق.</div>
+                            {% endif %}
+                        </div>
+                    </article>
+
+                    <article class="table-card" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">أحدث الخطط النشطة</h3>
+                                <p class="chart-card__subtitle">آخر الخطط المفتوحة مع الطالب والحلقة وحالة الإنجاز.</p>
+                            </div>
+                        </div>
+                        <div class="table-shell">
+                            {% if recent_plan_rows %}
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>الطالب</th>
+                                        <th>الحلقة</th>
+                                        <th>الفترة</th>
+                                        <th>الهدف</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for plan in recent_plan_rows %}
+                                    <tr>
+                                        <td><span class="cell-title">{{ plan.student.name }}</span></td>
+                                        <td>{{ plan.halaqa.name }}</td>
+                                        <td>{{ plan.start_date|date:"Y-m-d" }} - {{ plan.end_date|date:"Y-m-d" }}</td>
+                                        <td>
+                                            {{ plan.target }}
+                                            <span class="cell-meta">{% if plan.is_completed %}مكتملة{% else %}نشطة{% endif %}</span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <div class="empty-state">لا توجد صفوف خطط جاهزة للعرض حاليا.</div>
+                            {% endif %}
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="section-panel surface-card" data-surface>
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-head__title">
+                            <i class="fas fa-user-clock"></i>
+                            متابعة تنفيذ الخطط
+                        </h2>
+                        <p class="section-head__subtitle">هذه القائمة تبرز الطلاب الذين لديهم خطط نشطة لكن التنفيذ الحالي يحتاج تدخلا أسرع.</p>
+                    </div>
+                </div>
+
+                <div class="table-shell">
+                    {% if plan_followup_students %}
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>الطالب</th>
+                                <th>عدد الخطط</th>
+                                <th>الحضور</th>
+                                <th>النقاط</th>
+                                <th>الحلقة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in plan_followup_students %}
+                            <tr>
+                                <td>
+                                    <span class="cell-title">{{ student.name }}</span>
+                                    <span class="cell-meta">{{ student.category }}</span>
+                                </td>
+                                <td>{{ student.active_plans }}</td>
+                                <td>{{ student.attendance_rate }}%</td>
+                                <td>{{ student.points_total }}</td>
+                                <td>{{ student.halaqa_name }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="empty-state">لا توجد حالات خطط تحتاج متابعة إضافية حاليا.</div>
+                    {% endif %}
+                </div>
+            </section>
+        </div>
+    </section>
+
+    <section class="admin-dashboard-panel" id="attendancePanel" role="tabpanel" aria-labelledby="section-tab-attendance" hidden>
+        <div class="panel-stack">
+            {% if focused_student %}
+            <section class="focus-banner surface-card" data-surface>
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-head__title">
+                            <i class="fas fa-calendar-check"></i>
+                            متابعة الحضور للطالب المحدد
+                        </h2>
+                        <p class="section-head__subtitle">{{ focused_student.name }} | {{ focused_student.reference_attendance_label }} | {{ focused_student.halaqa_name }}</p>
+                    </div>
+                </div>
+                <div class="focus-banner__meta">
+                    <span class="meta-pill"><i class="fas fa-user-check"></i>حاضر {{ focused_student.attendance_present_total }}</span>
+                    <span class="meta-pill"><i class="fas fa-user-xmark"></i>غائب {{ focused_student.attendance_absent_total }}</span>
+                    <span class="meta-pill"><i class="fas fa-user-clock"></i>معذور {{ focused_student.attendance_excused_total }}</span>
+                    <span class="meta-pill"><i class="fas fa-gauge-high"></i>{{ focused_student.attendance_rate }}%</span>
+                </div>
+                {% if focused_student.reference_attendance_notes %}
+                <p class="table-card__summary">{{ focused_student.reference_attendance_notes }}</p>
+                {% endif %}
+            </section>
+            {% endif %}
+
+            <section class="section-panel surface-card" data-surface>
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-head__title">
+                            <i class="fas fa-calendar-check"></i>
+                            الحضور والمخاطر
+                        </h2>
+                        <p class="section-head__subtitle">لوحة مركزة للحضور العام مع الحالات الحرجة التي تحتاج تدخل تربوي أو إداري سريع.</p>
+                    </div>
+                </div>
+
+                <div id="reports-analytics" class="chart-grid">
+                    <article class="chart-card chart-card--wide" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">اتجاهات الحضور</h3>
+                                <p class="chart-card__subtitle">مقارنة بين الحضور والغياب عبر الفترة المحددة.</p>
+                            </div>
+                            {% if charts.attendance_trends.is_demo %}
+                            <span class="note-badge"><i class="fas fa-flask"></i> عينة</span>
+                            {% endif %}
+                        </div>
+                        <div class="chart-shell">
+                            <canvas id="attendanceTrendsChart"></canvas>
+                        </div>
+                    </article>
+
+                    <article class="chart-card chart-card--narrow" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">طلاب يحتاجون اهتماما</h3>
+                                <p class="chart-card__subtitle">حالات منخفضة الحضور أو غير مكتملة التصنيف.</p>
+                            </div>
+                        </div>
+                        <div class="chart-shell">
+                            <canvas id="studentsAttentionChart"></canvas>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="section-panel surface-card" data-surface>
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-head__title">
+                            <i class="fas fa-user-xmark"></i>
+                            طلاب حضورهم ضعيف
+                        </h2>
+                        <p class="section-head__subtitle">الحالات التي تحتاج تواصل أو تدخل سريع استنادا إلى نسبة الحضور الحالية.</p>
+                    </div>
+                </div>
+
+                <div class="table-shell">
+                    {% if weak_attendance_students %}
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>الطالب</th>
+                                <th>الحضور</th>
+                                <th>الغياب</th>
+                                <th>الملاحظة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in weak_attendance_students %}
+                            <tr>
+                                <td>
+                                    <span class="cell-title">{{ student.name }}</span>
+                                    <span class="cell-meta">{{ student.halaqa_name }}</span>
+                                </td>
+                                <td>{{ student.attendance_rate }}%</td>
+                                <td>{{ student.attendance_absent }}</td>
+                                <td>
+                                    <span class="status-pill status-pill--warning">متابعة</span>
+                                    <span class="cell-meta">{{ student.category }}</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="empty-state">لا توجد حالات حضور منخفض حاليا.</div>
+                    {% endif %}
+                </div>
+            </section>
+        </div>
+    </section>
+
+    <section class="admin-dashboard-panel" id="homeworkPanel" role="tabpanel" aria-labelledby="section-tab-homework" hidden>
+        <div class="panel-stack">
+            {% if focused_student %}
+            <section class="focus-banner surface-card" data-surface>
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-head__title">
+                            <i class="fas fa-clipboard-list"></i>
+                            متابعة الواجب للطالب المحدد
+                        </h2>
+                        <p class="section-head__subtitle">{{ focused_student.name }} | {{ focused_student.homework_status_label }} | {{ focused_student.homework_meta_text }}</p>
+                    </div>
+                </div>
+                <div class="focus-banner__meta">
+                    <span class="meta-pill"><i class="fas fa-book-open"></i>{{ focused_student.homework_meta_text }}</span>
+                    {% if focused_student.homework_detail_text %}
+                    <span class="meta-pill"><i class="fas fa-clipboard-check"></i>{{ focused_student.homework_detail_text }}</span>
+                    {% endif %}
+                    <span class="meta-pill"><i class="fas fa-route"></i>{{ focused_student.plan_target }}</span>
+                </div>
+            </section>
+            {% endif %}
+
+            <section class="section-panel surface-card" data-surface>
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-head__title">
+                            <i class="fas fa-clipboard-list"></i>
+                            الواجبات والمتابعة
+                        </h2>
+                        <p class="section-head__subtitle">تقسيم واضح لمشهد الواجبات بين الإسناد والتقييم والحالات المعلقة داخل النظام.</p>
+                    </div>
+                </div>
+
+                <div class="section-metric-grid">
+                    <article class="section-metric-card" data-surface>
+                        <div class="section-metric-card__label">واجبات أسندت في الفترة</div>
+                        <div class="section-metric-card__value">{{ homework_overview.assigned_in_range }}</div>
+                        <div class="section-metric-card__detail">تكليفات جديدة ضمن الفترة الحالية.</div>
+                    </article>
+                    <article class="section-metric-card" data-surface>
+                        <div class="section-metric-card__label">واجبات قيمت في الفترة</div>
+                        <div class="section-metric-card__value">{{ homework_overview.evaluated_in_range }}</div>
+                        <div class="section-metric-card__detail">نتائج تقييم اكتملت خلال النطاق المختار.</div>
+                    </article>
+                    <article class="section-metric-card" data-surface>
+                        <div class="section-metric-card__label">واجبات معلقة</div>
+                        <div class="section-metric-card__value">{{ homework_overview.pending_total }}</div>
+                        <div class="section-metric-card__detail">واجبات ما زالت تنتظر التقييم أو الإغلاق.</div>
+                    </article>
+                    <article class="section-metric-card" data-surface>
+                        <div class="section-metric-card__label">طلاب شملهم الواجب</div>
+                        <div class="section-metric-card__value">{{ homework_overview.students_covered }}</div>
+                        <div class="section-metric-card__detail">عدد الطلاب الذين ظهر لهم واجب داخل النطاق.</div>
+                    </article>
+                </div>
+
+                <div class="tables-grid">
+                    <article class="table-card" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">أحدث الواجبات</h3>
+                                <p class="chart-card__subtitle">آخر إسنادات أو تقييمات الواجب مع الطالب والحلقة.</p>
+                            </div>
+                        </div>
+                        <div class="table-shell">
+                            {% if recent_homework_rows %}
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>الطالب</th>
+                                        <th>الحلقة</th>
+                                        <th>الواجب</th>
+                                        <th>الحالة</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for homework in recent_homework_rows %}
+                                    <tr>
+                                        <td><span class="cell-title">{{ homework.student.name }}</span></td>
+                                        <td>{{ homework.halaqa.name }}</td>
+                                        <td>
+                                            {{ homework.get_assignment_type_display }}: {{ homework.assignment_text }}
+                                            <span class="cell-meta">{{ homework.assigned_date|date:"Y-m-d" }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="status-pill {% if homework.evaluation_date %}status-pill--success{% else %}status-pill--warning{% endif %}">
+                                                {% if homework.evaluation_date %}تم التقييم{% else %}بانتظار التقييم{% endif %}
+                                            </span>
+                                            <span class="cell-meta">
+                                                {% if homework.evaluation_date %}
+                                                {{ homework.evaluation_date|date:"Y-m-d" }}
+                                                {% else %}
+                                                {{ homework.assignment_notes|default:"لا توجد ملاحظة إضافية" }}
+                                                {% endif %}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <div class="empty-state">لا توجد واجبات ظاهرة ضمن النطاق الحالي.</div>
+                            {% endif %}
+                        </div>
+                    </article>
+
+                    <article class="table-card" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">واجبات معلقة</h3>
+                                <p class="chart-card__subtitle">قائمة مركزة بالواجبات التي ما زالت بانتظار التقييم أو الإغلاق.</p>
+                            </div>
+                        </div>
+                        <div class="table-shell">
+                            {% if pending_homework_rows %}
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>الطالب</th>
+                                        <th>الحلقة</th>
+                                        <th>الواجب</th>
+                                        <th>تاريخ الإسناد</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for homework in pending_homework_rows %}
+                                    <tr>
+                                        <td><span class="cell-title">{{ homework.student.name }}</span></td>
+                                        <td>{{ homework.halaqa.name }}</td>
+                                        <td>
+                                            {{ homework.get_assignment_type_display }}: {{ homework.assignment_text }}
+                                            <span class="cell-meta">{{ homework.assignment_notes|default:"بانتظار التقييم" }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="status-pill status-pill--warning">معلق</span>
+                                            <span class="cell-meta">{{ homework.assigned_date|date:"Y-m-d" }}</span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <div class="empty-state">لا توجد واجبات معلقة حاليا.</div>
+                            {% endif %}
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </div>
+    </section>
+
+    <section class="admin-dashboard-panel" id="reportsPanel" role="tabpanel" aria-labelledby="section-tab-reports" hidden>
+        <div class="panel-stack">
+            {% if focused_student %}
+            <section class="focus-banner surface-card" data-surface>
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-head__title">
+                            <i class="fas fa-file-lines"></i>
+                            تقرير الطالب المحدد
+                        </h2>
+                        <p class="section-head__subtitle">{{ focused_student.name }} | {{ focused_student.last_memorization_text }} | نقاط {{ focused_student.points_total }}</p>
+                    </div>
+                </div>
+                <div class="focus-banner__meta">
+                    <span class="meta-pill"><i class="fas fa-star"></i>النقاط {{ focused_student.points_total }}</span>
+                    <span class="meta-pill"><i class="fas fa-book-open"></i>{{ focused_student.last_memorization_evaluation_label }}</span>
+                    <span class="meta-pill"><i class="fas fa-clipboard-list"></i>{{ focused_student.homework_status_label }}</span>
+                </div>
+            </section>
+            {% endif %}
+
+            <section class="section-panel surface-card" data-surface>
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-head__title">
+                            <i class="fas fa-chart-simple"></i>
+                            التقارير والتحليلات
+                        </h2>
+                        <p class="section-head__subtitle">طبقة تقارير إشرافية موحدة تربط الفئات الرسمية والحلقات والطلاب بنفس البيانات التي يدخلها المعلمون داخل الحلقات.</p>
+                    </div>
+                </div>
+
+                <div class="chart-grid">
+                    <article class="chart-card chart-card--wide" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">اتجاهات الأداء</h3>
+                                <p class="chart-card__subtitle">حجم الحفظ المسجل عبر الزمن ضمن النطاق الحالي.</p>
+                            </div>
+                            {% if charts.performance_trends.is_demo %}
+                            <span class="note-badge"><i class="fas fa-flask"></i> عينة</span>
+                            {% endif %}
+                        </div>
+                        <div class="chart-shell">
+                            <canvas id="performanceTrendsChart"></canvas>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="section-panel surface-card" data-surface>
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-head__title">
+                            <i class="fas fa-layer-group"></i>
+                            تقارير الفئات الرسمية
+                        </h2>
+                        <p class="section-head__subtitle">الفئات أصبحت وحدة إشرافية أساسية في التقارير، مع ترتيب واضح للحضور والحفظ والنقاط وروابط مباشرة لتضييق النطاق.</p>
+                    </div>
+                </div>
+
+                <div class="tables-grid">
+                    <article class="table-card" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">الفئات الأعلى حضورا</h3>
+                                <p class="chart-card__subtitle">ترتيب من أعلى نسبة حضور إلى أدناها داخل النطاق الزمني الحالي.</p>
+                            </div>
+                        </div>
+                        <div class="table-shell">
+                            {% if category_attendance_ranking %}
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>الفئة</th>
+                                        <th>الحضور</th>
+                                        <th>الطلاب والحلقات</th>
+                                        <th>التنقل</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for category in category_attendance_ranking %}
+                                    <tr>
+                                        <td>
+                                            <span class="cell-title">{{ category.name }}</span>
+                                            <span class="cell-meta">{{ category.code|default:"--" }}</span>
+                                        </td>
+                                        <td>{{ category.attendance_rate }}%</td>
+                                        <td>
+                                            {{ category.student_count }} طالب
+                                            <span class="cell-meta">{{ category.halaqa_count }} حلقة</span>
+                                        </td>
+                                        <td>
+                                            <a href="{{ category.filter_url }}" class="drill-link"><i class="fas fa-filter"></i> فتح النطاق</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <div class="empty-state">لا توجد بيانات حضور كافية لبناء ترتيب الفئات حاليا.</div>
+                            {% endif %}
+                        </div>
+                    </article>
+
+                    <article class="table-card" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">الفئات الأعلى حفظا</h3>
+                                <p class="chart-card__subtitle">ترتيب حسب حجم الحفظ المسجل خلال الفترة المحددة.</p>
+                            </div>
+                        </div>
+                        <div class="table-shell">
+                            {% if category_memorization_ranking %}
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>الفئة</th>
+                                        <th>الحفظ في الفترة</th>
+                                        <th>إجمالي الحفظ</th>
+                                        <th>المعدل</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for category in category_memorization_ranking %}
+                                    <tr>
+                                        <td>
+                                            <span class="cell-title">{{ category.name }}</span>
+                                            <span class="cell-meta">{{ category.code }}</span>
+                                        </td>
+                                        <td>{{ category.memorized_in_range }}</td>
+                                        <td>{{ category.memorized_total }}</td>
+                                        <td>{{ category.memorization_per_student }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <div class="empty-state">لا توجد تسجيلات حفظ كافية لبناء ترتيب الفئات حاليا.</div>
+                            {% endif %}
+                        </div>
+                    </article>
+
+                    <article class="table-card" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">الفئات الأعلى نقاطا</h3>
+                                <p class="chart-card__subtitle">يركز على حركة النقاط داخل الفترة الحالية، مع إبقاء الرصيد الكلي مرئيا للمقارنة.</p>
+                            </div>
+                        </div>
+                        <div class="table-shell">
+                            {% if category_points_ranking %}
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>الفئة</th>
+                                        <th>نقاط الفترة</th>
+                                        <th>الرصيد الكلي</th>
+                                        <th>المعدل</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for category in category_points_ranking %}
+                                    <tr>
+                                        <td>
+                                            <span class="cell-title">{{ category.name }}</span>
+                                            {% if not category.resolved and category.hint_summary %}
+                                            <span class="cell-meta">{{ category.hint_summary }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ category.points_in_range }}</td>
+                                        <td>{{ category.points_total }}</td>
+                                        <td>{{ category.points_per_student }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <div class="empty-state">لا توجد حركات نقاط كافية لبناء ترتيب الفئات حاليا.</div>
+                            {% endif %}
+                        </div>
+                    </article>
+
+                    <article class="table-card" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">ملخص الفئات</h3>
+                                <p class="chart-card__subtitle">عرض جامع للفئة وعدد حلقاتها وخططها ومؤشرات المتابعة المفتوحة.</p>
+                            </div>
+                        </div>
+                        <div class="table-shell">
+                            {% if category_supervision_rows %}
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>الفئة</th>
+                                        <th>الطلاب</th>
+                                        <th>الخطط والواجب</th>
+                                        <th>المتابعة</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for category in category_supervision_rows %}
+                                    <tr>
+                                        <td>
+                                            <span class="cell-title">{{ category.name }}</span>
+                                            <span class="cell-meta">{{ category.halaqa_count }} حلقة</span>
+                                        </td>
+                                        <td>
+                                            {{ category.student_count }}
+                                            <span class="cell-meta">حضور {{ category.attendance_rate }}%</span>
+                                        </td>
+                                        <td>
+                                            خطط {{ category.active_plan_students }}
+                                            <span class="cell-meta">واجبات معلقة {{ category.pending_homework_students }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="status-pill {% if category.followup_students %}status-pill--warning{% else %}status-pill--success{% endif %}">
+                                                متابعة {{ category.followup_students }}
+                                            </span>
+                                            {% if category.unresolved_students or category.unresolved_halaqas %}
+                                            <span class="cell-meta">غير محسوم: طلاب {{ category.unresolved_students }} | حلقات {{ category.unresolved_halaqas }}</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <div class="empty-state">لا توجد فئات مرئية ضمن هذا النطاق حاليا.</div>
+                            {% endif %}
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="section-panel surface-card" data-surface>
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-head__title">
+                            <i class="fas fa-arrows-down-to-people"></i>
+                            المتابعة والمخاطر
+                        </h2>
+                        <p class="section-head__subtitle">يشمل هذا القسم ترتيب الحلقات من الأقوى إلى الأضعف، والطلاب المتأخرين على الخطط، والحضور الضعيف، والواجبات المعلقة، والحالات المعرضة للمخاطر.</p>
+                    </div>
+                </div>
+
+                <div class="tables-grid">
+                    <article class="table-card" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">أقوى الحلقات</h3>
+                                <p class="chart-card__subtitle">أفضل الحلقات أداء ضمن مزيج الحضور والحفظ والخطط والواجب والنقاط.</p>
+                            </div>
+                        </div>
+                        <div class="table-shell">
+                            {% if strongest_halaqas %}
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>الحلقة</th>
+                                        <th>الفئة</th>
+                                        <th>مؤشر القوة</th>
+                                        <th>التنقل</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for halaqa in strongest_halaqas %}
+                                    <tr>
+                                        <td>
+                                            <span class="cell-title">{{ halaqa.name }}</span>
+                                            <span class="cell-meta">{{ halaqa.teacher_names }}</span>
+                                        </td>
+                                        <td>{{ halaqa.category_name }}</td>
+                                        <td>{{ halaqa.strength_score }}</td>
+                                        <td><a href="{{ halaqa.reports_url }}" class="drill-link"><i class="fas fa-file-lines"></i> التقارير</a></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <div class="empty-state">لا توجد حلقات كافية لبناء ترتيب القوة حاليا.</div>
+                            {% endif %}
+                        </div>
+                    </article>
+
+                    <article class="table-card" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">أضعف الحلقات</h3>
+                                <p class="chart-card__subtitle">الحلقات التي تحتاج تدخلا أسرع أو متابعة تشغيلية إضافية.</p>
+                            </div>
+                        </div>
+                        <div class="table-shell">
+                            {% if weakest_halaqas %}
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>الحلقة</th>
+                                        <th>الفئة</th>
+                                        <th>مؤشر القوة</th>
+                                        <th>المتابعة</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for halaqa in weakest_halaqas %}
+                                    <tr>
+                                        <td>
+                                            <span class="cell-title">{{ halaqa.name }}</span>
+                                            <span class="cell-meta">{{ halaqa.teacher_names }}</span>
+                                        </td>
+                                        <td>{{ halaqa.category_name }}</td>
+                                        <td>{{ halaqa.strength_score }}</td>
+                                        <td><a href="{{ halaqa.students_url }}" class="drill-link"><i class="fas fa-users"></i> الطلاب</a></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <div class="empty-state">لا توجد حلقات تحتاج ترتيب متابعة حاليا.</div>
+                            {% endif %}
+                        </div>
+                    </article>
+
+                    <article class="table-card" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">طلاب متأخرون على الخطط</h3>
+                                <p class="chart-card__subtitle">طلاب لديهم خطة نشطة أو ينبغي أن تكون لديهم خطة لكن التنفيذ الحالي متراجع.</p>
+                            </div>
+                        </div>
+                        <div class="table-shell">
+                            {% if plan_followup_students %}
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>الطالب</th>
+                                        <th>الحلقة</th>
+                                        <th>الحضور</th>
+                                        <th>التنقل</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for student in plan_followup_students %}
+                                    <tr>
+                                        <td>
+                                            <span class="cell-title">{{ student.name }}</span>
+                                            <span class="cell-meta">{{ student.category }}</span>
+                                        </td>
+                                        <td>{{ student.halaqa_name }}</td>
+                                        <td>{{ student.attendance_rate }}%</td>
+                                        <td><a href="{{ student.plans_url }}" class="drill-link"><i class="fas fa-route"></i> الخطط</a></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <div class="empty-state">لا توجد حالات تأخر واضحة على الخطط حاليا.</div>
+                            {% endif %}
+                        </div>
+                    </article>
+
+                    <article class="table-card" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">طلاب حضورهم ضعيف</h3>
+                                <p class="chart-card__subtitle">تركيز سريع على الطلاب ذوي الحضور المنخفض أو الحالات التي تحتاج تنبيها مباشرا.</p>
+                            </div>
+                        </div>
+                        <div class="table-shell">
+                            {% if weak_attendance_students %}
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>الطالب</th>
+                                        <th>الحلقة</th>
+                                        <th>الحضور</th>
+                                        <th>التنقل</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for student in weak_attendance_students %}
+                                    <tr>
+                                        <td>
+                                            <span class="cell-title">{{ student.name }}</span>
+                                            <span class="cell-meta">{{ student.category }}</span>
+                                        </td>
+                                        <td>{{ student.halaqa_name }}</td>
+                                        <td>{{ student.attendance_rate }}%</td>
+                                        <td><a href="{{ student.attendance_url }}" class="drill-link"><i class="fas fa-calendar-check"></i> الحضور</a></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <div class="empty-state">لا توجد حالات حضور ضعيف ضمن هذا النطاق حاليا.</div>
+                            {% endif %}
+                        </div>
+                    </article>
+
+                    <article class="table-card" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">واجبات بانتظار التقييم</h3>
+                                <p class="chart-card__subtitle">حالات واجب ما زالت بحاجة إلى إغلاق أو تقييم داخل الفترة الحالية.</p>
+                            </div>
+                        </div>
+                        <div class="table-shell">
+                            {% if pending_homework_rows %}
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>الطالب</th>
+                                        <th>الحلقة</th>
+                                        <th>الواجب</th>
+                                        <th>تاريخ الإسناد</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for homework in pending_homework_rows %}
+                                    <tr>
+                                        <td><span class="cell-title">{{ homework.student.name }}</span></td>
+                                        <td>{{ homework.halaqa.name }}</td>
+                                        <td>{{ homework.assignment_text }}</td>
+                                        <td>{{ homework.assigned_date|date:"Y-m-d" }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <div class="empty-state">لا توجد واجبات معلقة بانتظار التقييم حاليا.</div>
+                            {% endif %}
+                        </div>
+                    </article>
+
+                    <article class="table-card" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">طلاب يحتاجون متابعة لصيقة</h3>
+                                <p class="chart-card__subtitle">تجميع سريع للحالات الأكثر عرضة للخطر بناء على الحضور والخطط والواجب والتصنيف الرسمي.</p>
+                            </div>
+                        </div>
+                        <div class="table-shell">
+                            {% if at_risk_students %}
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>الطالب</th>
+                                        <th>ملخص المتابعة</th>
+                                        <th>الحلقة</th>
+                                        <th>التنقل</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for student in at_risk_students %}
+                                    <tr>
+                                        <td>
+                                            <span class="cell-title">{{ student.name }}</span>
+                                            <span class="cell-meta">{{ student.category }}</span>
+                                        </td>
+                                        <td>{{ student.followup_summary }}</td>
+                                        <td>{{ student.halaqa_name }}</td>
+                                        <td><a href="{{ student.reports_url }}" class="drill-link"><i class="fas fa-file-lines"></i> التقارير</a></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <div class="empty-state">لا توجد حالات عالية المخاطر ضمن هذا النطاق حاليا.</div>
+                            {% endif %}
+                        </div>
+                    </article>
+
+                    <article class="table-card" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">حالات تصنيف غير محسومة</h3>
+                                <p class="chart-card__subtitle">تعرض هذه القائمة الطلاب أو الحلقات التي ما زالت تحتاج ربطا رسميا بفئة مع قرينة متابعة واضحة.</p>
+                            </div>
+                        </div>
+                        <div class="table-shell">
+                            {% if unresolved_category_rows %}
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>النوع</th>
+                                        <th>الاسم</th>
+                                        <th>السياق</th>
+                                        <th>القرينة</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in unresolved_category_rows %}
+                                    <tr>
+                                        <td><span class="status-pill status-pill--warning">{{ item.type }}</span></td>
+                                        <td>
+                                            <span class="cell-title">{{ item.name }}</span>
+                                            <span class="cell-meta">{{ item.detail }}</span>
+                                        </td>
+                                        <td>{{ item.scope }}</td>
+                                        <td>
+                                            {{ item.hint }}
+                                            <span class="cell-meta"><a href="{{ item.url }}" class="drill-link"><i class="fas fa-arrow-up-right-from-square"></i> فتح الحالة</a></span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <div class="empty-state">كل الحالات الظاهرة ضمن هذا النطاق مرتبطة حاليا بفئات رسمية واضحة.</div>
+                            {% endif %}
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="section-panel surface-card" data-surface>
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-head__title">
+                            <i class="fas fa-star"></i>
+                            النقاط والانضباط
+                        </h2>
+                        <p class="section-head__subtitle">قراءة مركزية لحركات النقاط كما سجلها المعلمون، مع ترتيب الطلاب الأبرز وآخر الحركات داخل النطاق الحالي.</p>
+                    </div>
+                </div>
+
+                <div class="section-metric-grid">
+                    <article class="section-metric-card" data-surface>
+                        <div class="section-metric-card__label">صافي النقاط في الفترة</div>
+                        <div class="section-metric-card__value">{{ points_overview.net_total }}</div>
+                        <div class="section-metric-card__detail">إجمالي الإضافات والخصومات المرصودة ضمن الفلاتر الحالية.</div>
+                    </article>
+                    <article class="section-metric-card" data-surface>
+                        <div class="section-metric-card__label">عدد الحركات</div>
+                        <div class="section-metric-card__value">{{ points_overview.transaction_total }}</div>
+                        <div class="section-metric-card__detail">كل حركة نقاط سُجلت من صفحة الحلقة خلال الفترة المحددة.</div>
+                    </article>
+                    <article class="section-metric-card" data-surface>
+                        <div class="section-metric-card__label">طلاب شملتهم النقاط</div>
+                        <div class="section-metric-card__value">{{ points_overview.students_covered }}</div>
+                        <div class="section-metric-card__detail">عدد الطلاب الذين ظهرت لهم حركات نقاط داخل النطاق الحالي.</div>
+                    </article>
+                    <article class="section-metric-card" data-surface>
+                        <div class="section-metric-card__label">إجمالي الخصومات</div>
+                        <div class="section-metric-card__value">{{ points_overview.deduction_total }}</div>
+                        <div class="section-metric-card__detail">مجموع الخصومات المسجلة خلال الفترة الحالية.</div>
+                    </article>
+                </div>
+
+                <div class="tables-grid">
+                    <article class="table-card" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">ترتيب النقاط</h3>
+                                <p class="chart-card__subtitle">أعلى الطلاب في الرصيد الحالي داخل نطاق الإشراف.</p>
+                            </div>
+                        </div>
+                        <div class="table-shell">
+                            {% if points_leaderboard %}
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>الطالب</th>
+                                        <th>الرصيد</th>
+                                        <th>التغير في الفترة</th>
+                                        <th>التنقل</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for student in points_leaderboard %}
+                                    <tr>
+                                        <td>
+                                            <span class="cell-title">{{ student.name }}</span>
+                                            <span class="cell-meta">{{ student.halaqa_name }}</span>
+                                        </td>
+                                        <td>{{ student.points_total }}</td>
+                                        <td>{{ student.points_in_range }}</td>
+                                        <td>
+                                            <div class="drill-link-group">
+                                                <a href="{{ student.focus_url }}" class="drill-link"><i class="fas fa-id-card"></i> البطاقة</a>
+                                                <a href="{{ student.points_url }}" class="drill-link"><i class="fas fa-file-lines"></i> التقارير</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <div class="empty-state">لا توجد حركات نقاط كافية لعرض الترتيب حالياً.</div>
+                            {% endif %}
+                        </div>
+                    </article>
+
+                    <article class="table-card" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">آخر حركات النقاط</h3>
+                                <p class="chart-card__subtitle">أحدث الإضافات والخصومات مع السبب المسجل إن وجد.</p>
+                            </div>
+                        </div>
+                        <div class="table-shell">
+                            {% if recent_point_rows %}
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>الطالب</th>
+                                        <th>الحلقة</th>
+                                        <th>القيمة</th>
+                                        <th>السبب</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for point in recent_point_rows %}
+                                    <tr>
+                                        <td><span class="cell-title">{{ point.student.name }}</span></td>
+                                        <td>{{ point.halaqa.name }}</td>
+                                        <td>{{ point.value }}</td>
+                                        <td>
+                                            {{ point.reason|default:"بدون سبب نصي" }}
+                                            <span class="cell-meta">{{ point.date|date:"Y-m-d H:i" }}</span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <div class="empty-state">لا توجد حركات نقاط ظاهرة ضمن هذا النطاق.</div>
+                            {% endif %}
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="section-panel surface-card" data-surface>
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-head__title">
+                            <i class="fas fa-table-list"></i>
+                            السجلات والاعتمادات
+                        </h2>
+                        <p class="section-head__subtitle">الأنشطة الحديثة وسجلات الحفظ التي ما زالت تنتظر المراجعة من الإدارة.</p>
+                    </div>
+                </div>
+
+                <div class="tables-grid">
+                    <article class="table-card" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">النشاط الأخير</h3>
+                                <p class="chart-card__subtitle">آخر ما حدث في الحفظ والحضور والنقاط داخل النظام.</p>
+                            </div>
+                        </div>
+                        <div class="table-shell">
+                            {% if recent_activity %}
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>النوع</th>
+                                        <th>المستفيد</th>
+                                        <th>التفصيل</th>
+                                        <th>الوقت</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in recent_activity %}
+                                    <tr>
+                                        <td>
+                                            <span class="status-pill {% if item.tone == 'success' %}status-pill--success{% elif item.tone == 'danger' %}status-pill--danger{% elif item.tone == 'warning' %}status-pill--warning{% else %}status-pill--info{% endif %}">
+                                                {{ item.title }}
+                                            </span>
+                                        </td>
+                                        <td><span class="cell-title">{{ item.subject }}</span></td>
+                                        <td>{{ item.detail }}</td>
+                                        <td>{{ item.timestamp|date:"Y-m-d H:i" }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <div class="empty-state">لا توجد أنشطة حديثة بعد.</div>
+                            {% endif %}
+                        </div>
+                    </article>
+
+                    <article class="table-card" data-surface>
+                        <div class="chart-card__header">
+                            <div>
+                                <h3 class="chart-card__title">الاعتمادات المعلقة</h3>
+                                <p class="chart-card__subtitle">سجلات الحفظ التي تنتظر مراجعة أو اعتمادا من الإدارة.</p>
+                            </div>
+                        </div>
+                        <div class="table-shell">
+                            {% if pending_approvals %}
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>الطالب</th>
+                                        <th>السورة</th>
+                                        <th>النطاق</th>
+                                        <th>التاريخ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for record in pending_approvals %}
+                                    <tr>
+                                        <td><span class="cell-title">{{ record.student.name }}</span></td>
+                                        <td>{{ record.surah }}</td>
+                                        <td>{{ record.from_verse }} - {{ record.to_verse }}</td>
+                                        <td>
+                                            <span class="status-pill status-pill--warning">بانتظار الاعتماد</span>
+                                            <span class="cell-meta">{{ record.date|date:"Y-m-d" }}</span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <div class="empty-state">لا توجد اعتمادات معلقة حاليا.</div>
+                            {% endif %}
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="section-panel surface-card" data-surface>
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-head__title">
+                            <i class="fas fa-note-sticky"></i>
+                            ملاحظات المعلمين والإشارات النصية
+                        </h2>
+                        <p class="section-head__subtitle">يعرض هذا الجدول الملاحظات التي دخلها المعلمون في الحضور والجلسات والخطط والواجب والنقاط، لتقريب جانب التقارير النصية داخل لوحة الإدارة.</p>
+                    </div>
+                </div>
+
+                <div class="table-shell">
+                    {% if teacher_note_feed %}
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>المصدر</th>
+                                <th>المستفيد</th>
+                                <th>السياق</th>
+                                <th>الملاحظة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in teacher_note_feed %}
+                            <tr>
+                                <td><span class="cell-title">{{ item.source }}</span></td>
+                                <td>{{ item.subject }}</td>
+                                <td>
+                                    {{ item.context }}
+                                    <span class="cell-meta">{{ item.timestamp|date:"Y-m-d H:i" }}</span>
+                                </td>
+                                <td>{{ item.note }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="empty-state">لا توجد ملاحظات نصية مدخلة من المعلمين ضمن الفلاتر الحالية.</div>
+                    {% endif %}
+                </div>
+            </section>
+        </div>
+    </section>
+</div>
+
+{{ charts.students_by_category|json_script:"students-by-category-chart-data" }}
+{{ charts.students_by_halaqa|json_script:"students-by-halaqa-chart-data" }}
+{{ charts.attendance_trends|json_script:"attendance-trends-chart-data" }}
+{{ charts.performance_trends|json_script:"performance-trends-chart-data" }}
+{{ charts.teacher_distribution|json_script:"teacher-distribution-chart-data" }}
+{{ charts.top_halaqas|json_script:"top-halaqas-chart-data" }}
+{{ charts.students_attention|json_script:"students-attention-chart-data" }}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function setAdminLayoutVariables() {
+        const navbar = document.querySelector('.admin-navbar');
+        const sectionNavWrap = document.querySelector('.admin-section-nav-wrap');
+        const navHeight = navbar ? Math.ceil(navbar.getBoundingClientRect().height) : 84;
+        const sectionNavHeight = sectionNavWrap ? Math.ceil(sectionNavWrap.getBoundingClientRect().height) : 64;
+
+        document.documentElement.style.setProperty('--admin-nav-h', `${navHeight}px`);
+        document.documentElement.style.setProperty('--admin-section-nav-h', `${sectionNavHeight}px`);
+        document.documentElement.style.setProperty('--admin-stack-offset', `${navHeight + sectionNavHeight + 18}px`);
+    }
+
+    function highlightAdminSection(target) {
+        if (!target) {
+            return;
+        }
+
+        target.classList.remove('section-focus');
+        void target.offsetWidth;
+        target.classList.add('section-focus');
+        clearTimeout(target.sectionFocusTimer);
+        target.sectionFocusTimer = setTimeout(function () {
+            target.classList.remove('section-focus');
+        }, 1800);
+    }
+
+    function scrollAdminPanelsIntoView() {
+        const panelContainer = document.getElementById('sectionPanels');
+        if (!panelContainer) {
+            return;
+        }
+
+        const offset = parseInt(
+            getComputedStyle(document.documentElement).getPropertyValue('--admin-stack-offset'),
+            10
+        ) || 160;
+        const top = window.pageYOffset + panelContainer.getBoundingClientRect().top - offset;
+        window.scrollTo({
+            top: Math.max(top, 0),
+            behavior: 'smooth',
+        });
+    }
+
+    function syncAdminExportPanel(panelId) {
+        document.querySelectorAll('input[name="current_panel"]').forEach(function (input) {
+            input.value = panelId;
+        });
+    }
+
+    function activateAdminSection(panelId, options) {
+        const config = options || {};
+        const buttons = Array.from(document.querySelectorAll('.admin-section-link'));
+        const panels = Array.from(document.querySelectorAll('.admin-dashboard-panel'));
+        const panelAliases = {
+            overview: 'overviewPanel',
+            overviewSection: 'overviewPanel',
+            halaqas: 'halaqasPanel',
+            halaqasSection: 'halaqasPanel',
+            students: 'studentsPanel',
+            studentsSection: 'studentsPanel',
+            plans: 'plansPanel',
+            plansSection: 'plansPanel',
+            attendance: 'attendancePanel',
+            attendanceSection: 'attendancePanel',
+            homework: 'homeworkPanel',
+            homeworkSection: 'homeworkPanel',
+            reports: 'reportsPanel',
+            reportsSection: 'reportsPanel',
+            'reports-analytics': 'reportsPanel',
+            'category-foundation': 'studentsPanel',
+        };
+        const resolvedId = panelAliases[panelId] || panelId;
+        const targetPanel = document.getElementById(resolvedId);
+
+        if (!targetPanel) {
+            return;
+        }
+
+        buttons.forEach(function (button) {
+            const active = button.dataset.panel === resolvedId;
+            button.classList.toggle('active', active);
+            button.setAttribute('aria-selected', active ? 'true' : 'false');
+            if (active) {
+                button.scrollIntoView({
+                    behavior: 'smooth',
+                    inline: 'nearest',
+                    block: 'nearest',
+                });
+            }
+        });
+
+        panels.forEach(function (panel) {
+            panel.hidden = panel !== targetPanel;
+        });
+
+        syncAdminExportPanel(resolvedId);
+
+        highlightAdminSection(targetPanel);
+
+        if (config.scrollIntoView !== false) {
+            scrollAdminPanelsIntoView();
+        }
+
+        window.requestAnimationFrame(function () {
+            window.dispatchEvent(new Event('resize'));
+        });
+
+        if (config.updateHash !== false && window.history && window.history.replaceState) {
+            const url = `${window.location.pathname}${window.location.search}#${resolvedId}`;
+            window.history.replaceState(null, '', url);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const sectionNavButtons = Array.from(document.querySelectorAll('.admin-section-link'));
+        const initialPanel = (window.location.hash || '').replace('#', '');
+
+        setAdminLayoutVariables();
+        window.addEventListener('resize', setAdminLayoutVariables);
+        window.addEventListener('load', setAdminLayoutVariables);
+
+        sectionNavButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                activateAdminSection(button.dataset.panel);
+            });
+        });
+
+        document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+            const hashTarget = (link.getAttribute('href') || '').replace('#', '');
+            if (!hashTarget) {
+                return;
+            }
+
+            const resolvedTarget = {
+                'reports-analytics': 'reportsPanel',
+                'category-foundation': 'studentsPanel',
+            }[hashTarget] || hashTarget;
+            const panel = document.getElementById(resolvedTarget);
+
+            if (!panel || !panel.classList.contains('admin-dashboard-panel')) {
+                return;
+            }
+
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+                activateAdminSection(hashTarget);
+            });
+        });
+
+        activateAdminSection(initialPanel || 'overviewPanel', {
+            scrollIntoView: false,
+            updateHash: Boolean(initialPanel),
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (typeof Chart === 'undefined') {
+            return;
+        }
+
+        const rootStyles = getComputedStyle(document.documentElement);
+        const palette = {
+            primary: rootStyles.getPropertyValue('--color-primary').trim(),
+            secondary: rootStyles.getPropertyValue('--color-secondary').trim(),
+            accent: rootStyles.getPropertyValue('--color-accent').trim(),
+            light: rootStyles.getPropertyValue('--color-light').trim(),
+            success: rootStyles.getPropertyValue('--color-success').trim(),
+            warning: rootStyles.getPropertyValue('--color-warning').trim(),
+            danger: rootStyles.getPropertyValue('--color-danger').trim(),
+            info: rootStyles.getPropertyValue('--color-info').trim()
+        };
+
+        const chartColors = [
+            palette.primary,
+            palette.secondary,
+            palette.accent,
+            palette.info,
+            palette.success,
+            palette.warning,
+            palette.danger
+        ];
+
+        function expandColors(count, alphaSuffix) {
+            return Array.from({ length: count }, function (_, index) {
+                const color = chartColors[index % chartColors.length];
+                return alphaSuffix ? color + alphaSuffix : color;
+            });
+        }
+
+        function readChartData(id) {
+            const node = document.getElementById(id);
+            return node ? JSON.parse(node.textContent) : null;
+        }
+
+        function buildGradient(ctx, colorStart, colorEnd) {
+            const gradient = ctx.createLinearGradient(0, 0, 0, 320);
+            gradient.addColorStop(0, colorStart);
+            gradient.addColorStop(1, colorEnd);
+            return gradient;
+        }
+
+        function mountChart(canvasId, factory) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) {
+                return;
+            }
+            const context = canvas.getContext('2d');
+            new Chart(context, factory(context));
+        }
+
+        const axisOptions = {
+            grid: {
+                color: 'rgba(11, 60, 84, 0.08)'
+            },
+            ticks: {
+                color: palette.secondary
+            }
+        };
+
+        Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+        Chart.defaults.color = palette.secondary;
+        Chart.defaults.plugins.legend.labels.usePointStyle = true;
+        Chart.defaults.plugins.legend.labels.boxWidth = 10;
+
+        const studentsByCategory = readChartData('students-by-category-chart-data');
+        const studentsByHalaqa = readChartData('students-by-halaqa-chart-data');
+        const attendanceTrends = readChartData('attendance-trends-chart-data');
+        const performanceTrends = readChartData('performance-trends-chart-data');
+        const teacherDistribution = readChartData('teacher-distribution-chart-data');
+        const topHalaqas = readChartData('top-halaqas-chart-data');
+        const studentsAttention = readChartData('students-attention-chart-data');
+
+        mountChart('studentsByCategoryChart', function () {
+            return {
+                type: 'bar',
+                data: {
+                    labels: studentsByCategory.labels,
+                    datasets: [{
+                        label: 'عدد الطلاب',
+                        data: studentsByCategory.values,
+                        backgroundColor: expandColors(studentsByCategory.values.length),
+                        borderRadius: 14,
+                        maxBarThickness: 36
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: axisOptions,
+                        y: {
+                            ...axisOptions,
+                            beginAtZero: true
+                        }
+                    }
+                }
+            };
+        });
+
+        mountChart('studentsByHalaqaChart', function () {
+            return {
+                type: 'doughnut',
+                data: {
+                    labels: studentsByHalaqa.labels,
+                    datasets: [{
+                        data: studentsByHalaqa.values,
+                        backgroundColor: expandColors(studentsByHalaqa.values.length),
+                        borderWidth: 0,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '62%'
+                }
+            };
+        });
+
+        mountChart('attendanceTrendsChart', function (ctx) {
+            return {
+                type: 'line',
+                data: {
+                    labels: attendanceTrends.labels,
+                    datasets: [
+                        {
+                            label: 'حضور',
+                            data: attendanceTrends.present,
+                            borderColor: palette.success,
+                            backgroundColor: buildGradient(ctx, 'rgba(76, 175, 80, 0.28)', 'rgba(76, 175, 80, 0.02)'),
+                            fill: true,
+                            tension: 0.35,
+                            pointRadius: 4
+                        },
+                        {
+                            label: 'غياب',
+                            data: attendanceTrends.absent,
+                            borderColor: palette.danger,
+                            backgroundColor: buildGradient(ctx, 'rgba(244, 67, 54, 0.18)', 'rgba(244, 67, 54, 0.02)'),
+                            fill: true,
+                            tension: 0.35,
+                            pointRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: axisOptions,
+                        y: {
+                            ...axisOptions,
+                            beginAtZero: true
+                        }
+                    }
+                }
+            };
+        });
+
+        mountChart('performanceTrendsChart', function (ctx) {
+            return {
+                type: 'line',
+                data: {
+                    labels: performanceTrends.labels,
+                    datasets: [{
+                        label: 'الحفظ المسجل',
+                        data: performanceTrends.values,
+                        borderColor: palette.accent,
+                        backgroundColor: buildGradient(ctx, 'rgba(150, 137, 96, 0.30)', 'rgba(150, 137, 96, 0.03)'),
+                        fill: true,
+                        tension: 0.38,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: axisOptions,
+                        y: {
+                            ...axisOptions,
+                            beginAtZero: true
+                        }
+                    }
+                }
+            };
+        });
+
+        mountChart('teacherDistributionChart', function () {
+            return {
+                type: 'polarArea',
+                data: {
+                    labels: teacherDistribution.labels,
+                    datasets: [{
+                        data: teacherDistribution.values,
+                        backgroundColor: expandColors(teacherDistribution.values.length, 'CC'),
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            grid: {
+                                color: 'rgba(11, 60, 84, 0.08)'
+                            },
+                            pointLabels: {
+                                color: palette.secondary
+                            },
+                            ticks: {
+                                backdropColor: 'transparent',
+                                color: palette.secondary
+                            }
+                        }
+                    }
+                }
+            };
+        });
+
+        mountChart('topHalaqasChart', function () {
+            return {
+                type: 'bar',
+                data: {
+                    labels: topHalaqas.labels,
+                    datasets: [{
+                        label: 'إجمالي النقاط',
+                        data: topHalaqas.values,
+                        backgroundColor: expandColors(topHalaqas.values.length),
+                        borderRadius: 14,
+                        maxBarThickness: 34
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: axisOptions,
+                        y: {
+                            ...axisOptions,
+                            beginAtZero: true
+                        }
+                    }
+                }
+            };
+        });
+
+        mountChart('studentsAttentionChart', function () {
+            return {
+                type: 'bar',
+                data: {
+                    labels: studentsAttention.labels,
+                    datasets: [{
+                        label: 'نسبة الحضور',
+                        data: studentsAttention.values,
+                        backgroundColor: studentsAttention.values.map(function (value) {
+                            return value < 50 ? palette.danger : palette.warning;
+                        }),
+                        borderRadius: 14
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            ...axisOptions,
+                            beginAtZero: true,
+                            max: 100
+                        },
+                        y: axisOptions
+                    }
+                }
+            };
+        });
+    });
+</script>
+{% endblock %}

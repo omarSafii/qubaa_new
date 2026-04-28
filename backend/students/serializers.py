@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password
+from django.utils.crypto import get_random_string
 from halaqas.models import Halaqa, HalaqaMembership # أضفنا استيراد HalaqaMembership
 from students.models import Student,MemorizationRecord
 
@@ -25,13 +27,14 @@ class StudentRegistrationSerializer(serializers.Serializer):
         phone = validated_data.pop('parent_phone')
         parent_name = validated_data.pop('parent_name')
         halaqa_id = validated_data.pop('halaqa_id')
+        halaqa = Halaqa.objects.select_related('category').get(pk=halaqa_id)
         
         # 2) إنشاء/جلب حساب ولي الأمر
         user, created = User.objects.get_or_create(
             username=f"parent_{phone}",
             defaults={
                 'first_name': parent_name,
-                'password': User.objects.make_random_password()
+                'password': make_password(get_random_string(12))
             }
         )
 
@@ -39,13 +42,15 @@ class StudentRegistrationSerializer(serializers.Serializer):
         student = Student.objects.create(
             parent=user,
             parent_phone=phone,
+            halaqa=halaqa,
+            category=halaqa.category,
             **validated_data
         )
 
         # 4) الربط مع الحلقة عبر HalaqaMembership
         HalaqaMembership.objects.create(
             student=student,
-            halaqa_id=halaqa_id,
+            halaqa=halaqa,
             is_active=True
         )
 
@@ -54,31 +59,37 @@ class StudentRegistrationSerializer(serializers.Serializer):
 class StudentSerializer(serializers.ModelSerializer):
     current_halaqa = serializers.SerializerMethodField()  # حقل جديد لعرض الحلقة الحالية
     halaqa_details = serializers.SerializerMethodField()  # تفاصيل الحلقة
+    category_label = serializers.SerializerMethodField()
 
     class Meta:
         model = Student
         fields = [
             'id', 'name', 'birth_date', 'parent', 'parent_phone',
-            'address', 'grade', 'access_token', 'current_halaqa',
+            'address', 'grade', 'category', 'category_label', 'halaqa', 'access_token', 'current_halaqa',
             'halaqa_details', 'created_at'
         ]
         read_only_fields = [
             'access_token', 'created_by', 'created_at',
-            'current_halaqa', 'halaqa_details'
+            'current_halaqa', 'halaqa_details', 'category_label', 'category', 'halaqa'
         ]
 
     def get_current_halaqa(self, obj):
         """يحصل على معرف الحلقة النشطة للطالب"""
-        membership = obj.halaqa_memberships.filter(is_active=True).first()
+        if obj.halaqa_id:
+            return obj.halaqa_id
+        membership = obj.halaqa_memberships.filter(is_active=True).order_by('-join_date', '-id').first()
         return membership.halaqa.id if membership else None
 
     def get_halaqa_details(self, obj):
         """يحصل على تفاصيل الحلقة النشطة"""
-        membership = obj.halaqa_memberships.filter(is_active=True).first()
-        if membership:
+        halaqa = obj.halaqa or obj.get_current_halaqa()
+        if halaqa:
             from halaqas.serializers import HalaqaSerializer  # استيراد هنا لتجنب التبعية الدائرية
-            return HalaqaSerializer(membership.halaqa).data
+            return HalaqaSerializer(halaqa).data
         return None
+
+    def get_category_label(self, obj):
+        return obj.get_category_label()
     
     
 class MemorizationRecordSerializer(serializers.ModelSerializer):
@@ -90,6 +101,9 @@ class MemorizationRecordSerializer(serializers.ModelSerializer):
             model = MemorizationRecord
             fields = [
                 'id', 'student', 'student_name', 'surah', 'from_verse', 'to_verse',
-                'verses_count', 'date', 'is_approved', 'approved_by', 'approved_by_name'
+                'verses_count', 'date', 'evaluation', 'is_approved', 'approved_by', 'approved_by_name'
             ]
-            read_only_fields = ['verses_count', 'student_name', 'approved_by_name', 'date']
+            read_only_fields = ['verses_count', 'student_name', 'approved_by_name']
+            extra_kwargs = {
+                'date': {'required': False},
+            }

@@ -18,13 +18,15 @@ class RegisterView(APIView):
     
     
 class CurrentUserView(APIView):
-     permission_classes = [IsAuthenticated]
-     def get(self, request):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
         user = request.user
+        profile = getattr(user, 'profile', None)
         return Response({
             "id": user.id,
             "username": user.username,
-            "role": user.role  # افترضنا أنك خزنت الدور في حقل role
+            "role": profile.role if profile else "unknown"
         })
 
 

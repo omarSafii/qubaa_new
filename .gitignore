@@ -1,0 +1,62 @@
+# Python cache and bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+env/
+venv/
+.venv/
+ENV/
+
+# Environment files
+.env
+.env.*
+!.env.example
+!**/.env.example
+
+# Django local/generated files
+*.sqlite3
+*.sqlite3-journal
+media/
+staticfiles/
+
+# Test, coverage, and tool caches
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.hypothesis/
+
+# Build and packaging artifacts
+build/
+dist/
+site/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Logs and temp files
+*.log
+*.pid
+*.seed
+*.stackdump
+*.tmp
+*.temp
+
+# Editor and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Frontend/generated dependency folders
+node_modules/
+
+# Repo-specific local artifacts
+backend/cd
+backend/color
+backend/python

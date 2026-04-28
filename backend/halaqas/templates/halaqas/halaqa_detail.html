@@ -1,13 +1,10 @@
-{% extends 'base.html' %}
 {% load static %}
-
-{% block content %}
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>لوحة تحكم الأستاذ - معهد قباء لتحفيظ القرآن الكريم</title>
+  <title>تفاصيل الحلقة - {{ halaqa.name }}</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -21,310 +18,1140 @@
       --color-warning: #FFC107;
       --color-danger: #F44336;
       --color-info: #2196F3;
+      --shadow-soft: 0 5px 15px rgba(0, 0, 0, 0.05);
+      --shadow-hover: 0 10px 25px rgba(0, 0, 0, 0.1);
     }
-    
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       background: linear-gradient(135deg, #f8f9fa 0%, #f1f3f5 100%);
       color: var(--color-primary);
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       min-height: 100vh;
-      padding-top: 70px;
+      padding-top: 74px;
     }
-    
+
     .navbar {
       background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       padding: 10px 20px;
     }
-    
+
     .navbar-brand {
       display: flex;
       align-items: center;
       gap: 15px;
-      color: white !important;
+      color: #fff !important;
       font-weight: 600;
-      font-size: 1.3rem;
+      font-size: 1.25rem;
     }
-    
-    .institute-logo {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: linear-gradient(45deg, var(--color-light), var(--color-accent));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.2rem;
-    }
-    
-    .teacher-info {
-      color: white;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
+
+    .institute-logo,
     .teacher-avatar {
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.2);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
-      font-size: 1.2rem;
+      color: #fff;
+      flex-shrink: 0;
     }
-    
+
+    .institute-logo {
+      background: linear-gradient(45deg, var(--color-light), var(--color-accent));
+    }
+
+    .teacher-avatar {
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    .teacher-info {
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: right;
+    }
+
+    .teacher-info .small {
+      color: rgba(255, 255, 255, 0.75);
+    }
+
     .dashboard-container {
-      padding: 20px 0;
+      padding: 24px 0 40px;
+      position: relative;
     }
-    
-    .dashboard-card {
-      background: white;
-      border-radius: 15px;
-      overflow: hidden;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-      margin-bottom: 25px;
-      transition: all 0.3s ease;
-      height: 100%;
+
+    .dashboard-card,
+    .stat-card,
+    .chart-card,
+    .report-card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(11, 60, 84, 0.05);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
-    
-    .dashboard-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+
+    .dashboard-card:hover,
+    .stat-card:hover,
+    .chart-card:hover,
+    .report-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
     }
-    
+
     .card-header {
       background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-light) 100%);
-      color: white;
+      color: #fff;
       padding: 15px 20px;
       font-weight: 600;
       display: flex;
       align-items: center;
       gap: 10px;
+      border: 0;
     }
-    
+
     .card-body {
       padding: 20px;
     }
-    
+
+    .btn-soft {
+      border-radius: 12px;
+      border: 1px solid rgba(11, 60, 84, 0.12);
+      background: #fff;
+      color: var(--color-primary);
+      padding: 10px 16px;
+      font-weight: 600;
+    }
+
+    .btn-soft:hover {
+      background: rgba(11, 60, 84, 0.05);
+      color: var(--color-primary);
+    }
+
+    .btn-primary-soft {
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      color: #fff;
+      border: none;
+    }
+
+    .btn-primary-soft:hover {
+      color: #fff;
+      opacity: 0.95;
+    }
+
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 24px;
     }
-    
+
     .stat-card {
-      background: white;
-      border-radius: 15px;
-      padding: 20px;
+      padding: 22px 18px;
       text-align: center;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-      border-top: 4px solid var(--color-accent);
-      transition: all 0.3s ease;
       position: relative;
       overflow: hidden;
+      border-top: 4px solid var(--color-accent);
     }
-    
-    .stat-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-    }
-    
+
     .stat-card i {
-      font-size: 2.5rem;
-      color: var(--color-accent);
-      margin-bottom: 15px;
-    }
-    
-    .stat-card h3 {
       font-size: 2.2rem;
-      margin: 10px 0;
+      color: var(--color-accent);
+      margin-bottom: 12px;
+    }
+
+    .stat-card h3 {
+      font-size: 2rem;
+      margin: 0 0 8px;
       color: var(--color-primary);
     }
-    
+
     .stat-card p {
-      color: #666;
-      margin-bottom: 0;
-    }
-    
-    .stat-status {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      padding: 5px;
-      font-size: 0.8rem;
+      margin: 0;
       font-weight: 600;
-      color: white;
+      color: #5f6c76;
     }
-    
-    .status-success {
-      background-color: var(--color-success);
+
+    .stat-meta {
+      display: block;
+      margin-top: 8px;
+      color: #8a949b;
+      font-size: 0.86rem;
+      line-height: 1.6;
     }
-    
-    .status-warning {
-      background-color: var(--color-warning);
-    }
-    
-    .status-danger {
-      background-color: var(--color-danger);
-    }
-    
-    .charts-container {
+
+    .charts-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 20px;
-      margin-bottom: 30px;
+      margin-bottom: 24px;
     }
-    
-    @media (max-width: 992px) {
-      .charts-container {
-        grid-template-columns: 1fr;
-      }
-    }
-    
+
     .chart-card {
-      background: white;
-      border-radius: 15px;
       padding: 20px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-      border: 1px solid rgba(0,0,0,0.05);
-      position: relative;
     }
-    
+
     .chart-title {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
       color: var(--color-primary);
       font-weight: 600;
-      font-size: 1.2rem;
+      font-size: 1.12rem;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
     }
-    
+
+    .full-width-card {
+      margin-bottom: 24px;
+    }
+
+    .chart-card-merged {
+      padding-bottom: 0;
+      overflow: hidden;
+    }
+
+    .chart-card-action {
+      width: calc(100% + 40px);
+      margin: 18px -20px 0;
+      padding: 15px 20px;
+      border: 0;
+      border-top: 1px solid rgba(11, 60, 84, 0.08);
+      background: linear-gradient(90deg, rgba(11, 60, 84, 0.06), rgba(150, 137, 96, 0.16));
+      color: var(--color-primary);
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .chart-card-action:hover {
+      background: linear-gradient(90deg, rgba(11, 60, 84, 0.1), rgba(150, 137, 96, 0.22));
+      color: var(--color-primary);
+    }
+
     .student-table {
       width: 100%;
       border-collapse: separate;
       border-spacing: 0;
-      border-radius: 10px;
       overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      border-radius: 12px;
     }
-    
+
     .student-table th {
       background: var(--color-primary);
-      color: white;
-      padding: 15px;
+      color: #fff;
+      padding: 14px 12px;
       text-align: center;
       font-weight: 600;
+      white-space: nowrap;
     }
-    
+
     .student-table td {
-      padding: 12px 15px;
+      padding: 14px 12px;
       text-align: center;
-      border-bottom: 1px solid rgba(0,0,0,0.05);
+      vertical-align: middle;
+      border-bottom: 1px solid rgba(11, 60, 84, 0.08);
+      background: #fff;
     }
-    
-    .student-table tr:nth-child(even) {
-      background-color: rgba(242, 216, 161, 0.05);
+
+    .student-table tbody tr:nth-child(even) td {
+      background: rgba(242, 216, 161, 0.05);
     }
-    
-    .student-table tr:hover {
-      background-color: rgba(11, 60, 84, 0.03);
+
+    .student-table tbody tr:hover td {
+      background: rgba(11, 60, 84, 0.04);
     }
-    
+
+    .student-name {
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-bottom: 8px;
+    }
+
+    .student-subtext,
+    .plan-dates {
+      font-size: 0.88rem;
+      color: #6b7680;
+      line-height: 1.5;
+    }
+
+    .student-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .compact-badge,
+    .points-pill,
+    .today-status-pill,
+    .plan-pill,
+    .homework-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .compact-badge {
+      background: rgba(11, 60, 84, 0.06);
+      color: var(--color-primary);
+    }
+
+    .mini-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .attendance-summary {
+      display: inline-flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .summary-badge,
+    .eval-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .summary-badge.present {
+      background: rgba(76, 175, 80, 0.12);
+      color: var(--color-success);
+    }
+
+    .summary-badge.absent {
+      background: rgba(244, 67, 54, 0.12);
+      color: var(--color-danger);
+    }
+
+    .summary-badge.excused {
+      background: rgba(255, 193, 7, 0.16);
+      color: #8e6b00;
+    }
+
+    .eval-pill.excellent {
+      background: rgba(76, 175, 80, 0.14);
+      color: #2e7d32;
+    }
+
+    .eval-pill.very_good {
+      background: rgba(33, 150, 243, 0.12);
+      color: #1565c0;
+    }
+
+    .eval-pill.good {
+      background: rgba(255, 193, 7, 0.16);
+      color: #8a6700;
+    }
+
+    .eval-pill.needs_followup {
+      background: rgba(244, 67, 54, 0.12);
+      color: #c62828;
+    }
+
+    .today-status-pill {
+      background: rgba(11, 60, 84, 0.06);
+      color: var(--color-primary);
+    }
+
+    .today-status-pill.present {
+      background: rgba(76, 175, 80, 0.12);
+      color: #2e7d32;
+    }
+
+    .today-status-pill.absent {
+      background: rgba(244, 67, 54, 0.12);
+      color: #c62828;
+    }
+
+    .today-status-pill.excused {
+      background: rgba(255, 193, 7, 0.16);
+      color: #8a6700;
+    }
+
+    .points-pill {
+      background: rgba(76, 175, 80, 0.12);
+      color: #2e7d32;
+      min-width: 72px;
+    }
+
+    .points-pill.negative {
+      background: rgba(244, 67, 54, 0.12);
+      color: #c62828;
+    }
+
+    .last-range {
+      font-size: 0.9rem;
+      color: #516069;
+    }
+
+    .plan-pill {
+      max-width: 210px;
+      background: rgba(11, 60, 84, 0.06);
+      color: var(--color-primary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .homework-pill {
+      background: rgba(11, 60, 84, 0.06);
+      color: var(--color-primary);
+    }
+
+    .homework-pill.assigned {
+      background: rgba(33, 150, 243, 0.12);
+      color: #1565c0;
+    }
+
+    .homework-pill.pending {
+      background: rgba(255, 193, 7, 0.16);
+      color: #8a6700;
+    }
+
+    .homework-pill.evaluated {
+      background: rgba(76, 175, 80, 0.12);
+      color: #2e7d32;
+    }
+
+    .homework-text {
+      max-width: 220px;
+      color: var(--color-primary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
     .action-buttons {
       display: flex;
       justify-content: center;
-      gap: 8px;
+      flex-wrap: wrap;
+      gap: 6px;
     }
-    
+
     .btn-action {
-      width: 40px;
-      height: 40px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
       border: none;
-      color: white;
-      transition: all 0.3s ease;
+      color: #fff;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
     }
-    
+
     .btn-action:hover {
-      transform: scale(1.1);
+      transform: scale(1.08);
+      opacity: 0.95;
     }
-    
+
+    .btn-profile {
+      background: linear-gradient(135deg, var(--color-secondary), var(--color-primary));
+    }
+
     .btn-points {
-      background-color: var(--color-success);
+      background: var(--color-success);
     }
-    
+
     .btn-save {
-      background-color: var(--color-info);
+      background: var(--color-info);
     }
-    
+
     .btn-attendance {
-      background-color: var(--color-warning);
+      background: var(--color-warning);
+      color: #4b4100;
     }
-    
+
     .btn-plan {
-      background-color: var(--color-primary);
+      background: var(--color-primary);
     }
-    
-    .top-student {
-      background-color: rgba(242, 216, 161, 0.3);
-      font-weight: 600;
+
+    .btn-homework {
+      background: linear-gradient(135deg, var(--color-accent), #b7a774);
     }
-    
-    .low-student {
-      background-color: rgba(255, 193, 7, 0.1);
+
+    .btn-action:disabled {
+      opacity: 0.45;
+      box-shadow: none;
+      cursor: not-allowed;
     }
-    
+
+    .report-card {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .report-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 20px;
+      background: linear-gradient(90deg, rgba(150, 137, 96, 0.12), rgba(242, 216, 161, 0.18));
+      border-bottom: 1px solid rgba(11, 60, 84, 0.08);
+    }
+
+    .report-header h3 {
+      margin: 0;
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+
+    .report-heading {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .report-toggle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid rgba(11, 60, 84, 0.12);
+      background: #fff;
+      color: var(--color-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .report-toggle:hover {
+      background: rgba(11, 60, 84, 0.05);
+    }
+
+    .report-toggle.is-open {
+      transform: rotate(180deg);
+    }
+
+    .report-summary {
+      color: #5f6c76;
+      font-size: 0.9rem;
+      margin-top: 5px;
+      line-height: 1.7;
+    }
+
+    .report-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 12px;
+    }
+
+    .report-button-group {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .date-context-form {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(11, 60, 84, 0.1);
+      background: rgba(255, 255, 255, 0.7);
+    }
+
+    .date-context-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .date-context-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+
+    .date-context-helper {
+      font-size: 0.82rem;
+      color: #6b7680;
+    }
+
+    .date-context-input {
+      min-width: 170px;
+      background: #fff;
+    }
+
+    .report-body {
+      display: none;
+      border-top: 1px solid rgba(11, 60, 84, 0.08);
+    }
+
+    .report-body.is-open {
+      display: block;
+    }
+
+    .report-preview {
+      margin: 0;
+      padding: 18px 20px;
+      background: #fff;
+      color: #39444b;
+      font-size: 0.95rem;
+      line-height: 1.85;
+      white-space: pre-wrap;
+    }
+
     .decoration {
       position: absolute;
-      font-size: 7rem;
+      font-size: 6rem;
       opacity: 0.05;
       color: var(--color-primary);
       z-index: 0;
+      pointer-events: none;
     }
-    
+
     .dec-1 {
       top: 20px;
       right: 30px;
     }
-    
+
     .dec-2 {
       bottom: 20px;
       left: 30px;
     }
-    
-    .footer {
+
+    .page-footer {
       text-align: center;
-      padding: 30px 0;
-      color: #666;
+      padding: 20px 0 0;
+      color: #6b7680;
       font-size: 0.9rem;
-      margin-top: 40px;
-      border-top: 1px solid rgba(0,0,0,0.1);
     }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+
+    .modal-content {
+      border: 1px solid rgba(11, 60, 84, 0.08);
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 20px 48px rgba(11, 60, 84, 0.18);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(245, 242, 234, 0.98));
     }
-    
-    .animate-fadeIn {
-      animation: fadeIn 0.8s ease forwards;
+
+    .modal-content::before {
+      content: "";
+      display: block;
+      height: 5px;
+      background: linear-gradient(90deg, var(--color-accent), var(--color-light));
+    }
+
+    .modal-header {
+      background: linear-gradient(90deg, var(--color-accent), var(--color-light));
+      color: #fff;
+      border: 0;
+      padding: 18px 22px;
+      text-shadow: 0 1px 2px rgba(11, 60, 84, 0.24);
+    }
+
+    .modal-header .btn-close {
+      filter: brightness(0) invert(1);
+      opacity: 0.92;
+    }
+
+    .modal-body {
+      padding: 24px 22px 20px;
+      background:
+        linear-gradient(180deg, rgba(242, 216, 161, 0.12), transparent 24%),
+        #fff;
+    }
+
+    .modal-footer {
+      border: 0;
+      border-top: 1px solid rgba(11, 60, 84, 0.08);
+      padding: 16px 22px 22px;
+      gap: 10px;
+      justify-content: flex-start;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(242, 216, 161, 0.08));
+    }
+
+    .modal-subtitle {
+      color: #5f6c76;
+      margin-bottom: 18px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(242, 216, 161, 0.16);
+      border-right: 4px solid var(--color-accent);
+      line-height: 1.7;
+    }
+
+    .modal .form-control,
+    .modal .form-select,
+    .modal textarea {
+      min-height: 48px;
+      border-radius: 14px;
+      border-color: rgba(11, 60, 84, 0.14);
+      background: #fcfbf8;
+      box-shadow: none !important;
+    }
+
+    .modal textarea {
+      min-height: 120px;
+    }
+
+    .modal .form-control:focus,
+    .modal .form-select:focus,
+    .modal textarea:focus {
+      border-color: rgba(150, 137, 96, 0.88);
+      box-shadow: 0 0 0 0.2rem rgba(150, 137, 96, 0.14) !important;
+      background: #fff;
+    }
+
+    .ranking-list,
+    .history-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .ranking-row,
+    .history-card {
+      border-radius: 18px;
+      border: 1px solid rgba(11, 60, 84, 0.08);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(242, 216, 161, 0.08));
+      box-shadow: 0 10px 24px rgba(11, 60, 84, 0.06);
+    }
+
+    .ranking-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+    }
+
+    .ranking-rank {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(150, 137, 96, 0.16), rgba(11, 60, 84, 0.12));
+      color: var(--color-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .ranking-main {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .ranking-name {
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-bottom: 4px;
+    }
+
+    .ranking-meta {
+      color: #72808a;
+      font-size: 0.84rem;
+    }
+
+    .ranking-points {
+      min-width: 88px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(76, 175, 80, 0.12);
+      color: #2e7d32;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .ranking-points.negative {
+      background: rgba(244, 67, 54, 0.12);
+      color: #c62828;
+    }
+
+    .history-card {
+      padding: 16px;
+    }
+
+    .history-card.is-selected {
+      border-color: rgba(49, 97, 127, 0.28);
+      box-shadow: 0 14px 28px rgba(11, 60, 84, 0.1);
+    }
+
+    .history-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .history-card-title {
+      margin: 0 0 4px;
+      color: var(--color-primary);
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .history-card-meta {
+      color: #6e7a84;
+      font-size: 0.84rem;
+    }
+
+    .history-badges,
+    .history-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .history-pill,
+    .history-tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .history-pill {
+      background: rgba(11, 60, 84, 0.06);
+      color: var(--color-primary);
+    }
+
+    .history-sections {
+      display: grid;
+      gap: 12px;
+    }
+
+    .history-block-title {
+      color: var(--color-primary);
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .history-tag.present {
+      background: rgba(90, 143, 114, 0.14);
+      color: #3f6f56;
+    }
+
+    .history-tag.absent {
+      background: rgba(146, 94, 82, 0.14);
+      color: #8b4e41;
+    }
+
+    .history-tag.excused {
+      background: rgba(150, 137, 96, 0.18);
+      color: #786a43;
+    }
+
+    .history-lines {
+      display: grid;
+      gap: 8px;
+      color: #57636d;
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+
+    .history-empty {
+      padding: 24px 18px;
+      text-align: center;
+      border-radius: 18px;
+      border: 1px dashed rgba(11, 60, 84, 0.14);
+      color: #6f7b84;
+      background: rgba(11, 60, 84, 0.02);
+    }
+
+    .field-note {
+      display: block;
+      color: #7b848b;
+      font-size: 0.82rem;
+      margin-top: 6px;
+    }
+
+    .form-control,
+    .form-select {
+      border-radius: 12px;
+      min-height: 46px;
+      border-color: rgba(11, 60, 84, 0.15);
+      box-shadow: none !important;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+      border-color: rgba(49, 97, 127, 0.55);
+    }
+
+    .modal-chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .preset-chip {
+      border: 1px solid rgba(11, 60, 84, 0.12);
+      background: rgba(11, 60, 84, 0.04);
+      color: var(--color-primary);
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .preset-chip:hover {
+      background: rgba(242, 216, 161, 0.35);
+    }
+
+    .alert-inline {
+      display: none;
+      margin-bottom: 14px;
+      border-radius: 12px;
+    }
+
+    .homework-stage-switch {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .homework-stage-btn {
+      border: 1px solid rgba(11, 60, 84, 0.12);
+      background: #fff;
+      color: var(--color-primary);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-weight: 700;
+    }
+
+    .homework-stage-btn.is-active {
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      color: #fff;
+      border-color: transparent;
+    }
+
+    .homework-stage-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .homework-stage-panel {
+      display: none;
+    }
+
+    .homework-stage-panel.is-active {
+      display: block;
+    }
+
+    .homework-summary-box {
+      background: rgba(11, 60, 84, 0.04);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      color: #5f6c76;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 1199px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 991px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .report-actions {
+        align-items: stretch;
+      }
+
+    }
+
+    @media (max-width: 767px) {
+      body {
+        padding-top: 92px;
+      }
+
+      .navbar {
+        padding: 10px 14px;
+      }
+
+      .navbar .container-fluid {
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .navbar-brand {
+        font-size: 1rem;
+        gap: 10px;
+      }
+
+      .teacher-info {
+        width: 100%;
+        justify-content: flex-end;
+      }
+
+      .dashboard-container {
+        padding-top: 18px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .student-table thead {
+        display: none;
+      }
+
+      .student-table,
+      .student-table tbody,
+      .student-table tr,
+      .student-table td {
+        display: block;
+        width: 100%;
+      }
+
+      .student-table tbody {
+        display: grid;
+        gap: 14px;
+      }
+
+      .student-table tr {
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: var(--shadow-soft);
+      }
+
+      .student-table td {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        text-align: right;
+        padding: 12px 14px;
+        border-bottom: 1px solid rgba(11, 60, 84, 0.08);
+      }
+
+      .student-table td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        color: var(--color-secondary);
+        flex-shrink: 0;
+      }
+
+      .student-table td:last-child {
+        border-bottom: 0;
+      }
+
+      .actions-cell {
+        display: block !important;
+      }
+
+      .actions-cell::before {
+        display: block;
+        margin-bottom: 10px;
+      }
+
+      .action-buttons {
+        justify-content: flex-start;
+      }
+
+      .report-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .report-heading {
+        width: 100%;
+      }
+
+      .report-button-group,
+      .date-context-form {
+        width: 100%;
+      }
+
+      .date-context-form {
+        justify-content: stretch;
+      }
+
+      .date-context-input {
+        width: 100%;
+        max-width: none;
+      }
+
+      .ranking-row,
+      .history-card-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .modal-dialog {
+        margin: 0.75rem;
+      }
+
+      .modal-content {
+        border-radius: 18px;
+      }
+
+      .modal-header,
+      .modal-body {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .modal-footer {
+        padding: 14px 18px 18px;
+        flex-wrap: wrap;
+      }
+
+      .modal-footer .btn {
+        flex: 1 1 140px;
+      }
+
+      .student-badges,
+      .attendance-summary {
+        justify-content: flex-start;
+      }
     }
   </style>
 </head>
 <body>
-  <!-- شريط التنقل -->
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">
@@ -333,831 +1160,1868 @@
         </div>
         معهد قباء لتحفيظ القرآن الكريم
       </a>
-      
-      <div class="d-flex align-items-center">
-        <div class="teacher-info">
-          <div class="teacher-avatar">
-            <i class="fas fa-user-tie"></i>
-          </div>
+
+      <div class="teacher-info">
+        <div class="teacher-avatar">
+          <i class="fas fa-user-tie"></i>
+        </div>
+        <div>
           <div>
-            <div>الأستاذ: محمد أحمد</div>
-            <div>الحلقة: السابعة</div>
+            {% if display_teacher %}
+              {{ teacher_greeting }}، الأستاذ {{ display_teacher.full_name }}
+            {% else %}
+              {{ teacher_greeting }}
+            {% endif %}
           </div>
+          <div class="small">الحلقة: {{ halaqa.name }}</div>
         </div>
       </div>
     </div>
   </nav>
-  
+
   <div class="dashboard-container container">
-   
+    <i class="fas fa-mosque decoration dec-1"></i>
+    <i class="fas fa-star-and-crescent decoration dec-2"></i>
 
-
-
-{% load static %}
-
-  <h1>تفاصيل الحلقة: {{ halaqa.name }}</h1>
-
-  <a href="{% url 'halaqas:halaqa_edit' halaqa.pk %}">تعديل الحلقة</a> |
-  <a href="{% url 'halaqas:add_student_to_halaqa' halaqa.pk %}">إضافة طالب</a>
-
-  <!-- البطاقات -->
-  <div class="stats-grid" style="margin: 20px 0;">
-    <div class="stat-card">
-      <i class="fas fa-users"></i>
-      <h3 id="students-count">–</h3>
-      <p>عدد الطلاب</p>
-    </div>
-    <div class="stat-card">
-      <i class="fas fa-star"></i>
-      <h3 id="total-points">–</h3>
-      <p>مجموع النقاط</p>
-    </div>
-    <div class="stat-card">
-      <i class="fas fa-book-open"></i>
-      <h3 id="pages-saved">–</h3>
-      <p>صفحات محفوظة هذا الشهر</p>
-    </div>
-    <div class="stat-card">
-      <i class="fas fa-percentage"></i>
-      <h3 id="attendance-rate">–</h3>
-      <p>نسبة الحضور</p>
-    </div>
-  </div>
-
-  <div style="display: none;">
-
-  <!-- جدول الطلاب -->
-  <table border="1" style="width:100%;">
-    <thead>
-      <tr>
-        <th>الطالب</th>
-        <th>الحضور</th>
-        <th>الغياب</th>
-        <th>عدد النقاط</th>
-        <th>عدد الآيات المحفوظة</th>
-        <th>الخطة الحالية</th>
-        <th>إجراءات</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for entry in dashboard_data %}
-      <tr id="row-{{ entry.student.id }}">
-        <td>{{ entry.student.name }}</td>
-        <td id="present-{{ entry.student.id }}">{{ entry.present }}</td>
-        <td id="absent-{{ entry.student.id }}">{{ entry.absent }}</td>
-        <td id="points-{{ entry.student.id }}">{{ entry.points }}</td>
-        <td id="memorized-{{ entry.student.id }}">{{ entry.memorized }}</td>
-        <td>
-          {% if entry.plan %}
-            من {{ entry.plan.start_date }} إلى {{ entry.plan.end_date }}<br>
-            الهدف: {{ entry.plan.target }}
-          {% else %}
-            لا توجد خطة حالية
-          {% endif %}
-        </td>
-        <td>
-          <!-- هنا تبقى فورمات AJAX كما عندك -->
-        </td>
-      </tr>
+    <div class="stats-grid">
+      {% for card in summary_cards %}
+      <div class="stat-card">
+        <i class="{{ card.icon }}"></i>
+        <h3 id="summary-value-{{ forloop.counter }}">{{ card.value }}</h3>
+        <p>{{ card.label }}</p>
+        <span class="stat-meta" id="summary-meta-{{ forloop.counter }}">{{ card.meta }}</span>
+      </div>
       {% endfor %}
-    </tbody>
-  </table>
-</div>
+    </div>
 
-  <!-- سكربت حساب البطاقات -->
-  <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    // نجمع كل صف موجود بالجدول
-    const rows = Array.from(document.querySelectorAll('tbody tr[id^="row-"]'));
-    const studentCountEl = document.getElementById('students-count');
-    const totalPointsEl  = document.getElementById('total-points');
-    const pagesSavedEl   = document.getElementById('pages-saved');
-    const attendanceEl   = document.getElementById('attendance-rate');
-
-    // 1) عدد الطلاب
-    const studentsCount = rows.length;
-    studentCountEl.textContent = studentsCount;
-
-    // 2) مجموع النقاط
-    const totalPoints = rows.reduce((sum, row) => {
-      const v = parseInt(row.querySelector('[id^="points-"]').textContent, 10) || 0;
-      return sum + v;
-    }, 0);
-    totalPointsEl.textContent = totalPoints;
-
-    // 3) صفحات محفوظة هذا الشهر
-    const pagesSaved = rows.reduce((sum, row) => {
-      const v = parseInt(row.querySelector('[id^="memorized-"]').textContent, 10) || 0;
-      return sum + v;
-    }, 0);
-    pagesSavedEl.textContent = pagesSaved;
-
-    // 4) نسبة الحضور
-    const presentSum = rows.reduce((sum, row) => {
-      const v = parseInt(row.querySelector('[id^="present-"]').textContent, 10) || 0;
-      return sum + v;
-    }, 0);
-    const absentSum = rows.reduce((sum, row) => {
-      const v = parseInt(row.querySelector('[id^="absent-"]').textContent, 10) || 0;
-      return sum + v;
-    }, 0);
-    const totalMarks = presentSum + absentSum;
-    const attendanceRate = totalMarks > 0
-      ? Math.round((presentSum / totalMarks) * 100)
-      : 0;
-    attendanceEl.textContent = attendanceRate + '%';
-  });
-  </script>
-
-
-
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  // 1. نجمع كل صف في الجدول (كل طالب)
-  const rows = Array.from(document.querySelectorAll('tbody tr[id^="row-"]'));
-  const studentCountEl = document.getElementById('students-count');
-  const totalPointsEl  = document.getElementById('total-points');
-  const pagesSavedEl   = document.getElementById('pages-saved');
-  const attendanceEl   = document.getElementById('attendance-rate');
-
-  // 1) عدد الطلاب
-  const studentsCount = rows.length;
-  studentCountEl.textContent = studentsCount;
-
-  // 2) مجموع النقاط
-  const totalPoints = rows.reduce((sum, row) => {
-    // الخانة فيها id="points-<studentId>"
-    const points = parseInt(
-      row.querySelector('[id^="points-"]').textContent, 10
-    ) || 0;
-    return sum + points;
-  }, 0);
-  totalPointsEl.textContent = totalPoints;
-
-  // 3) صفحات محفوظة هذا الشهر
-  const pagesSaved = rows.reduce((sum, row) => {
-    // عمود الـ "memorized" فرضاً هو العمود رقم 5 في الجدول
-    // أو إذا عندك id ثابت: row.querySelector('#memorized-<id>')
-    const memorizedCell = row.cells[4]; 
-    const memorized = parseInt(memorizedCell.textContent, 10) || 0;
-    return sum + memorized;
-  }, 0);
-  pagesSavedEl.textContent = pagesSaved;
-
-  // 4) نسبة الحضور
-  const presentSum = rows.reduce((sum, row) => {
-    const v = parseInt(row.querySelector('[id^="present-"]').textContent, 10) || 0;
-    return sum + v;
-  }, 0);
-  const absentSum = rows.reduce((sum, row) => {
-    const v = parseInt(row.querySelector('[id^="absent-"]').textContent, 10) || 0;
-    return sum + v;
-  }, 0);
-  const totalMarks = presentSum + absentSum;
-  const attendanceRate = totalMarks > 0
-    ? Math.round((presentSum / totalMarks) * 100)
-    : 0;
-  attendanceEl.textContent = attendanceRate + '%';
-});
-</script>
-
-
-
-
-
-    
-    <!-- بطاقات الرسوم البيانية -->
-    <div class="row">
-      <div class="col-lg-6">
-        <div class="dashboard-card animate-fadeIn">
-          <div class="card-header">
-            <i class="fas fa-chart-line"></i> أفضل الطلاب بالنقاط
-          </div>
-          <div class="card-body">
-            <div class="chart-card">
-              <canvas id="topStudentsChart" height="250"></canvas>
-            </div>
-          </div>
+    <div class="charts-grid">
+      <div class="chart-card chart-card-merged">
+        <div class="chart-title">
+          <i class="fas fa-chart-column"></i>
+          أفضل الطلاب بالنقاط
         </div>
+        <canvas id="topStudentsChart" height="230"></canvas>
+        <button type="button" class="chart-card-action" id="showFullRankingBtn">
+          <i class="fas fa-list-ol"></i>
+          عرض الترتيب الكامل
+        </button>
       </div>
-      
-      <div class="col-lg-6">
-        <div class="dashboard-card animate-fadeIn">
-          <div class="card-header">
-            <i class="fas fa-chart-pie"></i> توزيع الحضور
-          </div>
-          <div class="card-body">
-            <div class="chart-card">
-              <canvas id="attendanceChart" height="250"></canvas>
-            </div>
-          </div>
+      <div class="chart-card">
+        <div class="chart-title">
+          <i class="fas fa-chart-pie"></i>
+          توزيع حضور الشهر
         </div>
+        <canvas id="attendanceChart" height="230"></canvas>
       </div>
     </div>
 
-    <!-- سكربت رسم الغرافين -->
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  // نجمع كل صفوف الطلاب
-  const rows = Array.from(document.querySelectorAll('tbody tr[id^="row-"]'));
-
-  // ====== 1. أفضل الطلاب بالنقاط (Bar Chart) ======
-  const studentsData = rows.map(row => {
-    const name   = row.cells[0].textContent.trim();
-    const points = parseInt(row.querySelector('[id^="points-"]').textContent, 10) || 0;
-    return { name, points };
-  });
-  // رتب تنازلي وخذ أول 5
-  const topStudents = studentsData
-    .sort((a, b) => b.points - a.points)
-    .slice(0, 5);
-  const barLabels = topStudents.map(s => s.name);
-  const barValues = topStudents.map(s => s.points);
-
-  const ctxBar = document.getElementById('topStudentsChart').getContext('2d');
-  new Chart(ctxBar, {
-    type: 'bar',
-    data: {
-      labels: barLabels,
-      datasets: [{
-        label: 'النقاط',
-        data: barValues
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false }
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: { precision: 0 }
-        }
-      }
-    }
-  });
-
-  // ====== 2. توزيع الحضور (Pie Chart) ======
-  let presentSum = 0, absentSum = 0, excusedSum = 0;
-  rows.forEach(row => {
-    const id = row.id.split('-')[1];
-    presentSum += parseInt(row.querySelector(`#present-${id}`).textContent, 10) || 0;
-    absentSum  += parseInt(row.querySelector(`#absent-${id}`).textContent, 10)  || 0;
-    // إذا عندك معذور كمثال id="excused-<id>"
-    excusedSum += parseInt(row.querySelector(`#excused-${id}`)?.textContent || '0', 10);
-  });
-
-  const pieLabels = ['حاضر', 'غائب', 'معذور'];
-  const pieValues = [presentSum, absentSum, excusedSum];
-
-  const ctxPie = document.getElementById('attendanceChart').getContext('2d');
-  new Chart(ctxPie, {
-    type: 'pie',
-    data: {
-      labels: pieLabels,
-      datasets: [{
-        data: pieValues
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { position: 'bottom' }
-      }
-    }
-  });
-});
-</script>
-
-    
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <!-- بطاقة جدول الطلاب مع البيانات الحقيقية -->
-<div class="dashboard-card animate-fadeIn">
-  <div class="card-header">
-    <i class="fas fa-user-graduate"></i> طلاب الحلقة: {{ halaqa.name }}
-    <div style="margin-right: auto;">
-      <a href="{% url 'halaqas:halaqa_edit' halaqa.pk %}" class="btn btn-sm btn-light" style="margin-left: 10px;">
-        <i class="fas fa-edit"></i> تعديل الحلقة
-      </a>
-      <a href="{% url 'halaqas:add_student_to_halaqa' halaqa.pk %}" class="btn btn-sm btn-light">
-        <i class="fas fa-user-plus"></i> إضافة طالب
-      </a>
+    <div class="chart-card full-width-card" id="memorizationChartCard">
+      <div class="chart-title">
+        <i class="fas fa-chart-line"></i>
+        التسميعات خلال الشهر
+      </div>
+      <canvas id="memorizationChart" height="120"></canvas>
     </div>
-  </div>
-  <div class="card-body">
-    <div class="table-responsive">
-      <table class="student-table">
-        <thead>
-          <tr>
-            <th>اسم الطالب</th>
-            <th>آخر حفظ</th>
-            <th>النقاط</th>
-            <th>الحضور</th>
-            <th>الغياب</th>
-            <th>الإجراءات</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for entry in dashboard_data %}
-          <tr {% if entry.points >= 200 %}class="top-student"{% elif entry.points < 100 %}class="low-student"{% endif %}>
-            <td>{{ entry.student.name }}</td>
-            <td>
-              {% with last_memorization=entry.student.memorization_records.last %}
-                {% if last_memorization %}
-                  {{ last_memorization.surah }} (آيات: {{ last_memorization.from_verse }}-{{ last_memorization.to_verse }})
-                {% else %}
-                  لا يوجد تسجيلات
-                {% endif %}
-              {% endwith %}
-            </td>
-            <td id="points-{{ entry.student.id }}">{{ entry.points }}</td>
-            <td id="present-{{ entry.student.id }}">{{ entry.present }}</td>
-            <td id="absent-{{ entry.student.id }}">{{ entry.absent }}</td>
-            <td>
-              <div class="action-buttons">
-                <!-- رابط ملف الطالب -->
-                  <a href="{% url 'halaqas:api:students-detail' entry.student.access_token %}"
 
-                   target="_blank"
-                   class="btn-action btn-profile"
-                   title="عرض ملف الطالب">
-                  <i class="fas fa-external-link-alt"></i>
-                </a>
-                
-                <!-- إضافة نقاط -->
-                <form class="ajax-form" data-type="points" action="{% url 'halaqas:api:points-list' %}" style="display: inline;">
-                  {% csrf_token %}
-                  <input type="hidden" name="student" value="{{ entry.student.id }}">
-                  <input type="hidden" name="halaqa" value="{{ halaqa.id }}">
-                  <button type="button" class="btn-action btn-points" title="إضافة نقاط"
-                          onclick="showPointsModal('{{ entry.student.id }}', '{{ entry.student.name }}', this.form)">
-                    <i class="fas fa-plus"></i>
-                  </button>
-                </form>
-                
-                <!-- تسجيل حفظ جديد -->
-                <form class="ajax-form" data-type="memorization" action="{% url 'students:memorizationrecord-list' %}" style="display: inline;">
-                  {% csrf_token %}
-                  <input type="hidden" name="student" value="{{ entry.student.id }}">
-                  <button type="button" class="btn-action btn-save" title="تسجيل حفظ جديد"
-                          onclick="showMemorizationModal('{{ entry.student.id }}', '{{ entry.student.name }}', this.form)">
-                    <i class="fas fa-book"></i>
-                  </button>
-                </form>
-                
-                <!-- تسجيل حضور -->
-                {% if entry.current_session_id %}
-                <form class="ajax-form" data-type="attendance" action="{% url 'halaqas:api:attendance-list' %}" method="post" style="display: inline;">
-                  {% csrf_token %}
-                  <input type="hidden" name="student" value="{{ entry.student.id }}">
-                  <input type="hidden" name="session" value="{{ entry.current_session_id }}">
-                  <button type="button" class="btn-action btn-attendance" title="تسجيل حضور"
-                          onclick="showAttendanceModal('{{ entry.student.id }}', '{{ entry.current_session_id }}', '{{ entry.student.name }}', this.form)">
-                    <i class="fas fa-user-check"></i>
-                  </button>
-                </form>
-                {% else %}
-                <button class="btn-action btn-attendance" title="لا توجد جلسة نشطة" disabled>
-                  <i class="fas fa-user-check"></i>
-                </button>
-                {% endif %}
-                
-                <!-- خطة الطالب -->
-                <form class="ajax-form" data-type="plans" action="{% url 'halaqas:api:plans-list' %}" style="display: inline;">
-                  {% csrf_token %}
-                  <input type="hidden" name="student" value="{{ entry.student.id }}">
-                  <input type="hidden" name="halaqa" value="{{ halaqa.id }}">
-                  <button type="button" class="btn-action btn-plan" title="خطة الطالب"
-                          onclick="showPlanModal('{{ entry.student.id }}', '{{ entry.student.name }}', this.form)">
-                    <i class="fas fa-tasks"></i>
-                  </button>
-                </form>
-              </div>
-            </td>
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="6" class="text-center py-4">لا يوجد طلاب مسجلين في هذه الحلقة</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+    <div class="report-card mb-4">
+      <div class="report-header">
+        <div class="report-heading">
+          <button type="button" class="report-toggle" id="reportToggleBtn" aria-expanded="false" aria-controls="dailyReportBody">
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div>
+            <h3>
+              <i class="fas fa-file-lines"></i>
+              معاينة التقرير اليومي
+            </h3>
+            <div class="report-summary" id="dailyReportSummary"></div>
+          </div>
+        </div>
+        <div class="report-actions">
+          <form method="get" class="date-context-form">
+            <div class="date-context-copy">
+              <span class="date-context-label">
+                <i class="fas fa-calendar-day"></i>
+                تاريخ الصفحة
+              </span>
+              <span class="date-context-helper">كل إجراءات اليوم مرتبطة بالتاريخ المحدد</span>
+            </div>
+            <input type="date" class="form-control date-context-input" name="date" value="{{ selected_date|date:'Y-m-d' }}">
+            <button type="submit" class="btn btn-soft btn-primary-soft">
+              <i class="fas fa-arrow-rotate-left"></i>
+              عرض
+            </button>
+          </form>
+          <div class="report-button-group">
+            <button type="button" class="btn btn-soft" id="reportHistoryBtn">
+              <i class="fas fa-clock-rotate-left"></i>
+              سجل التقارير
+            </button>
+            <button type="button" class="btn btn-soft" id="copyPreviewBtn">
+              <i class="fas fa-copy"></i>
+              نسخ التقرير
+            </button>
+          </div>
+        </div>
+        <button type="button" class="btn btn-soft d-none" id="copyPreviewBtnLegacy">
+          <i class="fas fa-copy"></i>
+          نسخ التقرير
+        </button>
+      </div>
+      <div class="report-body" id="dailyReportBody">
+        <pre class="report-preview" id="dailyReportPreview">{{ daily_report_preview }}</pre>
+      </div>
     </div>
-  </div>
-</div>
 
-<script>
-// دالة عامة لإرسال البيانات
-function submitForm(form, data) {
-  const url = form.action;
-  fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value
-    },
-    body: JSON.stringify(data)
-  })
-  .then(response => {
-    if (!response.ok) throw response;
-    return response.json();
-  })
-  .then(json => {
-    location.reload();
-  })
-  .catch(err => {
-    console.error('Request failed', err);
-    alert('حدث خطأ أثناء الحفظ.');
-  });
-}
-
-// نماذج الإجراءات
-function showPointsModal(studentId, studentName, form) {
-  const points = prompt(`إضافة/خصم نقاط للطالب ${studentName}:`, '10');
-  if (points !== null) {
-    const reason = prompt('سبب الإضافة/الخصم:', 'مشاركة في الحلقة');
-    if (reason !== null) {
-      const data = {
-        student: studentId,
-        halaqa: '{{ halaqa.id }}',
-        value: points,
-        reason: reason
-      };
-      submitForm(form, data);
-    }
-  }
-}
-
-function showMemorizationModal(studentId, studentName, form) {
-  const surah = prompt(`تسجيل حفظ جديد للطالب ${studentName}\nاسم السورة:`, 'البقرة');
-  if (surah !== null) {
-    const fromVerse = prompt('من آية:', '1');
-    if (fromVerse !== null) {
-      const toVerse = prompt('إلى آية:', '5');
-      if (toVerse !== null) {
-        const data = {
-          student: studentId,
-          surah: surah,
-          from_verse: fromVerse,
-          to_verse: toVerse
-        };
-        submitForm(form, data);
-      }
-    }
-  }
-}
-
-function showAttendanceModal(studentId, sessionId, studentName, form) {
-  const status = prompt(`تسجيل حضور للطالب ${studentName}\n(حاضر/غائب/معذور):`, 'حاضر');
-  if (status !== null && ['حاضر', 'غائب', 'معذور'].includes(status)) {
-    const notes = prompt('ملاحظات إضافية (اختياري):', '');
-    const data = {
-      student: studentId,
-      session: sessionId,
-      status: status === 'حاضر' ? 'present' : status === 'غائب' ? 'absent' : 'excused',
-      notes: notes || ''
-    };
-    submitForm(form, data);
-  }
-}
-
-function showPlanModal(studentId, studentName, form) {
-  const target = prompt(`إنشاء خطة حفظ للطالب ${studentName}\nالهدف:`, 'حفظ سورة البقرة من 1 إلى 20');
-  if (target !== null) {
-    const startDate = prompt('تاريخ البدء (YYYY-MM-DD):', new Date().toISOString().split('T')[0]);
-    if (startDate !== null) {
-      const endDate = prompt('تاريخ الانتهاء (YYYY-MM-DD):', 
-        new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
-      if (endDate !== null) {
-        const data = {
-          student: studentId,
-          halaqa: '{{ halaqa.id }}',
-          target: target,
-          start_date: startDate,
-          end_date: endDate
-        };
-        submitForm(form, data);
-      }
-    }
-  }
-}
-</script>
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <!-- بطاقة أداء الحفظ -->
     <div class="dashboard-card animate-fadeIn">
       <div class="card-header">
-        <i class="fas fa-chart-bar"></i> أداء الحفظ الشهري
+        <i class="fas fa-user-graduate"></i>
+        طلاب الحلقة: {{ halaqa.name }}
       </div>
       <div class="card-body">
-        <div class="chart-card">
-          <canvas id="savingChart" height="250"></canvas>
+        <div class="table-responsive">
+          <table class="student-table">
+            <thead>
+              <tr>
+                <th>الطالب</th>
+                <th>آخر تسميع</th>
+                <th>النقاط</th>
+                <th>الحضور</th>
+                <th>الخطة</th>
+                <th>الواجب</th>
+                <th>إجراءات</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for entry in dashboard_data %}
+              <tr id="student-row-{{ entry.student.id }}">
+                <td data-label="اسم الطالب">
+                  <div>
+                    <div class="student-name">{{ entry.student.name }}</div>
+                    <div class="student-badges">
+                      {% if entry.grade_label != 'غير محدد' %}
+                      <span class="compact-badge">{{ entry.grade_label }}</span>
+                      {% endif %}
+                      {% if entry.category_label != 'غير مصنف' %}
+                      <span class="compact-badge">{{ entry.category_label }}</span>
+                      {% endif %}
+                    </div>
+                  </div>
+                </td>
+                <td data-label="آخر تسميع">
+                  <div class="mini-stack" id="student-memorization-{{ entry.student.id }}">
+                    {% if entry.last_memorization %}
+                    <strong>{{ entry.last_memorization.surah }}</strong>
+                    <span class="last-range">{{ entry.last_memorization.from_verse }} - {{ entry.last_memorization.to_verse }}</span>
+                    {% if entry.last_memorization.evaluation %}
+                    <span class="eval-pill {{ entry.last_memorization.evaluation }}">
+                      {{ entry.last_memorization.get_evaluation_display }}
+                    </span>
+                    {% endif %}
+                    {% else %}
+                    <span class="student-subtext">لا يوجد</span>
+                    {% endif %}
+                  </div>
+                </td>
+                <td data-label="النقاط">
+                  <span
+                    class="points-pill {% if entry.points < 0 %}negative{% endif %}"
+                    id="student-points-{{ entry.student.id }}"
+                  >
+                    {{ entry.points }}
+                  </span>
+                </td>
+                <td data-label="الحضور">
+                  <div class="mini-stack">
+                    <div class="attendance-summary">
+                      <span class="summary-badge present" id="student-present-{{ entry.student.id }}"><i class="fas fa-user-check"></i> {{ entry.present }}</span>
+                      <span class="summary-badge absent" id="student-absent-{{ entry.student.id }}"><i class="fas fa-user-xmark"></i> {{ entry.absent }}</span>
+                      <span class="summary-badge excused" id="student-excused-{{ entry.student.id }}"><i class="fas fa-circle-exclamation"></i> {{ entry.excused }}</span>
+                    </div>
+                    <span
+                      class="today-status-pill {% if entry.today_attendance_status %}{{ entry.today_attendance_status }}{% endif %}"
+                      id="student-today-status-{{ entry.student.id }}"
+                    >
+                      {% if entry.today_attendance_status == 'present' %}
+                        حاضر
+                      {% elif entry.today_attendance_status == 'absent' %}
+                        غائب
+                      {% elif entry.today_attendance_status == 'excused' %}
+                        مبرر
+                      {% else %}
+                        غير مسجل
+                      {% endif %}
+                    </span>
+                  </div>
+                </td>
+                <td data-label="الخطة الحالية">
+                  <div class="mini-stack" id="student-plan-{{ entry.student.id }}">
+                    {% if entry.plan %}
+                    <span class="plan-pill" title="{{ entry.plan.target }}">{{ entry.plan.target }}</span>
+                    <span class="plan-dates">
+                      {{ entry.plan.start_date|date:"Y-m-d" }} إلى {{ entry.plan.end_date|date:"Y-m-d" }}
+                    </span>
+                    {% else %}
+                    <span class="student-subtext">لا توجد</span>
+                    {% endif %}
+                  </div>
+                </td>
+                <td data-label="الواجب">
+                  <div class="mini-stack" id="student-homework-{{ entry.student.id }}">
+                    {% if entry.homework %}
+                    <span class="homework-pill {{ entry.homework.status }}">{{ entry.homework.status_label }}</span>
+                    <strong class="homework-text" title="{{ entry.homework.meta_text }}">{{ entry.homework.meta_text }}</strong>
+                    <span class="student-subtext">{{ entry.homework.detail_text }}</span>
+                    {% else %}
+                    <span class="student-subtext">لا يوجد</span>
+                    {% endif %}
+                  </div>
+                </td>
+                <td data-label="الإجراءات" class="actions-cell">
+                  <div
+                    class="action-buttons"
+                    data-student-id="{{ entry.student.id }}"
+                    data-student-name="{{ entry.student.name }}"
+                    data-session-id="{{ entry.current_session_id|default:'' }}"
+                    data-attendance-id="{{ entry.today_attendance_id|default:'' }}"
+                    data-attendance-status="{{ entry.today_attendance_status|default:'' }}"
+                    data-attendance-notes="{{ entry.today_attendance_notes|default:'' }}"
+                    data-plan-id="{{ entry.plan_id|default:'' }}"
+                    data-plan-target="{% if entry.plan %}{{ entry.plan.target }}{% endif %}"
+                    data-plan-start="{% if entry.plan %}{{ entry.plan.start_date|date:'Y-m-d' }}{% endif %}"
+                    data-plan-end="{% if entry.plan %}{{ entry.plan.end_date|date:'Y-m-d' }}{% endif %}"
+                    data-plan-notes="{% if entry.plan %}{{ entry.plan.notes }}{% endif %}"
+                    data-homework-id="{% if entry.homework %}{{ entry.homework.id }}{% endif %}"
+                    data-homework-status="{% if entry.homework %}{{ entry.homework.status }}{% endif %}"
+                    data-homework-assignment-type="{% if entry.homework %}{{ entry.homework.assignment_type }}{% endif %}"
+                    data-homework-assignment-text="{% if entry.homework %}{{ entry.homework.assignment_text }}{% endif %}"
+                    data-homework-assignment-notes="{% if entry.homework %}{{ entry.homework.assignment_notes }}{% endif %}"
+                    data-homework-assigned-date="{% if entry.homework %}{{ entry.homework.assigned_date_iso }}{% endif %}"
+                    data-homework-evaluation="{% if entry.homework %}{{ entry.homework.evaluation }}{% endif %}"
+                    data-homework-evaluation-notes="{% if entry.homework %}{{ entry.homework.evaluation_notes }}{% endif %}"
+                    data-homework-evaluation-date="{% if entry.homework %}{{ entry.homework.evaluation_date_iso }}{% endif %}"
+                  >
+                    <a
+                      href="{% url 'students:students_data' entry.student.access_token %}"
+                      target="_blank"
+                      class="btn-action btn-profile"
+                      title="عرض ملف الطالب"
+                    >
+                      <i class="fas fa-up-right-from-square"></i>
+                    </a>
+
+                    <button type="button" class="btn-action btn-points" title="إضافة نقاط" data-action="points">
+                      <i class="fas fa-plus"></i>
+                    </button>
+
+                    <button type="button" class="btn-action btn-save" title="تسجيل تسميع" data-action="memorization">
+                      <i class="fas fa-book"></i>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="btn-action btn-attendance"
+                      title="تسجيل حضور"
+                      data-action="attendance"
+                      {% if not entry.current_session_id %}disabled{% endif %}
+                    >
+                      <i class="fas fa-user-check"></i>
+                    </button>
+
+                    <button type="button" class="btn-action btn-plan" title="خطة الطالب" data-action="plan">
+                      <i class="fas fa-tasks"></i>
+                    </button>
+
+                    <button type="button" class="btn-action btn-homework" title="إدارة الواجب" data-action="homework">
+                      <i class="fas fa-clipboard-list"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="7" data-label="الحالة">لا يوجد طلاب مسجلين في هذه الحلقة</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-footer">معهد قباء لتحفيظ القرآن الكريم</div>
+  </div>
+
+  <div id="memorizationChartAnchor"></div>
+  {{ memorization_chart|json_script:"memorization-data" }}
+  {{ report_state|json_script:"report-state-data" }}
+  {{ student_table_state|json_script:"student-table-state" }}
+  {{ point_reason_presets|json_script:"point-reason-presets" }}
+  {{ plan_target_presets|json_script:"plan-target-presets" }}
+  {{ evaluation_options|json_script:"evaluation-options-data" }}
+  {{ homework_type_options|json_script:"homework-type-options-data" }}
+  {{ homework_evaluation_options|json_script:"homework-evaluation-options-data" }}
+
+  <div class="modal fade" id="fullRankingModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-list-ol"></i> الترتيب الكامل بالنقاط</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-subtitle" id="fullRankingSubtitle"></div>
+          <div class="ranking-list" id="fullRankingList"></div>
         </div>
       </div>
     </div>
   </div>
 
+  <div class="modal fade" id="dailyHistoryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-clock-rotate-left"></i> سجل التقارير اليومية</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-subtitle" id="dailyHistorySubtitle"></div>
+          <div class="history-list" id="dailyHistoryList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<!-- سكربت رسم أداء الحفظ الشهري -->
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const joinCode = '{{ halaqa.join_code }}';
+  <div class="modal fade" id="pointsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-star"></i> إضافة نقاط</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-danger alert-inline" id="pointsAlert"></div>
+          <div class="modal-subtitle" id="pointsStudentLabel"></div>
+          <form id="pointsForm">
+            {% csrf_token %}
+            <input type="hidden" id="pointsStudentId" name="student">
+            <input type="hidden" id="pointsHalaqaId" name="halaqa" value="{{ halaqa.id }}">
 
-  // 1. جلب سجلات الحفظ من الـ API
-  fetch(`/api/memorization-records/?halaqa=${joinCode}`)
-    .then(r => r.json())
-    .then(records => {
-      // 2. نحسب عدد الآيات في كل سجل
-      const byDate = {};
-      records.forEach(rec => {
-        const count = (rec.to_verse - rec.from_verse + 1) || 0;
-        if (!byDate[rec.date]) byDate[rec.date] = 0;
-        byDate[rec.date] += count;
+            <div class="mb-3">
+              <label class="form-label">تاريخ الإجراء</label>
+              <input type="date" class="form-control" id="pointsActionDate" name="action_date" readonly>
+              <span class="field-note">سيتم احتساب النقاط على التاريخ المحدد في أعلى الصفحة.</span>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">عدد النقاط</label>
+              <input type="number" class="form-control" id="pointsValue" name="value" value="5" step="1" required>
+              <span class="field-note">يمكن استخدام القيمة السالبة عند الحاجة إلى خصم نقاط.</span>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">سبب الإجراء</label>
+              <select class="form-select" id="pointsReasonSelect">
+                {% for reason in point_reason_presets %}
+                <option value="{{ reason }}">{{ reason }}</option>
+                {% endfor %}
+              </select>
+              <div class="modal-chip-row" id="pointsReasonChips"></div>
+            </div>
+
+            <div class="mb-0">
+              <label class="form-label">الملاحظة النهائية</label>
+              <textarea class="form-control" id="pointsReason" name="reason" rows="3" required></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-soft" data-bs-dismiss="modal">إلغاء</button>
+          <button type="button" class="btn btn-soft btn-primary-soft" id="submitPointsBtn">حفظ</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="memorizationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-book-open"></i> تسجيل تسميع</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-danger alert-inline" id="memorizationAlert"></div>
+          <div class="modal-subtitle" id="memorizationStudentLabel"></div>
+          <form id="memorizationForm">
+            {% csrf_token %}
+            <input type="hidden" id="memorizationStudentId" name="student">
+
+            <div class="mb-3">
+              <label class="form-label">تاريخ التسميع</label>
+              <input type="date" class="form-control" id="memorizationDate" name="date" readonly>
+              <span class="field-note">يتم تسجيل التسميع على تاريخ الصفحة الحالي.</span>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">السورة</label>
+              <select class="form-select" id="memorizationSurah" name="surah" required></select>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-6">
+                <label class="form-label">من آية</label>
+                <input type="number" class="form-control" id="memorizationFromVerse" name="from_verse" min="1" value="1" required>
+              </div>
+              <div class="col-6">
+                <label class="form-label">إلى آية</label>
+                <input type="number" class="form-control" id="memorizationToVerse" name="to_verse" min="1" value="1" required>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">تقييم التسميع</label>
+              <select class="form-select" id="memorizationEvaluation" name="evaluation">
+                <option value="">بدون تقييم</option>
+                {% for option in evaluation_options %}
+                <option value="{{ option.value }}">{{ option.label }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="memorizationApproved" name="is_approved">
+              <label class="form-check-label" for="memorizationApproved">اعتماد التسميع مباشرة</label>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-soft" data-bs-dismiss="modal">إلغاء</button>
+          <button type="button" class="btn btn-soft btn-primary-soft" id="submitMemorizationBtn">حفظ</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="attendanceModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-user-check"></i> تسجيل حضور</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-danger alert-inline" id="attendanceAlert"></div>
+          <div class="modal-subtitle" id="attendanceStudentLabel"></div>
+          <form id="attendanceForm">
+            {% csrf_token %}
+            <input type="hidden" id="attendanceStudentId" name="student">
+            <input type="hidden" id="attendanceSessionId" name="session">
+            <input type="hidden" id="attendanceRecordId" name="record_id">
+
+            <div class="mb-3">
+              <label class="form-label">تاريخ الحضور</label>
+              <input type="date" class="form-control" id="attendanceDate" readonly>
+              <span class="field-note">الحضور في هذه النافذة مرتبط بتاريخ الصفحة المختار.</span>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">الحالة</label>
+              <select class="form-select" id="attendanceStatus" name="status" required>
+                <option value="present">حاضر</option>
+                <option value="absent">غائب</option>
+                <option value="excused">مبرر</option>
+              </select>
+            </div>
+
+            <div class="mb-0">
+              <label class="form-label">ملاحظة مختصرة</label>
+              <textarea class="form-control" id="attendanceNotes" name="notes" rows="3"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-soft" data-bs-dismiss="modal">إلغاء</button>
+          <button type="button" class="btn btn-soft btn-primary-soft" id="submitAttendanceBtn">حفظ</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="planModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-list-check"></i> خطة الطالب</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-danger alert-inline" id="planAlert"></div>
+          <div class="modal-subtitle" id="planStudentLabel"></div>
+          <form id="planForm">
+            {% csrf_token %}
+            <input type="hidden" id="planStudentId" name="student">
+            <input type="hidden" id="planHalaqaId" name="halaqa" value="{{ halaqa.id }}">
+            <input type="hidden" id="planRecordId" name="record_id">
+
+            <div class="mb-3">
+              <label class="form-label">الخطة الجاهزة</label>
+              <select class="form-select" id="planTargetSelect">
+                {% for target in plan_target_presets %}
+                <option value="{{ target }}">{{ target }}</option>
+                {% endfor %}
+              </select>
+              <div class="modal-chip-row" id="planTargetChips"></div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">الهدف النهائي</label>
+              <textarea class="form-control" id="planTarget" name="target" rows="3" required></textarea>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-6">
+                <label class="form-label">من</label>
+                <input type="date" class="form-control" id="planStartDate" name="start_date" required>
+              </div>
+              <div class="col-6">
+                <label class="form-label">إلى</label>
+                <input type="date" class="form-control" id="planEndDate" name="end_date" required>
+              </div>
+            </div>
+
+            <div class="mb-0">
+              <label class="form-label">ملاحظات</label>
+              <textarea class="form-control" id="planNotes" name="notes" rows="3"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-soft" data-bs-dismiss="modal">إلغاء</button>
+          <button type="button" class="btn btn-soft btn-primary-soft" id="submitPlanBtn">حفظ</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="homeworkModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-clipboard-list"></i> واجب الطالب</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-danger alert-inline" id="homeworkAlert"></div>
+          <div class="modal-subtitle" id="homeworkStudentLabel"></div>
+
+          <div class="homework-stage-switch">
+            <button type="button" class="homework-stage-btn" data-homework-stage="assign">إسناد الواجب</button>
+            <button type="button" class="homework-stage-btn" data-homework-stage="evaluate">تقييم الواجب</button>
+          </div>
+
+          <div class="homework-summary-box" id="homeworkCurrentSummary"></div>
+
+          <form id="homeworkForm">
+            {% csrf_token %}
+            <input type="hidden" id="homeworkStudentId" name="student">
+            <input type="hidden" id="homeworkHalaqaId" name="halaqa" value="{{ halaqa.id }}">
+            <input type="hidden" id="homeworkStage" value="assign">
+
+            <div class="homework-stage-panel" data-homework-panel="assign">
+              <div class="mb-3">
+                <label class="form-label">تاريخ الإسناد</label>
+                <input type="date" class="form-control" id="homeworkAssignedDate" name="assigned_date" readonly>
+                <span class="field-note">الواجب يرتبط بتاريخ الصفحة الحالي أو بتاريخ الواجب المفتوح عند تعديله.</span>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">نوع الواجب</label>
+                <select class="form-select" id="homeworkAssignmentType" name="assignment_type">
+                  {% for option in homework_type_options %}
+                  <option value="{{ option.value }}">{{ option.label }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">تفاصيل الواجب</label>
+                <input type="text" class="form-control" id="homeworkAssignmentText" name="assignment_text" maxlength="120" placeholder="مثل: سورة الملك أو الصفحات 12-14">
+              </div>
+
+              <div class="mb-0">
+                <label class="form-label">ملاحظة قصيرة</label>
+                <textarea class="form-control" id="homeworkAssignmentNotes" name="assignment_notes" rows="2"></textarea>
+              </div>
+            </div>
+
+            <div class="homework-stage-panel" data-homework-panel="evaluate">
+              <div class="mb-3">
+                <label class="form-label">تاريخ التقييم</label>
+                <input type="date" class="form-control" id="homeworkEvaluationDate" name="evaluation_date" readonly>
+                <span class="field-note">سيتم حفظ التقييم على تاريخ الصفحة الحالي.</span>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">نتيجة الواجب</label>
+                <select class="form-select" id="homeworkEvaluation" name="evaluation">
+                  {% for option in homework_evaluation_options %}
+                  <option value="{{ option.value }}">{{ option.label }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="mb-0">
+                <label class="form-label">ملاحظة قصيرة</label>
+                <textarea class="form-control" id="homeworkEvaluationNotes" name="evaluation_notes" rows="2"></textarea>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-soft" data-bs-dismiss="modal">إلغاء</button>
+          <button type="button" class="btn btn-soft btn-primary-soft" id="submitHomeworkBtn">حفظ</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const pointsListUrl = "{% url 'halaqas:api:points-list' %}";
+    const attendanceListUrl = "{% url 'halaqas:api:attendance-list' %}";
+    const homeworksListUrl = "{% url 'halaqas:api:homeworks-list' %}";
+    const plansListUrl = "{% url 'halaqas:api:plans-list' %}";
+    const memorizationListUrl = "{% url 'students:memorizationrecord-list' %}";
+
+    const pointsModal = new bootstrap.Modal(document.getElementById('pointsModal'));
+    const memorizationModal = new bootstrap.Modal(document.getElementById('memorizationModal'));
+    const attendanceModal = new bootstrap.Modal(document.getElementById('attendanceModal'));
+    const planModal = new bootstrap.Modal(document.getElementById('planModal'));
+    const homeworkModal = new bootstrap.Modal(document.getElementById('homeworkModal'));
+    const fullRankingModal = new bootstrap.Modal(document.getElementById('fullRankingModal'));
+    const dailyHistoryModal = new bootstrap.Modal(document.getElementById('dailyHistoryModal'));
+
+    const reportState = JSON.parse(document.getElementById('report-state-data').textContent);
+    reportState.daily_history = reportState.daily_history || [];
+    reportState.recentActions = [];
+
+    const studentTableState = new Map(
+      JSON.parse(document.getElementById('student-table-state').textContent).map((student) => [String(student.id), student])
+    );
+    const pointReasonPresets = JSON.parse(document.getElementById('point-reason-presets').textContent);
+    const planTargetPresets = JSON.parse(document.getElementById('plan-target-presets').textContent);
+    const evaluationOptions = JSON.parse(document.getElementById('evaluation-options-data').textContent);
+    const evaluationLabelMap = Object.fromEntries(evaluationOptions.map((option) => [option.value, option.label]));
+    const homeworkTypeOptions = JSON.parse(document.getElementById('homework-type-options-data').textContent);
+    const homeworkTypeLabelMap = Object.fromEntries(homeworkTypeOptions.map((option) => [option.value, option.label]));
+    const homeworkEvaluationOptions = JSON.parse(document.getElementById('homework-evaluation-options-data').textContent);
+    const homeworkEvaluationLabelMap = Object.fromEntries(homeworkEvaluationOptions.map((option) => [option.value, option.label]));
+    const memorizationSeed = JSON.parse(document.getElementById('memorization-data').textContent);
+
+    const chartState = {
+      memorizationEntries: [...(memorizationSeed.entries || [])],
+    };
+
+    const chartInstances = {
+      topStudents: null,
+      attendance: null,
+      memorization: null,
+    };
+
+    const surahNames = [
+      'الفاتحة', 'البقرة', 'آل عمران', 'النساء', 'المائدة', 'الأنعام', 'الأعراف', 'الأنفال', 'التوبة', 'يونس',
+      'هود', 'يوسف', 'الرعد', 'إبراهيم', 'الحجر', 'النحل', 'الإسراء', 'الكهف', 'مريم', 'طه',
+      'الأنبياء', 'الحج', 'المؤمنون', 'النور', 'الفرقان', 'الشعراء', 'النمل', 'القصص', 'العنكبوت', 'الروم',
+      'لقمان', 'السجدة', 'الأحزاب', 'سبأ', 'فاطر', 'يس', 'الصافات', 'ص', 'الزمر', 'غافر',
+      'فصلت', 'الشورى', 'الزخرف', 'الدخان', 'الجاثية', 'الأحقاف', 'محمد', 'الفتح', 'الحجرات', 'ق',
+      'الذاريات', 'الطور', 'النجم', 'القمر', 'الرحمن', 'الواقعة', 'الحديد', 'المجادلة', 'الحشر', 'الممتحنة',
+      'الصف', 'الجمعة', 'المنافقون', 'التغابن', 'الطلاق', 'التحريم', 'الملك', 'القلم', 'الحاقة', 'المعارج',
+      'نوح', 'الجن', 'المزمل', 'المدثر', 'القيامة', 'الإنسان', 'المرسلات', 'النبأ', 'النازعات', 'عبس',
+      'التكوير', 'الانفطار', 'المطففين', 'الانشقاق', 'البروج', 'الطارق', 'الأعلى', 'الغاشية', 'الفجر', 'البلد',
+      'الشمس', 'الليل', 'الضحى', 'الشرح', 'التين', 'العلق', 'القدر', 'البينة', 'الزلزلة', 'العاديات',
+      'القارعة', 'التكاثر', 'العصر', 'الهمزة', 'الفيل', 'قريش', 'الماعون', 'الكوثر', 'الكافرون', 'النصر',
+      'المسد', 'الإخلاص', 'الفلق', 'الناس'
+    ];
+
+    function getCsrfToken() {
+      return document.querySelector('input[name=csrfmiddlewaretoken]')?.value || '';
+    }
+
+    function detailUrl(listUrl, recordId) {
+      return `${listUrl}${recordId}/`;
+    }
+
+    function todayString() {
+      return new Date().toLocaleDateString('en-CA');
+    }
+
+    function plusDays(baseDate, days) {
+      const date = new Date(baseDate);
+      date.setDate(date.getDate() + days);
+      return date.toLocaleDateString('en-CA');
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>"']/g, (match) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      }[match]));
+    }
+
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (error) {
+        window.prompt('انسخ النص يدويًا', text);
+      }
+    }
+
+    function statusLabel(status) {
+      if (status === 'present') {
+        return 'حاضر';
+      }
+      if (status === 'absent') {
+        return 'غائب';
+      }
+      if (status === 'excused') {
+        return 'مبرر';
+      }
+      return 'غير مسجل';
+    }
+
+    function homeworkStatusLabel(status) {
+      if (status === 'assigned') {
+        return 'تم الإسناد';
+      }
+      if (status === 'pending') {
+        return 'بانتظار التقييم';
+      }
+      if (status === 'evaluated') {
+        return 'تم التقييم';
+      }
+      return '';
+    }
+
+    function homeworkMetaText(student) {
+      if (!student.homework_assignment_text) {
+        return '';
+      }
+      const typeLabel = student.homework_assignment_type_label || homeworkTypeLabelMap[student.homework_assignment_type] || '';
+      return `${typeLabel}: ${student.homework_assignment_text}`;
+    }
+
+    function homeworkDetailText(student) {
+      if (student.homework_status === 'evaluated' && student.homework_evaluation_label && student.homework_evaluation_date) {
+        return `${student.homework_evaluation_label} - ${student.homework_evaluation_date}`;
+      }
+      if (student.homework_assigned_date) {
+        return `أُسند في ${student.homework_assigned_date}`;
+      }
+      return '';
+    }
+
+    function formatSignedNumber(value) {
+      if (value > 0) {
+        return `+${value}`;
+      }
+      return `${value}`;
+    }
+
+    function sortStudentsByPoints(firstStudent, secondStudent) {
+      return (Number(secondStudent.points) - Number(firstStudent.points))
+        || String(firstStudent.name || '').localeCompare(String(secondStudent.name || ''), 'ar');
+    }
+
+    function memorizationLabels() {
+      return chartState.memorizationEntries.map((entry) => entry.label);
+    }
+
+    function memorizationValues() {
+      return chartState.memorizationEntries.map((entry) => entry.value);
+    }
+
+    function createEmptyHistoryEntry(dateValue) {
+      const dateObject = new Date(`${dateValue}T00:00:00`);
+      return {
+        date: dateValue,
+        date_label: dateValue,
+        display_date: Number.isNaN(dateObject.getTime())
+          ? dateValue
+          : dateObject.toLocaleDateString('en-GB'),
+        session_label: 'لا توجد جلسة مسجلة لهذا التاريخ',
+        present: [],
+        absent: [],
+        excused: [],
+        notes: [],
+        highlights: [],
+      };
+    }
+
+    function ensureHistoryEntry(dateValue) {
+      let entry = reportState.daily_history.find((item) => item.date === dateValue);
+      if (!entry) {
+        entry = createEmptyHistoryEntry(dateValue);
+        reportState.daily_history.unshift(entry);
+      }
+      reportState.daily_history.sort((firstDay, secondDay) => secondDay.date.localeCompare(firstDay.date));
+      return entry;
+    }
+
+    function selectedHistoryEntry() {
+      return ensureHistoryEntry(reportState.selected_date);
+    }
+
+    function pushUnique(list, value) {
+      if (!value || list.includes(value)) {
+        return;
+      }
+      list.push(value);
+    }
+
+    function removeValue(list, value) {
+      const itemIndex = list.indexOf(value);
+      if (itemIndex >= 0) {
+        list.splice(itemIndex, 1);
+      }
+    }
+
+    function historyNamesMarkup(items, typeClass) {
+      if (!items.length) {
+        return '<div class="history-empty">لا توجد بيانات لهذا القسم.</div>';
+      }
+
+      return `<div class="history-tags">${items.map((item) => `
+        <span class="history-tag ${typeClass}">${escapeHtml(item)}</span>
+      `).join('')}</div>`;
+    }
+
+    function historyLinesMarkup(items) {
+      if (!items.length) {
+        return '<div class="history-empty">لا توجد تفاصيل إضافية.</div>';
+      }
+
+      return `<div class="history-lines">${items.map((item) => `
+        <div>${escapeHtml(item)}</div>
+      `).join('')}</div>`;
+    }
+
+    function renderFullRanking() {
+      const rankingContainer = document.getElementById('fullRankingList');
+      const rankingSubtitle = document.getElementById('fullRankingSubtitle');
+      const rankedStudents = [...studentTableState.values()].sort(sortStudentsByPoints);
+
+      rankingSubtitle.textContent = `الترتيب حتى ${reportState.date_label}`;
+
+      if (!rankedStudents.length) {
+        rankingContainer.innerHTML = '<div class="history-empty">لا يوجد طلاب لعرض الترتيب.</div>';
+        return;
+      }
+
+      rankingContainer.innerHTML = rankedStudents.map((student, index) => `
+        <div class="ranking-row">
+          <div class="ranking-rank">${index + 1}</div>
+          <div class="ranking-main">
+            <div class="ranking-name">${escapeHtml(student.name)}</div>
+            <div class="ranking-meta">${escapeHtml(statusLabel(student.today_attendance_status))} • ${escapeHtml(student.present)} حضور • ${escapeHtml(student.absent)} غياب</div>
+          </div>
+          <div class="ranking-points ${Number(student.points) < 0 ? 'negative' : ''}">${escapeHtml(formatSignedNumber(Number(student.points)))}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderDailyHistory() {
+      const historyContainer = document.getElementById('dailyHistoryList');
+      const historySubtitle = document.getElementById('dailyHistorySubtitle');
+      historySubtitle.textContent = `تفاصيل الأيام المسجلة في الحلقة مع تمييز تاريخ الصفحة الحالي ${reportState.date_label}`;
+
+      if (!reportState.daily_history.length) {
+        historyContainer.innerHTML = '<div class="history-empty">لا يوجد سجل تقارير يومية بعد.</div>';
+        return;
+      }
+
+      historyContainer.innerHTML = reportState.daily_history.map((day) => `
+        <div class="history-card ${day.date === reportState.selected_date ? 'is-selected' : ''}">
+          <div class="history-card-header">
+            <div>
+              <h6 class="history-card-title">${escapeHtml(day.date_label)}</h6>
+              <div class="history-card-meta">${escapeHtml(day.session_label || 'لا توجد جلسة مسجلة')}</div>
+            </div>
+            <div class="history-badges">
+              <span class="history-pill"><i class="fas fa-user-check"></i> ${escapeHtml(day.present.length)} حضور</span>
+              <span class="history-pill"><i class="fas fa-user-xmark"></i> ${escapeHtml(day.absent.length)} غياب</span>
+              <span class="history-pill"><i class="fas fa-circle-exclamation"></i> ${escapeHtml(day.excused.length)} مبرر</span>
+            </div>
+          </div>
+          <div class="history-sections">
+            <div>
+              <div class="history-block-title">الحاضرون</div>
+              ${historyNamesMarkup(day.present || [], 'present')}
+            </div>
+            <div>
+              <div class="history-block-title">الغائبون</div>
+              ${historyNamesMarkup(day.absent || [], 'absent')}
+            </div>
+            <div>
+              <div class="history-block-title">المعذورون</div>
+              ${historyNamesMarkup(day.excused || [], 'excused')}
+            </div>
+            <div>
+              <div class="history-block-title">ملاحظات اليوم</div>
+              ${historyLinesMarkup(day.notes || [])}
+            </div>
+            <div>
+              <div class="history-block-title">أبرز اليوم</div>
+              ${historyLinesMarkup(day.highlights || [])}
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function showInlineAlert(elementId, message) {
+      const alertBox = document.getElementById(elementId);
+      alertBox.textContent = message;
+      alertBox.style.display = 'block';
+    }
+
+    function hideInlineAlert(elementId) {
+      const alertBox = document.getElementById(elementId);
+      alertBox.style.display = 'none';
+      alertBox.textContent = '';
+    }
+
+    function parseResponseError(errorPayload) {
+      if (!errorPayload) {
+        return 'تعذر حفظ البيانات، حاول مرة أخرى.';
+      }
+
+      if (typeof errorPayload === 'string') {
+        return errorPayload;
+      }
+
+      if (errorPayload.detail) {
+        return errorPayload.detail;
+      }
+
+      const firstKey = Object.keys(errorPayload)[0];
+      if (!firstKey) {
+        return 'تعذر حفظ البيانات، حاول مرة أخرى.';
+      }
+
+      const value = errorPayload[firstKey];
+      if (Array.isArray(value)) {
+        return value.join(' ');
+      }
+
+      return String(value);
+    }
+
+    async function submitJson(url, method, payload) {
+      const response = await fetch(url, {
+        method,
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCsrfToken()
+        },
+        body: JSON.stringify(payload)
       });
 
-      // 3. نبني مصفوفات مرتبة زمنياً
-      const dates = Object.keys(byDate)
-        .sort((a, b) => new Date(a) - new Date(b));
-      const values = dates.map(d => byDate[d]);
+      let data = null;
+      try {
+        data = await response.json();
+      } catch (error) {
+        data = null;
+      }
 
-      // 4. إعداد ورسم Line Chart
-      const ctxLine = document.getElementById('savingChart').getContext('2d');
-      new Chart(ctxLine, {
-        type: 'line',
+      if (!response.ok) {
+        throw data || { detail: 'تعذر حفظ البيانات.' };
+      }
+
+      return data;
+    }
+
+    function buildPresetChips(containerId, presets, applyValue) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      presets.forEach((preset) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'preset-chip';
+        button.textContent = preset;
+        button.addEventListener('click', () => applyValue(preset));
+        container.appendChild(button);
+      });
+    }
+
+    function fillSurahSelect() {
+      const select = document.getElementById('memorizationSurah');
+      surahNames.forEach((surah) => {
+        const option = document.createElement('option');
+        option.value = surah;
+        option.textContent = surah;
+        select.appendChild(option);
+      });
+      select.value = 'البقرة';
+    }
+
+    function updatePointsReason(value) {
+      document.getElementById('pointsReasonSelect').value = value;
+      document.getElementById('pointsReason').value = value;
+    }
+
+    function updatePlanTarget(value) {
+      document.getElementById('planTargetSelect').value = value;
+      document.getElementById('planTarget').value = value;
+    }
+
+    function getActionMeta(button) {
+      const container = button.closest('.action-buttons');
+      return {
+        element: container,
+        studentId: container.dataset.studentId,
+        studentName: container.dataset.studentName,
+        sessionId: container.dataset.sessionId,
+        attendanceId: container.dataset.attendanceId,
+        attendanceStatus: container.dataset.attendanceStatus,
+        attendanceNotes: container.dataset.attendanceNotes,
+        planId: container.dataset.planId,
+        planTarget: container.dataset.planTarget,
+        planStart: container.dataset.planStart,
+        planEnd: container.dataset.planEnd,
+        planNotes: container.dataset.planNotes,
+        homeworkId: container.dataset.homeworkId,
+        homeworkStatus: container.dataset.homeworkStatus,
+        homeworkAssignmentType: container.dataset.homeworkAssignmentType,
+        homeworkAssignmentText: container.dataset.homeworkAssignmentText,
+        homeworkAssignmentNotes: container.dataset.homeworkAssignmentNotes,
+        homeworkAssignedDate: container.dataset.homeworkAssignedDate,
+        homeworkEvaluation: container.dataset.homeworkEvaluation,
+        homeworkEvaluationNotes: container.dataset.homeworkEvaluationNotes,
+        homeworkEvaluationDate: container.dataset.homeworkEvaluationDate
+      };
+    }
+
+    function setActionMeta(studentId, updates) {
+      const container = document.querySelector(`.action-buttons[data-student-id="${studentId}"]`);
+      if (!container) {
+        return;
+      }
+
+      Object.entries(updates).forEach(([key, value]) => {
+        container.dataset[key] = value ?? '';
+      });
+    }
+
+    function openPointsModal(meta) {
+      hideInlineAlert('pointsAlert');
+      document.getElementById('pointsStudentLabel').textContent = `الطالب: ${meta.studentName}`;
+      document.getElementById('pointsStudentId').value = meta.studentId;
+      document.getElementById('pointsActionDate').value = reportState.selected_date;
+      document.getElementById('pointsValue').value = 5;
+      updatePointsReason(pointReasonPresets[0] || 'مشاركة مميزة');
+      pointsModal.show();
+    }
+
+    function openMemorizationModal(meta) {
+      hideInlineAlert('memorizationAlert');
+      document.getElementById('memorizationStudentLabel').textContent = `الطالب: ${meta.studentName}`;
+      document.getElementById('memorizationStudentId').value = meta.studentId;
+      document.getElementById('memorizationDate').value = reportState.selected_date;
+      document.getElementById('memorizationFromVerse').value = 1;
+      document.getElementById('memorizationToVerse').value = 1;
+      document.getElementById('memorizationEvaluation').value = '';
+      document.getElementById('memorizationApproved').checked = true;
+      memorizationModal.show();
+    }
+
+    function openAttendanceModal(meta) {
+      if (!meta.sessionId) {
+        return;
+      }
+
+      hideInlineAlert('attendanceAlert');
+      document.getElementById('attendanceStudentLabel').textContent = `الطالب: ${meta.studentName}`;
+      document.getElementById('attendanceStudentId').value = meta.studentId;
+      document.getElementById('attendanceSessionId').value = meta.sessionId;
+      document.getElementById('attendanceRecordId').value = meta.attendanceId || '';
+      document.getElementById('attendanceDate').value = reportState.selected_date;
+      document.getElementById('attendanceStatus').value = meta.attendanceStatus || 'present';
+      document.getElementById('attendanceNotes').value = meta.attendanceNotes || '';
+      attendanceModal.show();
+    }
+
+    function openPlanModal(meta) {
+      hideInlineAlert('planAlert');
+      document.getElementById('planStudentLabel').textContent = `الطالب: ${meta.studentName}`;
+      document.getElementById('planStudentId').value = meta.studentId;
+      document.getElementById('planRecordId').value = meta.planId || '';
+
+      const defaultStart = reportState.selected_date;
+      const defaultEnd = plusDays(defaultStart, 7);
+      document.getElementById('planStartDate').value = meta.planStart || defaultStart;
+      document.getElementById('planEndDate').value = meta.planEnd || defaultEnd;
+      document.getElementById('planNotes').value = meta.planNotes || '';
+      updatePlanTarget(meta.planTarget || planTargetPresets[0] || 'مراجعة المحفوظ الحالي');
+      planModal.show();
+    }
+
+    function setHomeworkStage(stage) {
+      document.getElementById('homeworkStage').value = stage;
+      document.querySelectorAll('[data-homework-stage]').forEach((button) => {
+        const isActive = button.dataset.homeworkStage === stage;
+        button.classList.toggle('is-active', isActive);
+        button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+      });
+      document.querySelectorAll('[data-homework-panel]').forEach((panel) => {
+        panel.classList.toggle('is-active', panel.dataset.homeworkPanel === stage);
+      });
+      document.getElementById('submitHomeworkBtn').innerHTML = stage === 'assign' ? 'حفظ الواجب' : 'حفظ التقييم';
+    }
+
+    function renderHomeworkSummary(student) {
+      const summary = document.getElementById('homeworkCurrentSummary');
+      if (!student.homework_id) {
+        summary.innerHTML = 'لا يوجد واجب مسجل لهذا الطالب حتى الآن.';
+        return;
+      }
+
+      const extraLine = student.homework_status === 'evaluated' && student.homework_evaluation_label
+        ? `آخر تقييم: ${escapeHtml(student.homework_evaluation_label)}${student.homework_evaluation_date ? ` في ${escapeHtml(student.homework_evaluation_date)}` : ''}`
+        : `الحالة الحالية: ${escapeHtml(student.homework_status_label || homeworkStatusLabel(student.homework_status))}`;
+
+      summary.innerHTML = `
+        <strong>${escapeHtml(homeworkMetaText(student))}</strong>
+        <div>${escapeHtml(extraLine)}</div>
+      `;
+    }
+
+    function openHomeworkModal(meta) {
+      hideInlineAlert('homeworkAlert');
+      const student = studentTableState.get(String(meta.studentId));
+      document.getElementById('homeworkStudentLabel').textContent = `الطالب: ${meta.studentName}`;
+      document.getElementById('homeworkStudentId').value = meta.studentId;
+
+      const hasOpenHomework = ['assigned', 'pending'].includes(student.homework_status);
+      document.getElementById('homeworkAssignedDate').value = hasOpenHomework
+        ? (student.homework_assigned_date || reportState.selected_date)
+        : reportState.selected_date;
+      document.getElementById('homeworkAssignmentType').value = hasOpenHomework
+        ? (student.homework_assignment_type || homeworkTypeOptions[0]?.value || 'surah')
+        : (homeworkTypeOptions[0]?.value || 'surah');
+      document.getElementById('homeworkAssignmentText').value = hasOpenHomework ? (student.homework_assignment_text || '') : '';
+      document.getElementById('homeworkAssignmentNotes').value = hasOpenHomework ? (student.homework_assignment_notes || '') : '';
+
+      document.getElementById('homeworkEvaluationDate').value = student.homework_evaluation_date || reportState.selected_date;
+      document.getElementById('homeworkEvaluation').value = student.homework_evaluation || (homeworkEvaluationOptions[0]?.value || 'completed');
+      document.getElementById('homeworkEvaluationNotes').value = student.homework_evaluation_notes || '';
+
+      const evaluateButton = document.querySelector('[data-homework-stage="evaluate"]');
+      evaluateButton.disabled = !student.homework_id;
+      renderHomeworkSummary(student);
+      setHomeworkStage(student.homework_status === 'pending' ? 'evaluate' : 'assign');
+      homeworkModal.show();
+    }
+
+    function topStudentsData() {
+      const students = [...studentTableState.values()].sort(sortStudentsByPoints).slice(0, 5);
+      if (!students.length) {
+        return {
+          labels: ['لا يوجد طلاب'],
+          values: [0],
+        };
+      }
+
+      return {
+        labels: students.map((student) => student.name),
+        values: students.map((student) => student.points),
+      };
+    }
+
+    function renderCharts() {
+      const topData = topStudentsData();
+
+      chartInstances.topStudents = new Chart(document.getElementById('topStudentsChart').getContext('2d'), {
+        type: 'bar',
         data: {
-          labels: dates,
+          labels: topData.labels,
           datasets: [{
-            label: 'عدد الآيات المحفوظة',
-            data: values,
-            fill: false,
-            tension: 0.3
+            data: topData.values,
+            backgroundColor: ['#968960', '#0B3C54', '#31617F', '#4CAF50', '#F2D8A1'],
+            borderRadius: 10,
+            borderSkipped: false
           }]
         },
         options: {
           responsive: true,
+          plugins: {
+            legend: { display: false }
+          },
           scales: {
-            x: {
-              type: 'time',
-              time: { unit: 'day', tooltipFormat: 'YYYY-MM-DD' }
-            },
             y: {
               beginAtZero: true,
               ticks: { precision: 0 }
             }
-          },
-          plugins: {
-            legend: { display: false }
           }
         }
       });
-    })
-    .catch(err => {
-      console.error('Error fetching memorization records:', err);
-      // إذا فشل، نرسم مخطط فارغ مثلاً
-    });
-});
-</script>
 
-
-
-
-
-
-
-
-
-
-  
-  <div class="footer">
-    <div class="container">
-      <p>© 2023 معهد قباء لتحفيظ القرآن الكريم. جميع الحقوق محفوظة.</p>
-      <p>هاتف: 0123456789 | البريد الإلكتروني: info@quba-institute.edu.sa</p>
-    </div>
-  </div>
-  
-  <!-- الزخارف الخلفية -->
-  <div class="decoration dec-1">
-    <i class="fas fa-mosque"></i>
-  </div>
-  
-  <div class="decoration dec-2">
-    <i class="fas fa-book-quran"></i>
-  </div>
-  
-  <!-- Bootstrap JS Bundle -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // رسم أفضل الطلاب
-      const topStudentsCtx = document.getElementById('topStudentsChart').getContext('2d');
-      const topStudentsChart = new Chart(topStudentsCtx, {
-        type: 'bar',
-        data: {
-          labels: ['عمر خالد', 'سارة محمد', 'يوسف أحمد', 'فاطمة علي', 'محمود سعيد'],
-          datasets: [{
-            label: 'النقاط',
-            data: [245, 198, 176, 165, 87],
-            backgroundColor: [
-              'rgba(150, 137, 96, 0.7)',
-              'rgba(49, 97, 127, 0.7)',
-              'rgba(11, 60, 84, 0.7)',
-              'rgba(242, 216, 161, 0.7)',
-              'rgba(255, 193, 7, 0.7)'
-            ],
-            borderColor: [
-              'rgba(150, 137, 96, 1)',
-              'rgba(49, 97, 127, 1)',
-              'rgba(11, 60, 84, 1)',
-              'rgba(242, 216, 161, 1)',
-              'rgba(255, 193, 7, 1)'
-            ],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              display: false
-            },
-            title: {
-              display: true,
-              text: 'أفضل الطلاب حسب النقاط',
-              font: {
-                size: 16
-              }
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                font: {
-                  size: 12
-                }
-              }
-            },
-            x: {
-              ticks: {
-                font: {
-                  size: 12
-                }
-              }
-            }
-          }
-        }
-      });
-      
-      // رسم توزيع الحضور
-      const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
-      const attendanceChart = new Chart(attendanceCtx, {
+      chartInstances.attendance = new Chart(document.getElementById('attendanceChart').getContext('2d'), {
         type: 'doughnut',
         data: {
-          labels: ['حاضر', 'غائب'],
+          labels: ['حضور', 'غياب', 'مبرر'],
           datasets: [{
-            label: 'الحضور',
-            data: [92, 8],
-            backgroundColor: [
-              'rgba(76, 175, 80, 0.7)',
-              'rgba(244, 67, 54, 0.7)'
+            data: [
+              reportState.monthly_attendance.present,
+              reportState.monthly_attendance.absent,
+              reportState.monthly_attendance.excused
             ],
-            borderColor: [
-              'rgba(76, 175, 80, 1)',
-              'rgba(244, 67, 54, 1)'
-            ],
-            borderWidth: 1
+            backgroundColor: ['#5A8F72', '#925E52', '#968960'],
+            borderColor: '#FFFFFF',
+            borderWidth: 2
           }]
         },
         options: {
           responsive: true,
           plugins: {
             legend: {
-              position: 'bottom',
-              labels: {
-                font: {
-                  size: 14
-                }
-              }
-            },
-            title: {
-              display: true,
-              text: 'نسبة الحضور في الحلقة',
-              font: {
-                size: 16
-              }
+              position: 'bottom'
             }
           }
         }
       });
-      
-      // رسم أداء الحفظ
-      const savingCtx = document.getElementById('savingChart').getContext('2d');
-      const savingChart = new Chart(savingCtx, {
+
+      chartInstances.memorization = new Chart(document.getElementById('memorizationChart').getContext('2d'), {
         type: 'line',
         data: {
-          labels: ['الأسبوع ١', 'الأسبوع ٢', 'الأسبوع ٣', 'الأسبوع ٤'],
+          labels: memorizationLabels(),
           datasets: [{
-            label: 'صفحات محفوظة',
-            data: [15, 22, 18, 23],
-            fill: false,
-            borderColor: 'rgba(150, 137, 96, 1)',
-            backgroundColor: 'rgba(150, 137, 96, 0.2)',
-            tension: 0.4,
-            borderWidth: 3
+            label: 'الآيات',
+            data: memorizationValues(),
+            borderColor: '#0B3C54',
+            backgroundColor: 'rgba(150, 137, 96, 0.16)',
+            fill: true,
+            tension: 0.35,
+            pointBackgroundColor: '#968960',
+            pointBorderColor: '#0B3C54',
+            pointRadius: 4
           }]
         },
         options: {
           responsive: true,
           plugins: {
-            legend: {
-              position: 'top',
-              labels: {
-                font: {
-                  size: 14
-                }
-              }
-            },
-            title: {
-              display: true,
-              text: 'أداء الحفظ خلال الشهر',
-              font: {
-                size: 16
-              }
-            }
+            legend: { display: false }
           },
           scales: {
             y: {
               beginAtZero: true,
-              ticks: {
-                font: {
-                  size: 12
-                }
-              }
-            },
-            x: {
-              ticks: {
-                font: {
-                  size: 12
-                }
-              }
+              ticks: { precision: 0 }
             }
           }
         }
       });
-      
-      // إضافة تفاعلية لأزرار الإجراءات
-      document.querySelectorAll('.btn-action').forEach(button => {
-        button.addEventListener('click', function() {
-          const action = this.title;
-          const studentRow = this.closest('tr');
-          const studentName = studentRow.querySelector('td:first-child').textContent;
-          
-          // هنا يمكنك إضافة منطق للتعامل مع الإجراءات
-          alert(`سيتم تنفيذ إجراء "${action}" للطالب "${studentName}"`);
+    }
+
+    function refreshCharts() {
+      const topData = topStudentsData();
+      chartInstances.topStudents.data.labels = topData.labels;
+      chartInstances.topStudents.data.datasets[0].data = topData.values;
+      chartInstances.topStudents.update();
+
+      chartInstances.attendance.data.datasets[0].data = [
+        reportState.monthly_attendance.present,
+        reportState.monthly_attendance.absent,
+        reportState.monthly_attendance.excused
+      ];
+      chartInstances.attendance.update();
+
+      chartInstances.memorization.data.labels = memorizationLabels();
+      chartInstances.memorization.data.datasets[0].data = memorizationValues();
+      chartInstances.memorization.update();
+    }
+
+    function buildReportSummary() {
+      return [
+        reportState.date_label,
+        `حضور اليوم ${reportState.today_attendance_summary.present}/${reportState.student_count}`,
+        `${reportState.monthly_records_count} تسميعات`,
+        `${formatSignedNumber(reportState.monthly_points_total)} نقطة`
+      ].join(' | ');
+    }
+
+    function buildReportText() {
+      const currentHistory = selectedHistoryEntry();
+      const lines = [
+        `تقرير يوم ${reportState.date_label}`,
+        `الحلقة: ${reportState.halaqa_name}`,
+        `المعلم: ${reportState.teacher_name || 'غير محدد'}`,
+        `عدد الطلاب النشطين: ${reportState.student_count}`,
+        `التصنيف الحالي: ${reportState.categories_text}`,
+        `الصفوف الحالية: ${reportState.grades_text}`,
+        `جلسة اليوم: ${reportState.session_label}`,
+        `حضور اليوم: ${reportState.today_attendance_summary.present} حاضر، ${reportState.today_attendance_summary.absent} غائب، ${reportState.today_attendance_summary.excused} مبرر`,
+        `مؤشرات ${reportState.month_label}: ${formatSignedNumber(reportState.monthly_points_total)} نقطة، ${reportState.monthly_verses_total} آية محفوظة، ${reportState.monthly_records_count} تسميعات، حضور ${reportState.monthly_attendance_rate}%`,
+      ];
+
+      if (currentHistory.notes?.length) {
+        lines.push('ملاحظات مرتبطة بالتاريخ:');
+        currentHistory.notes.forEach((noteLine) => {
+          lines.push(`- ${noteLine}`);
+        });
+      }
+
+      if (reportState.recentActions.length) {
+        lines.push('أبرز اليوم:');
+        reportState.recentActions.forEach((actionLine) => {
+          lines.push(`- ${actionLine}`);
+        });
+      }
+
+      return lines.join('\n');
+    }
+
+    function refreshReportPreview() {
+      document.getElementById('dailyReportSummary').textContent = buildReportSummary();
+      document.getElementById('dailyReportPreview').textContent = buildReportText();
+    }
+
+    function toggleReport(open) {
+      const body = document.getElementById('dailyReportBody');
+      const toggleButton = document.getElementById('reportToggleBtn');
+      const shouldOpen = typeof open === 'boolean' ? open : !body.classList.contains('is-open');
+
+      body.classList.toggle('is-open', shouldOpen);
+      toggleButton.classList.toggle('is-open', shouldOpen);
+      toggleButton.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+    }
+
+    function updateSummaryCards() {
+      document.getElementById('summary-value-2').textContent = formatSignedNumber(reportState.monthly_points_total);
+      document.getElementById('summary-value-3').textContent = reportState.monthly_verses_total;
+      document.getElementById('summary-meta-3').textContent = `${reportState.monthly_records_count} تسميعات مسجلة`;
+
+      const totalAttendance = reportState.monthly_attendance.present + reportState.monthly_attendance.absent + reportState.monthly_attendance.excused;
+      reportState.monthly_attendance.total = totalAttendance;
+      reportState.monthly_attendance_rate = totalAttendance
+        ? Math.round((reportState.monthly_attendance.present / totalAttendance) * 100)
+        : 0;
+
+      document.getElementById('summary-value-4').textContent = `${reportState.monthly_attendance_rate}%`;
+      document.getElementById('summary-meta-4').textContent = totalAttendance
+        ? `${reportState.monthly_attendance.present} حضور / ${totalAttendance} إجمالي حالات`
+        : 'لا توجد سجلات حضور لهذا الشهر';
+    }
+
+    function renderMemorizationCell(studentId) {
+      const student = studentTableState.get(String(studentId));
+      const container = document.getElementById(`student-memorization-${studentId}`);
+      const record = student.last_memorization;
+
+      if (!record) {
+        container.innerHTML = '<span class="student-subtext">لا يوجد</span>';
+        return;
+      }
+
+      container.innerHTML = `
+        <strong>${escapeHtml(record.surah)}</strong>
+        <span class="last-range">${escapeHtml(record.from_verse)} - ${escapeHtml(record.to_verse)}</span>
+        ${record.evaluation ? `<span class="eval-pill ${escapeHtml(record.evaluation)}">${escapeHtml(record.evaluation_label)}</span>` : ''}
+      `;
+    }
+
+    function renderPlanCell(studentId) {
+      const student = studentTableState.get(String(studentId));
+      const container = document.getElementById(`student-plan-${studentId}`);
+
+      if (!student.plan_target) {
+        container.innerHTML = '<span class="student-subtext">لا توجد</span>';
+        return;
+      }
+
+      container.innerHTML = `
+        <span class="plan-pill" title="${escapeHtml(student.plan_target)}">${escapeHtml(student.plan_target)}</span>
+        <span class="plan-dates">${escapeHtml(student.plan_start)} إلى ${escapeHtml(student.plan_end)}</span>
+      `;
+    }
+
+    function renderHomeworkCell(studentId) {
+      const student = studentTableState.get(String(studentId));
+      const container = document.getElementById(`student-homework-${studentId}`);
+
+      if (!student.homework_assignment_text) {
+        container.innerHTML = '<span class="student-subtext">لا يوجد</span>';
+        return;
+      }
+
+      const metaText = homeworkMetaText(student);
+      const detailText = homeworkDetailText(student);
+
+      container.innerHTML = `
+        <span class="homework-pill ${escapeHtml(student.homework_status)}">${escapeHtml(student.homework_status_label || homeworkStatusLabel(student.homework_status))}</span>
+        <strong class="homework-text" title="${escapeHtml(metaText)}">${escapeHtml(metaText)}</strong>
+        ${detailText ? `<span class="student-subtext">${escapeHtml(detailText)}</span>` : ''}
+      `;
+    }
+
+    function renderPointsCell(studentId) {
+      const student = studentTableState.get(String(studentId));
+      const element = document.getElementById(`student-points-${studentId}`);
+      element.textContent = student.points;
+      element.classList.toggle('negative', Number(student.points) < 0);
+    }
+
+    function renderAttendanceCell(studentId) {
+      const student = studentTableState.get(String(studentId));
+      document.getElementById(`student-present-${studentId}`).innerHTML = `<i class="fas fa-user-check"></i> ${student.present}`;
+      document.getElementById(`student-absent-${studentId}`).innerHTML = `<i class="fas fa-user-xmark"></i> ${student.absent}`;
+      document.getElementById(`student-excused-${studentId}`).innerHTML = `<i class="fas fa-circle-exclamation"></i> ${student.excused}`;
+
+      const todayBadge = document.getElementById(`student-today-status-${studentId}`);
+      todayBadge.textContent = statusLabel(student.today_attendance_status);
+      todayBadge.className = `today-status-pill ${student.today_attendance_status || ''}`.trim();
+    }
+
+    function ensureMemorizationDayValue(dayDate, dayLabel, verses) {
+      const existingEntry = chartState.memorizationEntries.find((entry) => entry.date === dayDate);
+      if (!existingEntry) {
+        chartState.memorizationEntries.push({
+          date: dayDate,
+          label: dayLabel,
+          value: verses,
+        });
+        chartState.memorizationEntries.sort((firstEntry, secondEntry) => firstEntry.date.localeCompare(secondEntry.date));
+        return;
+      }
+      existingEntry.value += verses;
+    }
+
+    function addRecentAction(text) {
+      reportState.recentActions.unshift(text);
+      reportState.recentActions = reportState.recentActions.slice(0, 6);
+      const historyEntry = selectedHistoryEntry();
+      removeValue(historyEntry.highlights, text);
+      historyEntry.highlights.unshift(text);
+      historyEntry.highlights = historyEntry.highlights.slice(0, 8);
+      renderDailyHistory();
+    }
+
+    function wireRowActions() {
+      document.querySelectorAll('.action-buttons [data-action]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const meta = getActionMeta(button);
+          const action = button.dataset.action;
+          if (action === 'points') {
+            openPointsModal(meta);
+          } else if (action === 'memorization') {
+            openMemorizationModal(meta);
+          } else if (action === 'attendance') {
+            openAttendanceModal(meta);
+          } else if (action === 'plan') {
+            openPlanModal(meta);
+          } else if (action === 'homework') {
+            openHomeworkModal(meta);
+          }
         });
       });
+    }
+
+    function wireReportControls() {
+      document.getElementById('reportToggleBtn').addEventListener('click', () => toggleReport());
+      document.getElementById('copyPreviewBtn').addEventListener('click', () => {
+        copyText(document.getElementById('dailyReportPreview').textContent.trim());
+      });
+      document.getElementById('showFullRankingBtn').addEventListener('click', () => {
+        renderFullRanking();
+        fullRankingModal.show();
+      });
+      document.getElementById('reportHistoryBtn').addEventListener('click', () => {
+        renderDailyHistory();
+        dailyHistoryModal.show();
+      });
+    }
+
+    function setButtonLoading(button, isLoading, defaultLabel) {
+      button.disabled = isLoading;
+      button.innerHTML = isLoading ? '<i class="fas fa-spinner fa-spin"></i> جاري الحفظ' : defaultLabel;
+    }
+
+    async function handlePointsSubmit() {
+      hideInlineAlert('pointsAlert');
+      const button = document.getElementById('submitPointsBtn');
+      const studentId = document.getElementById('pointsStudentId').value;
+      const student = studentTableState.get(String(studentId));
+      const rawValue = Number(document.getElementById('pointsValue').value);
+      const reason = document.getElementById('pointsReason').value.trim();
+      setButtonLoading(button, true, 'حفظ');
+      try {
+        await submitJson(pointsListUrl, 'POST', {
+          student: studentId,
+          halaqa: document.getElementById('pointsHalaqaId').value,
+          value: rawValue,
+          reason,
+          action_date: document.getElementById('pointsActionDate').value
+        });
+
+        student.points += rawValue;
+        reportState.monthly_points_total += rawValue;
+
+        renderPointsCell(studentId);
+        updateSummaryCards();
+        refreshCharts();
+        renderFullRanking();
+        addRecentAction(`${student.name}: ${rawValue >= 0 ? 'إضافة' : 'خصم'} ${Math.abs(rawValue)} نقطة${reason ? ` - ${reason}` : ''}`);
+        refreshReportPreview();
+        pointsModal.hide();
+      } catch (error) {
+        showInlineAlert('pointsAlert', parseResponseError(error));
+      } finally {
+        setButtonLoading(button, false, 'حفظ');
+      }
+    }
+
+    async function handleMemorizationSubmit() {
+      hideInlineAlert('memorizationAlert');
+      const button = document.getElementById('submitMemorizationBtn');
+      const fromVerse = Number(document.getElementById('memorizationFromVerse').value);
+      const toVerse = Number(document.getElementById('memorizationToVerse').value);
+      if (toVerse < fromVerse) {
+        showInlineAlert('memorizationAlert', 'رقم الآية الأخيرة يجب أن يكون أكبر من أو يساوي الآية الأولى.');
+        return;
+      }
+      const studentId = document.getElementById('memorizationStudentId').value;
+      const student = studentTableState.get(String(studentId));
+      const surah = document.getElementById('memorizationSurah').value;
+      const evaluation = document.getElementById('memorizationEvaluation').value;
+      const versesCount = (toVerse - fromVerse) + 1;
+      setButtonLoading(button, true, 'حفظ');
+      try {
+        await submitJson(memorizationListUrl, 'POST', {
+          student: studentId,
+          surah,
+          from_verse: fromVerse,
+          to_verse: toVerse,
+          evaluation,
+          is_approved: document.getElementById('memorizationApproved').checked,
+          date: document.getElementById('memorizationDate').value
+        });
+
+        student.last_memorization = {
+          surah,
+          from_verse: fromVerse,
+          to_verse: toVerse,
+          evaluation,
+          evaluation_label: evaluationLabelMap[evaluation] || '',
+          date: document.getElementById('memorizationDate').value
+        };
+        reportState.monthly_verses_total += versesCount;
+        reportState.monthly_records_count += 1;
+
+        ensureMemorizationDayValue(reportState.today_chart_date, reportState.today_chart_label, versesCount);
+        renderMemorizationCell(studentId);
+        updateSummaryCards();
+        refreshCharts();
+        addRecentAction(`${student.name}: تسميع ${surah} ${fromVerse}-${toVerse}${evaluation ? ` (${evaluationLabelMap[evaluation]})` : ''}`);
+        refreshReportPreview();
+        memorizationModal.hide();
+      } catch (error) {
+        showInlineAlert('memorizationAlert', parseResponseError(error));
+      } finally {
+        setButtonLoading(button, false, 'حفظ');
+      }
+    }
+
+    async function handleAttendanceSubmit() {
+      hideInlineAlert('attendanceAlert');
+      const button = document.getElementById('submitAttendanceBtn');
+      const studentId = document.getElementById('attendanceStudentId').value;
+      const student = studentTableState.get(String(studentId));
+      const recordId = document.getElementById('attendanceRecordId').value;
+      const nextStatus = document.getElementById('attendanceStatus').value;
+      const previousStatus = student.today_attendance_status;
+      const notes = document.getElementById('attendanceNotes').value;
+      setButtonLoading(button, true, 'حفظ');
+      const payload = {
+        student: studentId,
+        session: document.getElementById('attendanceSessionId').value,
+        status: nextStatus,
+        notes
+      };
+
+      try {
+        const response = await submitJson(
+          recordId ? detailUrl(attendanceListUrl, recordId) : attendanceListUrl,
+          recordId ? 'PATCH' : 'POST',
+          payload
+        );
+
+        if (previousStatus) {
+          student[previousStatus] = Math.max(0, student[previousStatus] - 1);
+          reportState.today_attendance_summary[previousStatus] = Math.max(0, reportState.today_attendance_summary[previousStatus] - 1);
+          reportState.monthly_attendance[previousStatus] = Math.max(0, reportState.monthly_attendance[previousStatus] - 1);
+        }
+
+        student[nextStatus] += 1;
+        student.today_attendance_status = nextStatus;
+        reportState.today_attendance_summary[nextStatus] += 1;
+        reportState.monthly_attendance[nextStatus] += 1;
+
+        const historyEntry = selectedHistoryEntry();
+        if (previousStatus) {
+          removeValue(historyEntry[previousStatus], student.name);
+        }
+        pushUnique(historyEntry[nextStatus], student.name);
+        if (notes) {
+          pushUnique(historyEntry.notes, `${student.name}: ${notes}`);
+        }
+
+        renderAttendanceCell(studentId);
+        updateSummaryCards();
+        refreshCharts();
+        addRecentAction(`${student.name}: ${statusLabel(nextStatus)}`);
+        refreshReportPreview();
+        setActionMeta(studentId, {
+          attendanceId: response?.id || recordId,
+          attendanceStatus: nextStatus,
+          attendanceNotes: notes
+        });
+        attendanceModal.hide();
+      } catch (error) {
+        showInlineAlert('attendanceAlert', parseResponseError(error));
+      } finally {
+        setButtonLoading(button, false, 'حفظ');
+      }
+    }
+
+    async function handlePlanSubmit() {
+      hideInlineAlert('planAlert');
+      const button = document.getElementById('submitPlanBtn');
+      const startDate = document.getElementById('planStartDate').value;
+      const endDate = document.getElementById('planEndDate').value;
+      if (endDate < startDate) {
+        showInlineAlert('planAlert', 'تاريخ نهاية الخطة يجب أن يكون بعد تاريخ البداية.');
+        return;
+      }
+      const studentId = document.getElementById('planStudentId').value;
+      const student = studentTableState.get(String(studentId));
+      setButtonLoading(button, true, 'حفظ');
+      const recordId = document.getElementById('planRecordId').value;
+      const target = document.getElementById('planTarget').value.trim();
+      const notes = document.getElementById('planNotes').value;
+      const payload = {
+        student: studentId,
+        halaqa: document.getElementById('planHalaqaId').value,
+        start_date: startDate,
+        end_date: endDate,
+        target,
+        notes,
+        is_completed: false
+      };
+
+      try {
+        const response = await submitJson(
+          recordId ? detailUrl(plansListUrl, recordId) : plansListUrl,
+          recordId ? 'PATCH' : 'POST',
+          payload
+        );
+
+        const planAppliesToSelectedDate = startDate <= reportState.selected_date && endDate >= reportState.selected_date;
+        student.plan_id = response?.id || recordId;
+        student.plan_target = planAppliesToSelectedDate ? target : '';
+        student.plan_start = planAppliesToSelectedDate ? startDate : '';
+        student.plan_end = planAppliesToSelectedDate ? endDate : '';
+        student.plan_notes = notes;
+
+        renderPlanCell(studentId);
+        if (notes) {
+          pushUnique(selectedHistoryEntry().notes, `${student.name}: ${notes}`);
+        }
+        addRecentAction(`${student.name}: خطة ${target}`);
+        refreshReportPreview();
+        setActionMeta(studentId, {
+          planId: response?.id || recordId,
+          planTarget: target,
+          planStart: startDate,
+          planEnd: endDate,
+          planNotes: notes
+        });
+        planModal.hide();
+      } catch (error) {
+        showInlineAlert('planAlert', parseResponseError(error));
+      } finally {
+        setButtonLoading(button, false, 'حفظ');
+      }
+    }
+
+    async function handleHomeworkSubmit() {
+      hideInlineAlert('homeworkAlert');
+      const button = document.getElementById('submitHomeworkBtn');
+      const stage = document.getElementById('homeworkStage').value;
+      const studentId = document.getElementById('homeworkStudentId').value;
+      const student = studentTableState.get(String(studentId));
+      const defaultLabel = stage === 'assign' ? 'حفظ الواجب' : 'حفظ التقييم';
+
+      if (stage === 'assign') {
+        const assignmentText = document.getElementById('homeworkAssignmentText').value.trim();
+        if (!assignmentText) {
+          showInlineAlert('homeworkAlert', 'يرجى كتابة الواجب بشكل مختصر.');
+          return;
+        }
+
+        const payload = {
+          student: studentId,
+          halaqa: document.getElementById('homeworkHalaqaId').value,
+          assigned_date: document.getElementById('homeworkAssignedDate').value,
+          assignment_type: document.getElementById('homeworkAssignmentType').value,
+          assignment_text: assignmentText,
+          assignment_notes: document.getElementById('homeworkAssignmentNotes').value.trim(),
+        };
+        const shouldUpdate = student.homework_id && ['assigned', 'pending'].includes(student.homework_status);
+
+        setButtonLoading(button, true, defaultLabel);
+        try {
+          const response = await submitJson(
+            shouldUpdate ? detailUrl(homeworksListUrl, student.homework_id) : homeworksListUrl,
+            shouldUpdate ? 'PATCH' : 'POST',
+            payload
+          );
+
+          student.homework_id = response?.id || student.homework_id;
+          student.homework_assignment_type = payload.assignment_type;
+          student.homework_assignment_type_label = response?.assignment_type_label || homeworkTypeLabelMap[payload.assignment_type] || '';
+          student.homework_assignment_text = assignmentText;
+          student.homework_assignment_notes = payload.assignment_notes;
+          student.homework_assigned_date = payload.assigned_date;
+          student.homework_evaluation = '';
+          student.homework_evaluation_label = '';
+          student.homework_evaluation_date = '';
+          student.homework_evaluation_notes = '';
+          student.homework_status = payload.assigned_date === reportState.selected_date ? 'assigned' : 'pending';
+          student.homework_status_label = homeworkStatusLabel(student.homework_status);
+
+          if (payload.assignment_notes) {
+            pushUnique(selectedHistoryEntry().notes, `واجب ${student.name}: ${payload.assignment_notes}`);
+          }
+
+          renderHomeworkCell(studentId);
+          setActionMeta(studentId, {
+            homeworkId: student.homework_id,
+            homeworkStatus: student.homework_status,
+            homeworkAssignmentType: student.homework_assignment_type,
+            homeworkAssignmentText: student.homework_assignment_text,
+            homeworkAssignmentNotes: student.homework_assignment_notes,
+            homeworkAssignedDate: student.homework_assigned_date,
+            homeworkEvaluation: '',
+            homeworkEvaluationNotes: '',
+            homeworkEvaluationDate: '',
+          });
+          addRecentAction(`${student.name}: واجب ${student.homework_assignment_type_label} - ${student.homework_assignment_text}`);
+          refreshReportPreview();
+          homeworkModal.hide();
+        } catch (error) {
+          showInlineAlert('homeworkAlert', parseResponseError(error));
+        } finally {
+          setButtonLoading(button, false, defaultLabel);
+        }
+        return;
+      }
+
+      if (!student.homework_id) {
+        showInlineAlert('homeworkAlert', 'لا يوجد واجب لتقييمه لهذا الطالب.');
+        return;
+      }
+
+      const evaluation = document.getElementById('homeworkEvaluation').value;
+      const evaluationNotes = document.getElementById('homeworkEvaluationNotes').value.trim();
+      const payload = {
+        student: studentId,
+        halaqa: document.getElementById('homeworkHalaqaId').value,
+        evaluation_date: document.getElementById('homeworkEvaluationDate').value,
+        evaluation,
+        evaluation_notes: evaluationNotes,
+      };
+
+      setButtonLoading(button, true, defaultLabel);
+      try {
+        await submitJson(detailUrl(homeworksListUrl, student.homework_id), 'PATCH', payload);
+
+        student.homework_status = 'evaluated';
+        student.homework_status_label = homeworkStatusLabel('evaluated');
+        student.homework_evaluation = evaluation;
+        student.homework_evaluation_label = homeworkEvaluationLabelMap[evaluation] || '';
+        student.homework_evaluation_date = payload.evaluation_date;
+        student.homework_evaluation_notes = evaluationNotes;
+
+        if (evaluationNotes) {
+          pushUnique(selectedHistoryEntry().notes, `تقييم ${student.name}: ${evaluationNotes}`);
+        }
+
+        renderHomeworkCell(studentId);
+        setActionMeta(studentId, {
+          homeworkId: student.homework_id,
+          homeworkStatus: student.homework_status,
+          homeworkAssignmentType: student.homework_assignment_type,
+          homeworkAssignmentText: student.homework_assignment_text,
+          homeworkAssignmentNotes: student.homework_assignment_notes,
+          homeworkAssignedDate: student.homework_assigned_date,
+          homeworkEvaluation: student.homework_evaluation,
+          homeworkEvaluationNotes: student.homework_evaluation_notes,
+          homeworkEvaluationDate: student.homework_evaluation_date,
+        });
+        addRecentAction(`${student.name}: تقييم واجب (${student.homework_evaluation_label})`);
+        refreshReportPreview();
+        homeworkModal.hide();
+      } catch (error) {
+        showInlineAlert('homeworkAlert', parseResponseError(error));
+      } finally {
+        setButtonLoading(button, false, defaultLabel);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      fillSurahSelect();
+      const currentHistory = selectedHistoryEntry();
+      reportState.recentActions = [...(currentHistory.highlights || [])].slice(0, 6);
+      const memorizationChartCard = document.getElementById('memorizationChartCard');
+      const pageFooter = document.querySelector('.page-footer');
+      if (memorizationChartCard && pageFooter) {
+        pageFooter.before(memorizationChartCard);
+      }
+      document.getElementById('memorizationChartAnchor')?.remove();
+      renderCharts();
+      renderFullRanking();
+      renderDailyHistory();
+      wireRowActions();
+      wireReportControls();
+      refreshReportPreview();
+
+      buildPresetChips('pointsReasonChips', pointReasonPresets, updatePointsReason);
+      buildPresetChips('planTargetChips', planTargetPresets, updatePlanTarget);
+
+      document.getElementById('pointsReasonSelect').addEventListener('change', (event) => {
+        updatePointsReason(event.target.value);
+      });
+      document.getElementById('planTargetSelect').addEventListener('change', (event) => {
+        updatePlanTarget(event.target.value);
+      });
+      document.querySelectorAll('[data-homework-stage]').forEach((button) => {
+        button.addEventListener('click', () => {
+          if (!button.disabled) {
+            setHomeworkStage(button.dataset.homeworkStage);
+          }
+        });
+      });
+
+      document.getElementById('submitPointsBtn').addEventListener('click', handlePointsSubmit);
+      document.getElementById('submitMemorizationBtn').addEventListener('click', handleMemorizationSubmit);
+      document.getElementById('submitAttendanceBtn').addEventListener('click', handleAttendanceSubmit);
+      document.getElementById('submitPlanBtn').addEventListener('click', handlePlanSubmit);
+      document.getElementById('submitHomeworkBtn').addEventListener('click', handleHomeworkSubmit);
     });
   </script>
-</body>
-{% endblock %}
 
+  </body>
 </html>

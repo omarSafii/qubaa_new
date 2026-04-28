@@ -1,41 +1,321 @@
-from django.shortcuts import render, get_object_or_404
-from django.db.models import F, Value, IntegerField, ExpressionWrapper
-from django.db.models import Sum, Q, Count
-from rest_framework import viewsets, status
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from django.shortcuts import render
-from django.db.models import FloatField
-# في أعلى الملف views.py
-from datetime import date
-from rest_framework.response import Response
-from rest_framework.permissions import AllowAny  # <--- استبدال IsAuthenticated بـ AllowAny
+from collections import Counter
+from datetime import time
+
 from django.contrib.auth.decorators import login_required
+from django.db.models import Count, ExpressionWrapper, F, FloatField, IntegerField, Q, Sum, Value
+from django.db.models.functions import Coalesce
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+from django.utils.dateparse import parse_date
 from django.views.decorators.http import require_GET
-from students.models import Student, MemorizationRecord
+from rest_framework import status, viewsets
+from rest_framework.decorators import api_view
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+
+from students.models import MemorizationRecord, Student
 from students.serializers import StudentSerializer
-from rest_framework.exceptions import PermissionDenied
+
 from .forms import HalaqaForm
-from django.shortcuts import redirect
-from .models import (
-    Halaqa,
-    Attendance,
-    PointTransaction,
-    Plan,
-    HalaqaMembership,
-    Teacher,
-    Session
-)
+from .models import Attendance, Halaqa, HalaqaMembership, Homework, Plan, PointTransaction, Session, Teacher
 from .serializers import (
     AttendanceSerializer,
-    PointTransactionSerializer as PointSerializer,
+    HalaqaSerializer,
+    HomeworkSerializer,
     PlanSerializer,
-    HalaqaSerializer
+    PointTransactionSerializer as PointSerializer,
 )
 
-# ────────────────────────────────────────────────────────────────
-# ViewSets للواجهات البرمجية (API)
-# ────────────────────────────────────────────────────────────────
+
+VERSE_COUNT_EXPR = ExpressionWrapper(
+    F('to_verse') - F('from_verse') + Value(1),
+    output_field=IntegerField(),
+)
+
+POINT_REASON_PRESETS = [
+    'مشاركة مميزة',
+    'إتقان التسميع',
+    'انضباط وحضور',
+    'مساعدة الزملاء',
+    'تأخر',
+    'غياب بدون عذر',
+    'ملاحظة سلوكية',
+]
+
+ATTENDANCE_NOTE_PRESETS = [
+    'بدون ملاحظات',
+    'حضر في الوقت',
+    'تأخر قليلًا',
+    'انصرف مبكرًا',
+    'تم إبلاغ ولي الأمر',
+]
+
+PLAN_TARGET_PRESETS = [
+    'مراجعة المحفوظ الحالي',
+    'حفظ مقطع جديد',
+    'مراجعة مع تثبيت',
+    'إتقان سورة محددة',
+]
+
+
+def _infer_category(grade):
+    if hasattr(grade, 'category_id') and getattr(grade, 'category_id', None):
+        return grade.category.name
+    if hasattr(grade, 'get_category_label'):
+        return grade.get_category_label()
+
+    grade_text = (grade or '').strip()
+    if 'ابتدائي' in grade_text:
+        return 'المرحلة الابتدائية'
+    if 'متوسط' in grade_text:
+        return 'المرحلة المتوسطة'
+    if 'ثانوي' in grade_text:
+        return 'المرحلة الثانوية'
+    return 'غير مصنف'
+
+
+def _time_greeting():
+    hour = timezone.localtime().hour
+    if hour < 12:
+        return 'صباح الخير'
+    if hour < 17:
+        return 'نهارك مبارك'
+    return 'مساء الخير'
+
+
+def _format_month_label(day_value):
+    return day_value.strftime('%m/%Y')
+
+
+def _resolve_reference_date(request):
+    raw_date = request.GET.get('date', '') if request else ''
+    return parse_date(raw_date) or timezone.localdate()
+
+
+def _format_session_label(session):
+    if not session:
+        return 'لا توجد جلسة مسجلة لهذا التاريخ'
+    return f'{session.start_time.strftime("%H:%M")} - {session.end_time.strftime("%H:%M")}'
+
+
+def _homework_status(homework, reference_date):
+    if not homework:
+        return 'none'
+    if homework.evaluation_date and homework.evaluation_date <= reference_date:
+        return 'evaluated'
+    if homework.assigned_date == reference_date:
+        return 'assigned'
+    return 'pending'
+
+
+def _build_homework_snapshot(homework, reference_date):
+    if not homework:
+        return None
+
+    status = _homework_status(homework, reference_date)
+    status_labels = {
+        'assigned': 'تم الإسناد',
+        'pending': 'بانتظار التقييم',
+        'evaluated': 'تم التقييم',
+    }
+    meta_text = f'{homework.get_assignment_type_display()}: {homework.assignment_text}'
+    if status == 'evaluated' and homework.evaluation_date:
+        detail_text = f'{homework.get_evaluation_display()} - {homework.evaluation_date.isoformat()}'
+    else:
+        detail_text = f'أُسند في {homework.assigned_date.isoformat()}'
+
+    return {
+        'id': homework.id,
+        'status': status,
+        'status_label': status_labels[status],
+        'assignment_type': homework.assignment_type,
+        'assignment_type_label': homework.get_assignment_type_display(),
+        'assignment_text': homework.assignment_text,
+        'assignment_notes': homework.assignment_notes,
+        'assigned_date': homework.assigned_date,
+        'assigned_date_iso': homework.assigned_date.isoformat(),
+        'evaluation': homework.evaluation,
+        'evaluation_label': homework.get_evaluation_display() if homework.evaluation else '',
+        'evaluation_date': homework.evaluation_date,
+        'evaluation_date_iso': homework.evaluation_date.isoformat() if homework.evaluation_date else '',
+        'evaluation_notes': homework.evaluation_notes,
+        'meta_text': meta_text,
+        'detail_text': detail_text,
+    }
+
+
+def _empty_daily_history_entry(day_value):
+    return {
+        'date': day_value.isoformat(),
+        'date_label': day_value.strftime('%Y-%m-%d'),
+        'display_date': day_value.strftime('%d/%m/%Y'),
+        'session_label': 'لا توجد جلسة مسجلة لهذا التاريخ',
+        'present': [],
+        'absent': [],
+        'excused': [],
+        'notes': [],
+        'highlights': [],
+    }
+
+
+def _build_daily_history(*, halaqa, student_ids, selected_date):
+    if not student_ids:
+        return [_empty_daily_history_entry(selected_date)]
+
+    history_by_date = {}
+
+    def ensure_entry(day_value):
+        if day_value not in history_by_date:
+            history_by_date[day_value] = _empty_daily_history_entry(day_value)
+        return history_by_date[day_value]
+
+    sessions = list(
+        Session.objects.filter(halaqa=halaqa).order_by('-date', '-start_time')
+    )
+    attendances = list(
+        Attendance.objects.filter(
+            session__halaqa=halaqa,
+            student_id__in=student_ids,
+        ).select_related('student', 'session').order_by('-session__date', 'student__name')
+    )
+    memorization_records = list(
+        MemorizationRecord.objects.filter(
+            student_id__in=student_ids,
+        ).select_related('student').order_by('-date', 'student__name')
+    )
+    point_transactions = list(
+        PointTransaction.objects.filter(
+            student_id__in=student_ids,
+            halaqa=halaqa,
+        ).select_related('student').order_by('-date', 'student__name')
+    )
+    homeworks = list(
+        Homework.objects.filter(
+            student_id__in=student_ids,
+            halaqa=halaqa,
+        ).select_related('student').order_by('-assigned_date', 'student__name')
+    )
+    plans = list(
+        Plan.objects.filter(
+            student_id__in=student_ids,
+            halaqa=halaqa,
+        ).select_related('student').order_by('-start_date', 'student__name')
+    )
+
+    for session in sessions:
+        entry = ensure_entry(session.date)
+        entry['session_label'] = _format_session_label(session)
+        if session.notes:
+            entry['notes'].append(session.notes)
+
+    for attendance in attendances:
+        entry = ensure_entry(attendance.session.date)
+        entry[attendance.status].append(attendance.student.name)
+        if attendance.notes:
+            entry['notes'].append(f'{attendance.student.name}: {attendance.notes}')
+
+    for record in memorization_records:
+        entry = ensure_entry(record.date)
+        label = f'{record.student.name}: تسميع {record.surah} {record.from_verse}-{record.to_verse}'
+        if record.evaluation:
+            label = f'{label} ({record.get_evaluation_display()})'
+        entry['highlights'].append(label)
+
+    for transaction in point_transactions:
+        entry = ensure_entry(transaction.date.date())
+        signed_value = f'{transaction.value:+}'
+        highlight = f'{transaction.student.name}: {signed_value} نقطة'
+        if transaction.reason:
+            highlight = f'{highlight} - {transaction.reason}'
+        entry['highlights'].append(highlight)
+
+    for homework in homeworks:
+        assign_entry = ensure_entry(homework.assigned_date)
+        assign_label = (
+            f'{homework.student.name}: واجب {homework.get_assignment_type_display()} - '
+            f'{homework.assignment_text}'
+        )
+        assign_entry['highlights'].append(assign_label)
+        if homework.assignment_notes:
+            assign_entry['notes'].append(f'واجب {homework.student.name}: {homework.assignment_notes}')
+
+        if homework.evaluation_date:
+            evaluation_entry = ensure_entry(homework.evaluation_date)
+            evaluation_label = (
+                f'{homework.student.name}: تقييم واجب - {homework.get_evaluation_display()}'
+            )
+            evaluation_entry['highlights'].append(evaluation_label)
+            if homework.evaluation_notes:
+                evaluation_entry['notes'].append(f'تقييم {homework.student.name}: {homework.evaluation_notes}')
+
+    for plan in plans:
+        entry = ensure_entry(plan.start_date)
+        entry['highlights'].append(f'خطة {plan.student.name}: {plan.target}')
+        if plan.notes:
+            entry['notes'].append(f'خطة {plan.student.name}: {plan.notes}')
+
+    ensure_entry(selected_date)
+
+    history = []
+    for day_value in sorted(history_by_date.keys(), reverse=True):
+        entry = history_by_date[day_value]
+        for key in ('present', 'absent', 'excused'):
+            entry[key] = list(dict.fromkeys(entry[key]))
+        entry['notes'] = list(dict.fromkeys(entry['notes']))
+        entry['highlights'] = list(dict.fromkeys(entry['highlights']))
+        history.append(entry)
+    return history
+
+
+def _build_daily_report(
+    *,
+    today,
+    halaqa,
+    teacher_name,
+    student_count,
+    category_badges,
+    grade_badges,
+    current_session,
+    today_attendance_summary,
+    monthly_points_total,
+    monthly_verses_total,
+    monthly_records_count,
+    monthly_attendance_rate,
+):
+    report_lines = [
+        f'تقرير يوم {today.strftime("%Y-%m-%d")}',
+        f'الحلقة: {halaqa.name}',
+        f'المعلم: {teacher_name or "غير محدد"}',
+        f'عدد الطلاب النشطين: {student_count}',
+    ]
+
+    categories_text = '، '.join(item['label'] for item in category_badges) or 'غير مصنف'
+    grades_text = '، '.join(item['label'] for item in grade_badges) or 'غير محدد'
+    report_lines.append(f'التصنيف الحالي: {categories_text}')
+    report_lines.append(f'الصفوف الحالية: {grades_text}')
+
+    if current_session:
+        report_lines.append(
+            f'جلسة اليوم: {current_session.start_time.strftime("%H:%M")} - '
+            f'{current_session.end_time.strftime("%H:%M")}'
+        )
+    else:
+        report_lines.append('جلسة اليوم: لا توجد جلسة مسجلة لليوم حتى الآن')
+
+    report_lines.append(
+        'حضور اليوم: '
+        f'{today_attendance_summary["present"]} حاضر، '
+        f'{today_attendance_summary["absent"]} غائب، '
+        f'{today_attendance_summary["excused"]} مبرر'
+    )
+    report_lines.append(
+        f'مؤشرات الشهر: {monthly_points_total:+} نقطة، '
+        f'{monthly_verses_total} آية محفوظة، '
+        f'{monthly_records_count} تسميعات، '
+        f'حضور {monthly_attendance_rate}%'
+    )
+    return '\n'.join(report_lines)
+
 
 class TeacherStudentViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [AllowAny]
@@ -50,7 +330,14 @@ class TeacherAttendanceViewSet(viewsets.ModelViewSet):
     serializer_class = AttendanceSerializer
 
     def get_queryset(self):
-        return Attendance.objects.select_related('student', 'session__halaqa')
+        queryset = Attendance.objects.select_related('student', 'session__halaqa')
+        student_id = self.request.query_params.get('student')
+        session_id = self.request.query_params.get('session')
+        if student_id:
+            queryset = queryset.filter(student_id=student_id)
+        if session_id:
+            queryset = queryset.filter(session_id=session_id)
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save()
@@ -61,10 +348,18 @@ class TeacherPointViewSet(viewsets.ModelViewSet):
     serializer_class = PointSerializer
 
     def get_queryset(self):
-        return PointTransaction.objects.select_related('student', 'halaqa')
+        queryset = PointTransaction.objects.select_related('student', 'halaqa')
+        student_id = self.request.query_params.get('student')
+        halaqa_id = self.request.query_params.get('halaqa')
+        if student_id:
+            queryset = queryset.filter(student_id=student_id)
+        if halaqa_id:
+            queryset = queryset.filter(halaqa_id=halaqa_id)
+        return queryset
 
     def perform_create(self, serializer):
-        serializer.save()
+        user = self.request.user if getattr(self.request.user, 'is_authenticated', False) else None
+        serializer.save(created_by=user)
 
 
 class TeacherPlanViewSet(viewsets.ModelViewSet):
@@ -72,61 +367,95 @@ class TeacherPlanViewSet(viewsets.ModelViewSet):
     serializer_class = PlanSerializer
 
     def get_queryset(self):
-        return Plan.objects.select_related('student', 'halaqa')
+        queryset = Plan.objects.select_related('student', 'halaqa')
+        student_id = self.request.query_params.get('student')
+        halaqa_id = self.request.query_params.get('halaqa')
+        is_completed = self.request.query_params.get('is_completed')
+        if student_id:
+            queryset = queryset.filter(student_id=student_id)
+        if halaqa_id:
+            queryset = queryset.filter(halaqa_id=halaqa_id)
+        if is_completed in {'true', 'false'}:
+            queryset = queryset.filter(is_completed=(is_completed == 'true'))
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save()
 
-#─────
-# الواجهات التقليدية (Templates)
-# ────────────────────────────────────────────────────────────────
+
+class TeacherHomeworkViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
+    serializer_class = HomeworkSerializer
+
+    def get_queryset(self):
+        queryset = Homework.objects.select_related('student', 'halaqa')
+        student_id = self.request.query_params.get('student')
+        halaqa_id = self.request.query_params.get('halaqa')
+        pending = self.request.query_params.get('pending')
+        if student_id:
+            queryset = queryset.filter(student_id=student_id)
+        if halaqa_id:
+            queryset = queryset.filter(halaqa_id=halaqa_id)
+        if pending in {'true', 'false'}:
+            queryset = queryset.filter(evaluation_date__isnull=(pending == 'true'))
+        return queryset
+
+    def perform_create(self, serializer):
+        user = self.request.user if getattr(self.request.user, 'is_authenticated', False) else None
+        validated_data = serializer.validated_data
+        evaluated_by = user if validated_data.get('evaluation') and validated_data.get('evaluation_date') else None
+        serializer.save(created_by=user, evaluated_by=evaluated_by)
+
+    def perform_update(self, serializer):
+        user = self.request.user if getattr(self.request.user, 'is_authenticated', False) else None
+        evaluation = serializer.validated_data.get('evaluation', serializer.instance.evaluation)
+        evaluation_date = serializer.validated_data.get('evaluation_date', serializer.instance.evaluation_date)
+        if evaluation and evaluation_date:
+            serializer.save(evaluated_by=user)
+        else:
+            serializer.save()
+
+
 @login_required
 def teacher_dashboard(request):
-    teacher = request.user.teacher_profile
-
+    teacher = request.user.teacher
     verses_expr = ExpressionWrapper(
-        F('memorization_records__to_verse')
-        - F('memorization_records__from_verse')
-        + Value(1),
-        output_field=IntegerField()
+        F('memorization_records__to_verse') - F('memorization_records__from_verse') + Value(1),
+        output_field=IntegerField(),
     )
 
     students = Student.objects.filter(
         halaqa_memberships__halaqa__teachers=teacher,
-        halaqa_memberships__is_active=True
+        halaqa_memberships__is_active=True,
     ).annotate(
         total_points=Sum('point_transactions__value'),
         memorized_verses=Sum(verses_expr),
         present_count=Count('attendances', filter=Q(attendances__status='present')),
-        absent_count=Count('attendances', filter=Q(attendances__status='absent'))
+        absent_count=Count('attendances', filter=Q(attendances__status='absent')),
     ).select_related('parent')
 
     halaqas = Halaqa.objects.filter(
-        teachers=teacher
+        teachers=teacher,
     ).annotate(
-        student_count=Count('members', filter=Q(members__is_active=True))
+        student_count=Count('members', filter=Q(members__is_active=True)),
     )
 
     dashboard_data = []
     for student in students:
-        current_plan = Plan.objects.filter(
-            student=student,
-            is_completed=False
-        ).first()
-
+        current_plan = Plan.objects.filter(student=student, is_completed=False).first()
         dashboard_data.append({
-            'student':   student,
-            'present':   student.present_count,
-            'absent':    student.absent_count,
-            'points':    student.total_points or 0,
+            'student': student,
+            'present': student.present_count,
+            'absent': student.absent_count,
+            'points': student.total_points or 0,
             'memorized': student.memorized_verses or 0,
-            'plan':      current_plan,
+            'plan': current_plan,
         })
 
     return render(request, 'halaqas/teacher_dashboard.html', {
-        'teacher':      teacher,
+        'teacher': teacher,
         'dashboard_data': dashboard_data,
-        'halaqas':      halaqas,
+        'halaqas': halaqas,
     })
 
 
@@ -134,80 +463,410 @@ def teacher_dashboard(request):
 def halaqa_detail(request, pk):
     halaqa = get_object_or_404(
         Halaqa.objects.prefetch_related('teachers__user', 'members__student'),
-        pk=pk
+        pk=pk,
     )
-    return prepare_halaqa_view(request, halaqa, 'halaqas/halaqa_detail.html')
+    return prepare_halaqa_view(
+        request,
+        halaqa,
+        'halaqas/halaqa_detail.html',
+        ensure_current_session=True,
+    )
 
 
 @require_GET
 def halaqa_share_view(request, link_code):
     halaqa = get_object_or_404(
         Halaqa.objects.prefetch_related('teachers__user', 'members__student'),
-        shareable_link=link_code
+        shareable_link=link_code,
     )
     return prepare_halaqa_view(request, halaqa, 'halaqas/halaqa_share.html')
 
 
-def prepare_halaqa_view(request, halaqa, template_name):
-    """دالة مساعدة لإعداد بيانات الحلقة مع تضمين معرف الجلسة الحالية."""
-    from .models import Session  # للتأكد من استيراد الجلسة
+def prepare_halaqa_view(request, halaqa, template_name, ensure_current_session=False):
+    today = _resolve_reference_date(request)
+    month_start = today.replace(day=1)
+    teachers = list(halaqa.teachers.all().select_related('user'))
 
-    # التعبير لحساب عدد الآيات لكل سجل حفظ
-    verses_expr = ExpressionWrapper(
-        F('memorization_records__to_verse') - F('memorization_records__from_verse') + Value(1),
-        output_field=IntegerField()
+    current_teacher = getattr(request.user, 'teacher', None) if getattr(request, 'user', None) else None
+    if current_teacher and current_teacher not in teachers:
+        current_teacher = None
+    display_teacher = current_teacher or (teachers[0] if teachers else None)
+
+    students = list(
+        Student.objects.filter(
+            halaqa_memberships__halaqa=halaqa,
+            halaqa_memberships__is_active=True,
+        ).select_related('parent').prefetch_related('memorization_records').distinct().order_by('name')
     )
+    student_ids = [student.id for student in students]
 
-    # الاستعلام الرئيسي لجلب الطلاب وإحصائياتهم
-    students = Student.objects.filter(
-        halaqa_memberships__halaqa=halaqa,
-        halaqa_memberships__is_active=True
-    ).annotate(
-        total_points=Sum(
-            'point_transactions__value',
-            filter=Q(point_transactions__halaqa=halaqa)
-        ),
-        memorized_verses=Sum(verses_expr),
-        present_count=Count(
-            'attendances',
-            filter=Q(attendances__session__halaqa=halaqa, attendances__status='present')
-        ),
-        absent_count=Count(
-            'attendances',
-            filter=Q(attendances__session__halaqa=halaqa, attendances__status='absent')
+    points_rows = PointTransaction.objects.filter(
+        student_id__in=student_ids,
+        halaqa=halaqa,
+        date__date__lte=today,
+    ).values('student_id').annotate(total=Coalesce(Sum('value'), 0))
+    points_map = {row['student_id']: row['total'] for row in points_rows}
+
+    attendance_rows = Attendance.objects.filter(
+        student_id__in=student_ids,
+        session__halaqa=halaqa,
+        session__date__lte=today,
+    ).values('student_id').annotate(
+        present=Count('id', filter=Q(status='present')),
+        absent=Count('id', filter=Q(status='absent')),
+        excused=Count('id', filter=Q(status='excused')),
+    )
+    attendance_map = {
+        row['student_id']: {
+            'present': row['present'],
+            'absent': row['absent'],
+            'excused': row['excused'],
+        }
+        for row in attendance_rows
+    }
+
+    memorization_rows = MemorizationRecord.objects.filter(
+        student_id__in=student_ids,
+        date__lte=today,
+    ).values('student_id').annotate(total=Coalesce(Sum(VERSE_COUNT_EXPR), 0))
+    memorization_map = {row['student_id']: row['total'] for row in memorization_rows}
+
+    current_plans = {}
+    for plan in Plan.objects.filter(
+        student_id__in=student_ids,
+        halaqa=halaqa,
+        is_completed=False,
+        start_date__lte=today,
+        end_date__gte=today,
+    ).order_by('student_id', '-start_date', '-id'):
+        current_plans.setdefault(plan.student_id, plan)
+
+    current_homeworks = {}
+    for homework in Homework.objects.filter(
+        student_id__in=student_ids,
+        halaqa=halaqa,
+        assigned_date__lte=today,
+    ).order_by('student_id', '-assigned_date', '-id'):
+        current_homeworks.setdefault(homework.student_id, homework)
+
+    current_session = Session.objects.filter(
+        halaqa=halaqa,
+        date=today,
+    ).first()
+    if ensure_current_session and current_session is None:
+        current_session = Session.objects.create(
+            halaqa=halaqa,
+            date=today,
+            start_time=time(0, 0),
+            end_time=time(0, 0),
         )
-    ).select_related('parent')
+    current_session_id = current_session.id if current_session else None
 
-    # الحصول على أحدث جلسة (حسب التاريخ) للحلقة
-    current_session, _ = Session.objects.get_or_create(
-    halaqa=halaqa,
-    date=date.today(),
-    defaults={'start_time': '00:00', 'end_time': '00:00'}
-)
-    session_id = current_session.id
+    today_attendance_map = {}
+    if current_session_id:
+        for attendance in Attendance.objects.filter(
+            session_id=current_session_id,
+            student_id__in=student_ids,
+        ):
+            today_attendance_map[attendance.student_id] = attendance
+
+    month_points_total = PointTransaction.objects.filter(
+        student_id__in=student_ids,
+        halaqa=halaqa,
+        date__date__range=(month_start, today),
+    ).aggregate(total=Coalesce(Sum('value'), 0))['total']
+
+    month_memorization_qs = MemorizationRecord.objects.filter(
+        student_id__in=student_ids,
+        date__range=(month_start, today),
+    )
+    month_verses_total = month_memorization_qs.aggregate(
+        total=Coalesce(Sum(VERSE_COUNT_EXPR), 0)
+    )['total']
+    month_records_count = month_memorization_qs.count()
+
+    month_attendance = Attendance.objects.filter(
+        student_id__in=student_ids,
+        session__halaqa=halaqa,
+        session__date__range=(month_start, today),
+    ).aggregate(
+        present=Count('id', filter=Q(status='present')),
+        absent=Count('id', filter=Q(status='absent')),
+        excused=Count('id', filter=Q(status='excused')),
+    )
+    month_attendance_total = (
+        month_attendance['present'] +
+        month_attendance['absent'] +
+        month_attendance['excused']
+    )
+    month_attendance_rate = round(
+        (month_attendance['present'] / month_attendance_total) * 100
+    ) if month_attendance_total else 0
+
+    today_attendance_summary = {
+        'present': sum(1 for item in today_attendance_map.values() if item.status == 'present'),
+        'absent': sum(1 for item in today_attendance_map.values() if item.status == 'absent'),
+        'excused': sum(1 for item in today_attendance_map.values() if item.status == 'excused'),
+    }
+
+    grade_counter = Counter()
+    category_counter = Counter()
     dashboard_data = []
     for student in students:
-        current_plan = Plan.objects.filter(
-            student=student,
-            halaqa=halaqa,
-            is_completed=False
-        ).first()
+        attendance_summary = attendance_map.get(student.id, {'present': 0, 'absent': 0, 'excused': 0})
+        current_plan = current_plans.get(student.id)
+        current_homework = current_homeworks.get(student.id)
+        homework_snapshot = _build_homework_snapshot(current_homework, today)
+        today_attendance = today_attendance_map.get(student.id)
+        memorization_records = sorted(
+            [record for record in student.memorization_records.all() if record.date <= today],
+            key=lambda record: (record.date, record.id),
+            reverse=True,
+        )
+        last_memorization = memorization_records[0] if memorization_records else None
+        grade_label = (student.grade or '').strip()
+        if grade_label:
+            grade_counter[grade_label] += 1
+        category_counter[_infer_category(student)] += 1
 
         dashboard_data.append({
-            'student':             student,
-            'present':             student.present_count,
-            'absent':              student.absent_count,
-            'points':              student.total_points or 0,
-            'memorized':           student.memorized_verses or 0,
-            'plan':                current_plan,
-            'current_session_id':  session_id,      # إضافة معرف الجلسة
+            'student': student,
+            'present': attendance_summary['present'],
+            'absent': attendance_summary['absent'],
+            'excused': attendance_summary['excused'],
+            'points': points_map.get(student.id, 0),
+            'memorized': memorization_map.get(student.id, 0),
+            'plan': current_plan,
+            'plan_id': current_plan.id if current_plan else None,
+            'homework': homework_snapshot,
+            'current_session_id': current_session_id,
+            'today_attendance_id': today_attendance.id if today_attendance else None,
+            'today_attendance_status': today_attendance.status if today_attendance else '',
+            'today_attendance_notes': today_attendance.notes if today_attendance else '',
+            'last_memorization': last_memorization,
+            'grade_label': grade_label or 'غير محدد',
+            'category_label': _infer_category(student),
         })
 
-    return render(request, template_name, {
-        'halaqa':        halaqa,
-        'dashboard_data': dashboard_data,
-    })
+    grade_badges = [
+        {'label': label, 'count': count}
+        for label, count in grade_counter.most_common()
+    ]
+    category_badges = [
+        {'label': label, 'count': count}
+        for label, count in category_counter.most_common()
+    ]
+    grades_text = '، '.join(item['label'] for item in grade_badges) or 'غير محدد'
+    categories_text = '، '.join(item['label'] for item in category_badges) or 'غير مصنف'
 
+    top_students = sorted(
+        dashboard_data,
+        key=lambda item: (-item['points'], item['student'].name),
+    )[:5]
+    top_students_chart = {
+        'labels': [entry['student'].name for entry in top_students],
+        'values': [entry['points'] for entry in top_students],
+    }
+    if not top_students_chart['labels']:
+        top_students_chart = {'labels': ['لا يوجد طلاب'], 'values': [0]}
+
+    attendance_chart = {
+        'labels': ['حضور', 'غياب', 'مبرر'],
+        'values': [
+            month_attendance['present'],
+            month_attendance['absent'],
+            month_attendance['excused'],
+        ],
+    }
+
+    memorization_chart_rows = list(
+        month_memorization_qs.values('date').annotate(
+            total=Coalesce(Sum(VERSE_COUNT_EXPR), 0)
+        ).order_by('date')
+    )
+    memorization_entries = [
+        {
+            'date': row['date'].isoformat(),
+            'label': row['date'].strftime('%d/%m'),
+            'value': row['total'],
+        }
+        for row in memorization_chart_rows
+    ]
+    if not memorization_entries:
+        memorization_entries = [{
+            'date': today.isoformat(),
+            'label': today.strftime('%d/%m'),
+            'value': 0,
+        }]
+    memorization_chart = {
+        'entries': memorization_entries,
+        'labels': [entry['label'] for entry in memorization_entries],
+        'values': [entry['value'] for entry in memorization_entries],
+    }
+
+    month_label = _format_month_label(today)
+    teacher_name = display_teacher.full_name if display_teacher else 'غير محدد'
+    current_session_label = (
+        f'{current_session.start_time.strftime("%H:%M")} - {current_session.end_time.strftime("%H:%M")}'
+        if current_session else 'لا توجد جلسة مسجلة لليوم'
+    )
+    summary_cards = [
+        {
+            'icon': 'fas fa-users',
+            'value': len(students),
+            'label': 'عدد الطلاب',
+            'meta': 'الطلاب النشطون في الحلقة',
+        },
+        {
+            'icon': 'fas fa-star',
+            'value': f'{month_points_total:+}',
+            'label': f'نقاط {month_label}',
+            'meta': 'إجمالي الإضافات والخصومات هذا الشهر',
+        },
+        {
+            'icon': 'fas fa-book-open',
+            'value': month_verses_total,
+            'label': 'آيات محفوظة هذا الشهر',
+            'meta': f'{month_records_count} تسميعات مسجلة',
+        },
+        {
+            'icon': 'fas fa-calendar-check',
+            'value': f'{month_attendance_rate}%',
+            'label': 'حضور الشهر',
+            'meta': (
+                f'{month_attendance["present"]} حاضر / {month_attendance_total} إجمالي حالات'
+                if month_attendance_total else 'لا توجد سجلات حضور لهذا الشهر'
+            ),
+        },
+    ]
+
+    daily_history = _build_daily_history(
+        halaqa=halaqa,
+        student_ids=student_ids,
+        selected_date=today,
+    )
+
+    daily_report_preview = _build_daily_report(
+        today=today,
+        halaqa=halaqa,
+        teacher_name=teacher_name,
+        student_count=len(students),
+        category_badges=category_badges,
+        grade_badges=grade_badges,
+        current_session=current_session,
+        today_attendance_summary=today_attendance_summary,
+        monthly_points_total=month_points_total,
+        monthly_verses_total=month_verses_total,
+        monthly_records_count=month_records_count,
+        monthly_attendance_rate=month_attendance_rate,
+    )
+
+    student_table_state = []
+    for entry in dashboard_data:
+        last_memorization = entry['last_memorization']
+        homework = entry['homework']
+        student_table_state.append({
+            'id': entry['student'].id,
+            'name': entry['student'].name,
+            'points': entry['points'],
+            'present': entry['present'],
+            'absent': entry['absent'],
+            'excused': entry['excused'],
+            'today_attendance_status': entry['today_attendance_status'],
+            'today_attendance_id': entry['today_attendance_id'],
+            'plan_id': entry['plan_id'],
+            'plan_target': entry['plan'].target if entry['plan'] else '',
+            'plan_start': entry['plan'].start_date.isoformat() if entry['plan'] else '',
+            'plan_end': entry['plan'].end_date.isoformat() if entry['plan'] else '',
+            'plan_notes': entry['plan'].notes if entry['plan'] else '',
+            'homework_id': homework['id'] if homework else '',
+            'homework_status': homework['status'] if homework else 'none',
+            'homework_status_label': homework['status_label'] if homework else '',
+            'homework_assignment_type': homework['assignment_type'] if homework else '',
+            'homework_assignment_type_label': homework['assignment_type_label'] if homework else '',
+            'homework_assignment_text': homework['assignment_text'] if homework else '',
+            'homework_assignment_notes': homework['assignment_notes'] if homework else '',
+            'homework_assigned_date': homework['assigned_date_iso'] if homework else '',
+            'homework_evaluation': homework['evaluation'] if homework else '',
+            'homework_evaluation_label': homework['evaluation_label'] if homework else '',
+            'homework_evaluation_date': homework['evaluation_date_iso'] if homework else '',
+            'homework_evaluation_notes': homework['evaluation_notes'] if homework else '',
+            'last_memorization': (
+                {
+                    'surah': last_memorization.surah,
+                    'from_verse': last_memorization.from_verse,
+                    'to_verse': last_memorization.to_verse,
+                    'evaluation': last_memorization.evaluation,
+                    'evaluation_label': last_memorization.get_evaluation_display() if last_memorization.evaluation else '',
+                    'date': last_memorization.date.isoformat(),
+                }
+                if last_memorization else None
+            ),
+        })
+
+    report_state = {
+        'halaqa_name': halaqa.name,
+        'teacher_name': teacher_name,
+        'selected_date': today.isoformat(),
+        'selected_date_display': today.strftime('%d/%m/%Y'),
+        'date_label': today.strftime('%Y-%m-%d'),
+        'session_label': current_session_label,
+        'student_count': len(students),
+        'categories_text': categories_text,
+        'grades_text': grades_text,
+        'month_label': month_label,
+        'monthly_points_total': month_points_total,
+        'monthly_verses_total': month_verses_total,
+        'monthly_records_count': month_records_count,
+        'monthly_attendance_rate': month_attendance_rate,
+        'monthly_attendance': {
+            'present': month_attendance['present'],
+            'absent': month_attendance['absent'],
+            'excused': month_attendance['excused'],
+            'total': month_attendance_total,
+        },
+        'today_attendance_summary': today_attendance_summary,
+        'today_chart_label': today.strftime('%d/%m'),
+        'today_chart_date': today.isoformat(),
+        'daily_history': daily_history,
+    }
+
+    return render(request, template_name, {
+        'halaqa': halaqa,
+        'dashboard_data': dashboard_data,
+        'display_teacher': display_teacher,
+        'teacher_greeting': _time_greeting(),
+        'teacher_names': [teacher.full_name for teacher in teachers],
+        'summary_cards': summary_cards,
+        'grade_badges': grade_badges,
+        'category_badges': category_badges,
+        'today_label': today,
+        'selected_date': today,
+        'month_label': month_label,
+        'current_session': current_session,
+        'top_students_chart': top_students_chart,
+        'attendance_chart': attendance_chart,
+        'memorization_chart': memorization_chart,
+        'daily_report_preview': daily_report_preview,
+        'report_state': report_state,
+        'student_table_state': student_table_state,
+        'today_attendance_summary': today_attendance_summary,
+        'evaluation_options': [
+            {'value': value, 'label': label}
+            for value, label in MemorizationRecord.EVALUATION_CHOICES
+        ],
+        'homework_type_options': [
+            {'value': value, 'label': label}
+            for value, label in Homework.ASSIGNMENT_TYPE_CHOICES
+        ],
+        'homework_evaluation_options': [
+            {'value': value, 'label': label}
+            for value, label in Homework.EVALUATION_CHOICES
+        ],
+        'point_reason_presets': POINT_REASON_PRESETS,
+        'attendance_note_presets': ATTENDANCE_NOTE_PRESETS,
+        'plan_target_presets': PLAN_TARGET_PRESETS,
+    })
 
 
 @login_required
@@ -234,41 +893,24 @@ def halaqa_students_api(request, link_code):
     halaqa = get_object_or_404(Halaqa, shareable_link=link_code)
     students = Student.objects.filter(
         halaqa_memberships__halaqa=halaqa,
-        halaqa_memberships__is_active=True
+        halaqa_memberships__is_active=True,
     ).annotate(
         total_points=Sum('point_transactions__value'),
         attendance_rate=ExpressionWrapper(
-            Count('attendances', filter=Q(attendances__status='present')) * 100.0 / 
+            Count('attendances', filter=Q(attendances__status='present')) * 100.0 /
             Count('attendances'),
-            output_field=FloatField()
-        )
+            output_field=FloatField(),
+        ),
     ).values(
-        'id', 
-        'full_name',
-        'last_memorized_surah',
+        'id',
+        'name',
+        'grade',
         'total_points',
-        'attendance_rate'
+        'attendance_rate',
     )
-    
-    return Response(list(students))
-
+    return Response(list(students), status=status.HTTP_200_OK)
 
 
 def halaqa_students_list(request, halaqa_id):
-    """
-    عرض قائمة طلاب الحلقة مع روابط ملفاتهم الشخصية
-    """
     halaqa = get_object_or_404(Halaqa, id=halaqa_id)
-    
-    # استخدام الدالة prepare_halaqa_view الموجودة لديك مع تعديلات
-    response = prepare_halaqa_view(request, halaqa, 'halaqas/students_list.html')
-    
-    # إضافة الروابط للطلاب
-    if hasattr(response, 'context_data'):
-        dashboard_data = response.context_data.get('dashboard_data', [])
-        
-        for student_data in dashboard_data:
-            student = student_data['student']
-            student_data['access_link'] = student.get_access_link(request)
-    
-    return response
+    return prepare_halaqa_view(request, halaqa, 'halaqas/students_list.html')

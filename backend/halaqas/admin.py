@@ -1,7 +1,18 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from django.urls import reverse, NoReverseMatch
-from .models import Teacher, Halaqa, Session, HalaqaMembership, Attendance, PointTransaction, Plan
+from .models import (
+    Attendance,
+    Category,
+    Halaqa,
+    HalaqaMembership,
+    Homework,
+    Plan,
+    PointTransaction,
+    Session,
+    Teacher,
+    TeacherAssignment,
+)
 
 class HalaqaMembershipInline(admin.TabularInline):
     model = HalaqaMembership
@@ -14,15 +25,22 @@ class SessionInline(admin.TabularInline):
 
 @admin.register(Teacher)
 class TeacherAdmin(admin.ModelAdmin):
-    list_display = ['full_name', 'phone', 'qualification', 'join_date']
+    list_display = ['full_name', 'phone', 'qualification', 'current_halaqa', 'join_date']
     search_fields = ['full_name', 'phone']
-    list_filter = ['join_date']
+    list_filter = ['join_date', 'current_halaqa']
+
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ['code', 'name', 'grade_span', 'display_order', 'is_special']
+    list_filter = ['is_special']
+    search_fields = ['code', 'name', 'grade_span']
 
 @admin.register(Halaqa)
 class HalaqaAdmin(admin.ModelAdmin):
-    list_display = ['name', 'display_teachers', 'join_code', 'view_link']
+    list_display = ['name', 'category', 'display_teachers', 'join_code', 'view_link']
     search_fields = ['name', 'join_code']
-    list_filter = ['teachers']
+    list_filter = ['category', 'teachers']
     inlines = [HalaqaMembershipInline, SessionInline]
     
     def display_teachers(self, obj):
@@ -68,3 +86,18 @@ class PlanAdmin(admin.ModelAdmin):
     list_filter = ['halaqa', 'is_completed']
     search_fields = ['student__name']
     raw_id_fields = ['student', 'halaqa']
+
+
+@admin.register(Homework)
+class HomeworkAdmin(admin.ModelAdmin):
+    list_display = ['student', 'halaqa', 'assigned_date', 'evaluation_date', 'evaluation']
+    list_filter = ['halaqa', 'assigned_date', 'evaluation']
+    search_fields = ['student__name', 'assignment_text']
+    raw_id_fields = ['student', 'halaqa']
+
+
+@admin.register(TeacherAssignment)
+class TeacherAssignmentAdmin(admin.ModelAdmin):
+    list_display = ['teacher', 'halaqa', 'start_date', 'end_date', 'is_active']
+    list_filter = ['halaqa', 'is_active']
+    search_fields = ['teacher__full_name', 'halaqa__name']
