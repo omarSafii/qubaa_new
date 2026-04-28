@@ -7,4 +7,8391 @@
     "user": 1,
     "content_type": 11,
     "object_id": "1",
-    "object_repr": 
+    "object_repr": "عمر صافي",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 2,
+  "fields": {
+    "action_time": "2025-07-23T08:45:04.152Z",
+    "user": 1,
+    "content_type": 12,
+    "object_id": "1",
+    "object_repr": "عمرو بن العاص",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 3,
+  "fields": {
+    "action_time": "2025-07-23T08:45:56.549Z",
+    "user": 1,
+    "content_type": 10,
+    "object_id": "1",
+    "object_repr": "جواد شيخ ورق",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 4,
+  "fields": {
+    "action_time": "2025-07-23T11:06:55.289Z",
+    "user": 1,
+    "content_type": 12,
+    "object_id": "1",
+    "object_repr": "عمرو بن العاص",
+    "action_flag": 2,
+    "change_message": "[]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 5,
+  "fields": {
+    "action_time": "2025-07-26T04:59:28.248Z",
+    "user": 1,
+    "content_type": 4,
+    "object_id": "3",
+    "object_repr": "حمزة",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 6,
+  "fields": {
+    "action_time": "2025-07-26T04:59:50.855Z",
+    "user": 1,
+    "content_type": 11,
+    "object_id": "3",
+    "object_repr": "حمزة",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 7,
+  "fields": {
+    "action_time": "2025-07-26T05:54:38.232Z",
+    "user": 1,
+    "content_type": 4,
+    "object_id": "8",
+    "object_repr": "يوسف",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 8,
+  "fields": {
+    "action_time": "2025-07-26T05:55:08.156Z",
+    "user": 1,
+    "content_type": 11,
+    "object_id": "8",
+    "object_repr": "يوسف شاهين",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 9,
+  "fields": {
+    "action_time": "2025-07-26T06:20:58.236Z",
+    "user": 1,
+    "content_type": 12,
+    "object_id": "3",
+    "object_repr": "خالد بن الوليد",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 10,
+  "fields": {
+    "action_time": "2025-07-26T06:36:54.893Z",
+    "user": 1,
+    "content_type": 4,
+    "object_id": "10",
+    "object_repr": "fatima",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 11,
+  "fields": {
+    "action_time": "2025-07-26T06:37:10.894Z",
+    "user": 1,
+    "content_type": 11,
+    "object_id": "10",
+    "object_repr": "فاطمة",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 12,
+  "fields": {
+    "action_time": "2025-07-26T06:37:48.143Z",
+    "user": 1,
+    "content_type": 12,
+    "object_id": "4",
+    "object_repr": "عثمان بن عفان",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 13,
+  "fields": {
+    "action_time": "2025-07-27T04:53:50.546Z",
+    "user": 1,
+    "content_type": 4,
+    "object_id": "11",
+    "object_repr": "سلمى",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 14,
+  "fields": {
+    "action_time": "2025-07-27T04:54:07.712Z",
+    "user": 1,
+    "content_type": 11,
+    "object_id": "11",
+    "object_repr": "سلمى سباعي",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 15,
+  "fields": {
+    "action_time": "2025-07-27T04:54:16.237Z",
+    "user": 1,
+    "content_type": 12,
+    "object_id": "5",
+    "object_repr": "ابو هريرة",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 16,
+  "fields": {
+    "action_time": "2025-07-27T06:44:33.366Z",
+    "user": 1,
+    "content_type": 4,
+    "object_id": "13",
+    "object_repr": "فبات",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 17,
+  "fields": {
+    "action_time": "2025-07-27T06:44:39.073Z",
+    "user": 1,
+    "content_type": 11,
+    "object_id": "13",
+    "object_repr": "f",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 18,
+  "fields": {
+    "action_time": "2025-07-27T06:44:49.266Z",
+    "user": 1,
+    "content_type": 12,
+    "object_id": "6",
+    "object_repr": "لا",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 19,
+  "fields": {
+    "action_time": "2025-07-28T03:19:37.172Z",
+    "user": 1,
+    "content_type": 4,
+    "object_id": "18",
+    "object_repr": "ali_jouri",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 20,
+  "fields": {
+    "action_time": "2025-07-28T03:19:54.055Z",
+    "user": 1,
+    "content_type": 11,
+    "object_id": "18",
+    "object_repr": "علي الجوري",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 21,
+  "fields": {
+    "action_time": "2025-07-28T03:20:12.246Z",
+    "user": 1,
+    "content_type": 12,
+    "object_id": "7",
+    "object_repr": "علي الجوري",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 22,
+  "fields": {
+    "action_time": "2025-09-18T14:54:17.244Z",
+    "user": 1,
+    "content_type": 10,
+    "object_id": "43",
+    "object_repr": "جاد حلبية",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 23,
+  "fields": {
+    "action_time": "2025-09-18T14:55:57.634Z",
+    "user": 1,
+    "content_type": 12,
+    "object_id": "8",
+    "object_repr": "حلقة عمرو بن العاص",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$ofjii7lSEUBLyMrIRqmpaQ$wmekoN9Nsxr3ZMTKsAsqCQ3tZSMIq8bC3XtV3f0v+KU=",
+    "last_login": "2025-10-25T07:57:39.709Z",
+    "is_superuser": true,
+    "username": "manegar",
+    "first_name": "",
+    "last_name": "",
+    "email": "m@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-07-23T08:43:12.917Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 2,
+  "fields": {
+    "password": "",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_0996138558",
+    "first_name": "عماد",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-24T12:03:59.899Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$iWE3iiTtnC6cbmzgz7x6el$o2hSWl7DFkPnczUMq8GrSE7BmGupa+IdWJSIstcjvHo=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "حمزة",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-26T04:59:27.886Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 4,
+  "fields": {
+    "password": "",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_0997416201",
+    "first_name": "عماد",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-26T05:18:44.698Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 5,
+  "fields": {
+    "password": "",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_سىلب",
+    "first_name": "سبلى",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-26T05:37:01.454Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 6,
+  "fields": {
+    "password": "",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_0943680048",
+    "first_name": "عماد",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-26T05:38:00.819Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 7,
+  "fields": {
+    "password": "fVcgrRnrQK",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_d,u",
+    "first_name": "حسام",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-26T05:49:41.907Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 8,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$cM1338ZbTpKSETJRLeTaAX$yW3c5fPKjkQ9uTQ/6kTExEhEPBIjxq5eKwovwDBvaRo=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "يوسف",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-26T05:54:37.511Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 9,
+  "fields": {
+    "password": "fcXmvC4Qdx",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_وةوةى",
+    "first_name": "du,",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-26T05:58:46.728Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 10,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$FZEgihlWi5k7SFXuwYdyFM$ewKZQWjT/gjbGwDCf94o/gAhOrUQAHbX9zdCUWmoGmU=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "fatima",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-26T06:36:54.137Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 11,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$fwzcSPhhVYXeVm6vQ2wymS$B7OKxnkwY5adGyylhk+Jn96C5fMfPhJZqtzp9OJKCMA=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "سلمى",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-27T04:53:49.426Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 12,
+  "fields": {
+    "password": "DB7SzCALSn",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_09961385585",
+    "first_name": "du,f",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-27T04:55:32.651Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 13,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$VN20u7zPBtEX2kaRuVTOs4$gh9E+aS4JRi9oxPPfGjCAYXQVKOqdJOeuB+SATOGXUI=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "فبات",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-27T06:44:31.551Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 14,
+  "fields": {
+    "password": "GcP6h9cuTZ",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_rhjm",
+    "first_name": "jym",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-27T06:45:29.076Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 15,
+  "fields": {
+    "password": "aHCLEhJ7dx",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_dfab",
+    "first_name": "adfb",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-27T09:14:01.455Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 16,
+  "fields": {
+    "password": "y2S5Ng4bdB",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_fg",
+    "first_name": "dga",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-28T03:14:24.736Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 17,
+  "fields": {
+    "password": "N2XaKMPDun",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_fg 52045",
+    "first_name": "فاص",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-28T03:15:37.948Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 18,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$0YQcRcQbY9vNnvkt0b4mWo$Va8H7Kd7vxTCmmvGCbw907DcqsrGzR1VZjGDtT0qMCQ=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "ali_jouri",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-28T03:19:36.242Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 19,
+  "fields": {
+    "password": "EcF32sPY6c",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_شلى",
+    "first_name": "شيل",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-30T03:30:51.816Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 20,
+  "fields": {
+    "password": "aTXBrHaJUW",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_سبى",
+    "first_name": "بسىل",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-30T04:23:38.686Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 21,
+  "fields": {
+    "password": "KLfhczACFp",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_سب",
+    "first_name": "سب",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-30T04:32:12.226Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 22,
+  "fields": {
+    "password": "VxSZf3uTXB",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_تةغاى",
+    "first_name": "تةىالال",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-30T05:27:51.202Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 23,
+  "fields": {
+    "password": "xLRY6aTZdm",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_ق",
+    "first_name": "قا",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-30T05:51:14.337Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 24,
+  "fields": {
+    "password": "yEE2njhQse",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_سلا",
+    "first_name": "اسل",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-30T06:05:18.213Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 25,
+  "fields": {
+    "password": "KwPAQQNfsk",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_504",
+    "first_name": "ىنبرلان",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-30T06:44:32.301Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 26,
+  "fields": {
+    "password": "RdzgXrKvVY",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_504شيلا",
+    "first_name": "تمي",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-30T09:48:24.230Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 27,
+  "fields": {
+    "password": "XzYKFnX326",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_5تغة",
+    "first_name": "5تةغ",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-30T11:02:39.412Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 28,
+  "fields": {
+    "password": "hRwLeBd6vH",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_09905151",
+    "first_name": "ابو اسامة",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-30T14:26:11.945Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 29,
+  "fields": {
+    "password": "Zp4NGYhumX",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_897645312.0",
+    "first_name": "سراج",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-30T21:18:07.937Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 30,
+  "fields": {
+    "password": "hZxDhHhzaz",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_5412.0453120",
+    "first_name": "shami",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-08-01T15:23:17.879Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 31,
+  "fields": {
+    "password": "d8CHUuWmZR",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_09111121",
+    "first_name": "عماد صافي",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-08-05T08:23:56.604Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 32,
+  "fields": {
+    "password": "PggweEEKj2",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_مسيىرمط",
+    "first_name": "تايؤتك",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-08-11T14:34:50.318Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 33,
+  "fields": {
+    "password": "VG5yjQWWjf",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_حختلب",
+    "first_name": "شبىلم",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-08-12T10:51:29.516Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 34,
+  "fields": {
+    "password": "7kj8r9jAwr",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_lewnc",
+    "first_name": "lkewnlc",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-09-15T22:10:23.733Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 35,
+  "fields": {
+    "password": "N588gJMypy",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_84+612",
+    "first_name": "منءىمن",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-09-16T16:47:02.894Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 36,
+  "fields": {
+    "password": "55hR88WKVA",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_غسان",
+    "first_name": "محمد",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-09-18T15:04:12.030Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 37,
+  "fields": {
+    "password": "VKRMrzZKuy",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_305952952952",
+    "first_name": "نديم",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-09-24T17:19:09.305Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 38,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$LMmtMaTqwyTs2nkWYRBSqz$kDJTyueb/aexanO5PPvliTM481FLgDDMF9WjyhwzHdE=",
+    "last_login": "2026-03-12T11:27:56.812Z",
+    "is_superuser": true,
+    "username": "H",
+    "first_name": "",
+    "last_name": "",
+    "email": "H@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-03-12T11:26:47.253Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 39,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$TRhManKR4kWFIeec4xsvuZ$sv5kpNlqSN/GRQ+wFQ1UpZRBrh5Za1FcGdcsU99U+EY=",
+    "last_login": "2026-04-13T14:16:56.640Z",
+    "is_superuser": true,
+    "username": "admin",
+    "first_name": "",
+    "last_name": "",
+    "email": "admin@admin.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-04-13T14:14:57.624Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 40,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$pra8lnzxrECIcP0fXpk9wn$HrA4G05ffQtm48yfUhREeasvVV25pqdcUqHxhjfLNjM=",
+    "last_login": "2026-04-16T04:01:54.263Z",
+    "is_superuser": false,
+    "username": "tmp_teacher",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-16T04:01:53.135Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 41,
+  "fields": {
+    "password": "",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "tmp_parent_action",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-16T04:01:54.165Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 42,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$Gn4HjcKJ8Cgt9FbH0Sks1X$JhOjrEanZ9xVWyngzMldQfVgpV6HPSjg3BNClZiM0qU=",
+    "last_login": "2026-04-16T04:02:29.018Z",
+    "is_superuser": false,
+    "username": "tmp_teacher_2",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-16T04:02:28.335Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 43,
+  "fields": {
+    "password": "",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "tmp_parent_action_2",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-16T04:02:28.955Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 44,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$0MN3U5wwZZL3gwVP81HbND$n5n/H2tsdiHEIG0GCKfYVun07YSdGWl1BBrbP45Wh/A=",
+    "last_login": "2026-04-16T04:18:33.914Z",
+    "is_superuser": false,
+    "username": "preview_user",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-16T04:18:32.518Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 45,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$iMwM3AYIQCn0fLbEfE8jz1$ZKDScu7g2lCGWelxtOR85Dz60Dv6z04fjxTuQj3+ruE=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "preview_parent",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-16T04:18:33.153Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 46,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$vn8akNM1M7xGWo3JKq9h25$LHqFj9WC49BIsQNE1BdAnoWIDTHdW2x2DIlHM1bgtGc=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "tmp_parent2",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-18T17:35:38.416Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 47,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$y8XNdjlgk6DUmJstbc0GDv$J0MM+cTuEAdIHgr5Y70uYlTWC2BX+Te0sCd+OkMaD/g=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "tmp_teacher2",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-18T17:35:39.265Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 48,
+  "fields": {
+    "password": "",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "u1",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-18T17:37:32.992Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 49,
+  "fields": {
+    "password": "",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "u_637f2a",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-18T17:37:50.889Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 50,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$uHRUMjPRlvEz5lBEQb74l1$1UbS6CA5SYjd5vurv3en0mQ3ZpUGmw5EqVZJfo/osyQ=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent_173809940750",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-18T17:38:09.941Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 51,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$FLvS3GZQRIpDR1sueDsRml$/R43+EThALjeaHcRAKDjpeJt/tqppvIbiy+rvBs1pJk=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "teacher_173809940750",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-18T17:38:10.401Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 52,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$QQXJ8nIjL24MkTB9AzLf5F$SqepV/DYj5Sele9qcXIcHqsSJ7GyyQtNnLdVqQWJyMw=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "p_173827263001",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-18T17:38:27.263Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 53,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$IM5ud0nhk1mvC5ZHSZLm3H$mun8VcLS9uyT5VlZSAZFMZI1Yum/Ytvhtd07DRsi44k=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "t_173827263001",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-18T17:38:27.673Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 54,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$89GIbzZ9IgbW3W1ZRjhNEo$htHqGCG8B2BSWtRv6GXvVP6k0a4TVm+ZsMlL4Dq3D74=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "p2_173842960548",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-18T17:38:42.960Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 55,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$Vxv0oUve2YOR0ud3Ssm5PC$t8+igXjqShuZ17t5hVW7+eB6L6YGrA2BGbZR2QJCNXg=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "t2_173842960548",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-18T17:38:43.330Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 56,
+  "fields": {
+    "password": "",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "uu_c0b6af",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-18T17:38:50.803Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 57,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$tHWcJl2qUGEZVgkcotG7lD$opIQLqbEhk2IR0xQgmJWcRQIEadCIhW0cG+bt2nqGes=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent3_174050229933",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-18T17:40:50.229Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 58,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$fBD9Zabr0c4TWAj0vZBTG6$W1p16ou0uL8RlIQn10EQeuRIg6pL1i/6YyWLhgmKSP0=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "teacher3_174050229933",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-18T17:40:50.636Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 59,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$DvDrFPdHWifmwvLTEAVO9q$jwvd7q0htyazhLExfoIhPyEaXZJOCQbnELlkiGo1YwI=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent4_174105420045",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-18T17:41:05.420Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 60,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$RFhvm4aUhZjPCEz7ypvDQO$cDgxrjJL3kja6gz2pnHs7TX4VYlqDkKWKDnDu5ypIPk=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "teacher4_174105420045",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-18T17:41:05.798Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 61,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$XJIxYHWdT9BJvwheBdoEUH$gyRjZ3baai/pPA0m5Gz9leHfyJoxB6oIHWwWAw/H3iw=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent5_174118558303",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-18T17:41:18.558Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 62,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$oMs1ZbKUVuuHYe4BrtIs9R$y4p1gcsuVgn9HmTs2cAuSJ643Yh7FiVQ4jrR8n6CcLk=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "teacher5_174118558303",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-18T17:41:18.941Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 63,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$ARLAC9TbrWAKhSZehZgXqg$ayCwL375+VjgzqJXlzDy8wj7PFMqq8uzv+Xj8cMgG5k=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "parent6_174137245343",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-18T17:41:37.245Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 64,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$VyRyhzAMpyLuoXEeZbvf3o$unV5lYRo39kY8X68EO/C8iuWwJn+f+4c9AzTz4NuEcI=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "teacher6_174137245343",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-18T17:41:37.634Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 65,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$KXCrDDyDp85yqvzYUffcYW$G5ta93uTprokDTkEwUHhlNkdODpaTnS3bSnRzM1wpbc=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "debug_parent_unique",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-26T11:11:39.841Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 66,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$5KYOXOKveDVsgSctIVfbuE$woLZpp3QkFA+LZ60SQ7vVgEUPRPKK7g4M22itBaigRg=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "debug_parent_unique_2",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-26T11:14:04.593Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "1huym6b9srcxfeouwh4yaubbwxgsfejq",
+  "fields": {
+    "session_data": ".eJxVjMEOwiAQRP-FsyEsCy316L3fQBYWpGpoUtqT8d9tkx70NMm8N_MWnra1-K2lxU8srgLE5bcLFJ-pHoAfVO-zjHNdlynIQ5EnbXKcOb1up_t3UKiVfW2pRybNGQYORtkuAiiltMOhB0ed3RNzNhozG1IhUUBjiYCzQRdJfL7NVje0:1ulTYn:1EJkQB50BWz38Yw8H5nFJhLfpBDC3xRd0zcg8AZdYzA",
+    "expire_date": "2025-08-25T14:31:37.999Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "53n7r8rugdgq1el1niq0vod1qr85m66f",
+  "fields": {
+    "session_data": ".eJxVjMEOwiAQRP-FsyEsCy316L3fQBYWpGpoUtqT8d9tkx70NMm8N_MWnra1-K2lxU8srgLE5bcLFJ-pHoAfVO-zjHNdlynIQ5EnbXKcOb1up_t3UKiVfW2pRybNGQYORtkuAiiltMOhB0ed3RNzNhozG1IhUUBjiYCzQRdJfL7NVje0:1uyHHj:e99RYehVSnXWzGkwJdsCLyECNxlInVtOTFkl1jkMYKE",
+    "expire_date": "2025-09-29T22:02:55.010Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "5oqaychy5a5nie4xfcn9byz4pak830cl",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAURO_C2pB-qiAu3XsGMvA_UjU0Ke3KeHfbpAtNZjXvzbxVwDKXsDSZwsDqovqzOvyWEekpdSP8QL2POo11noaoN0XvtOnbyPK67u7fQUEr69q4RGw9WZuEuCcYZJfZipA7CcAdxBvOlCFHiPPAmug6djmSh_p8ATfCOd4:1w0eCq:grQTRK4EvawvvhhJ2HxeqXulsF4GD3XJssKPyJVlBNs",
+    "expire_date": "2026-03-26T11:27:56.822Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "6ks0mqv5v0dmz2upv2ecvc4kkjmmra4n",
+  "fields": {
+    "session_data": ".eJxVjMEOwiAQRP-FsyEsCy316L3fQBYWpGpoUtqT8d9tkx70NMm8N_MWnra1-K2lxU8srgLE5bcLFJ-pHoAfVO-zjHNdlynIQ5EnbXKcOb1up_t3UKiVfW2pRybNGQYORtkuAiiltMOhB0ed3RNzNhozG1IhUUBjiYCzQRdJfL7NVje0:1vCZ9f:-BaABTtXRHu--_YkodElRnX2eWHtgDxqBjZmhDiohH8",
+    "expire_date": "2025-11-08T07:57:39.730Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "b0qnlrtqujmxuo32hy0t1h8hvx92o8qk",
+  "fields": {
+    "session_data": ".eJxVjDsOwjAQBe_iGln-sWtT0ucM1nqz4ABKpDipEHcnkVJAOzPvvVWmdal5bTLnoVcXFZw6_cJC_JRxN_2DxvukeRqXeSh6T_Rhm-6mXl7Xo_07qNTqtvbGIGBCcYzOUgBJNhbyGAUEMKAhZgsegneczhAiO-QN3ygVsVZ9vtaRNvI:1wDDvx:LoduUHR1dcIZDcHndBvegscD4lujuh_nA37OfPAsVuQ",
+    "expire_date": "2026-04-30T04:02:29.027Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "bq2n0cn2bj5si2vteg8fv3q0zgda61k0",
+  "fields": {
+    "session_data": ".eJxVjMEOwiAQRP-FsyEsCy316L3fQBYWpGpoUtqT8d9tkx70NMm8N_MWnra1-K2lxU8srgLE5bcLFJ-pHoAfVO-zjHNdlynIQ5EnbXKcOb1up_t3UKiVfW2pRybNGQYORtkuAiiltMOhB0ed3RNzNhozG1IhUUBjiYCzQRdJfL7NVje0:1uyYip:TqG5uWs4Fdtu41iNP9EujqOep5usAiYGJspMs8FkYKI",
+    "expire_date": "2025-09-30T16:40:03.852Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "k9cc6q5dx1gah80kuh55dnhqhe9i7ezb",
+  "fields": {
+    "session_data": ".eJxVjMsOwiAQRf-FtSFAh5dL934DYWCQqoGktCvjv2uTLnR7zzn3xULc1hq2QUuYMzszAHb6HTGmB7Wd5Htst85Tb-syI98VftDBrz3T83K4fwc1jvqtoyHvSLhYtHSghJUCDBiXk5cOocCkvJgIFYImrUFRsZBIkwU0gJq9P-gBN1Y:1wDEBV:hpqQTCezZckAkaYoQjAGGotGXJLwHj3Lz5nJSM8NwH4",
+    "expire_date": "2026-04-30T04:18:33.925Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "mnd5xqp7sbt3lmgdbbcp8mkj2pdek24f",
+  "fields": {
+    "session_data": ".eJxVjMEOwiAQRP-FsyEsCy316L3fQBYWpGpoUtqT8d9tkx70NMm8N_MWnra1-K2lxU8srgLE5bcLFJ-pHoAfVO-zjHNdlynIQ5EnbXKcOb1up_t3UKiVfW2pRybNGQYORtkuAiiltMOhB0ed3RNzNhozG1IhUUBjiYCzQRdJfL7NVje0:1ugERy:5fDVAfBBVOIOcH_vVkj2JHCPptOW0_V8ycT9CRxACKE",
+    "expire_date": "2025-08-11T03:22:54.919Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "otxb5o9b7n5vc95yjbb6ncewl2ogmowc",
+  "fields": {
+    "session_data": ".eJxVjDsOwjAQBe_iGlkO_uyGkp4zWOv1BgdQLMVJhbg7spQC2jcz760i7VuJe5M1zlldlB3V6XdMxE9ZOskPWu5Vc122dU66K_qgTd9qltf1cP8OCrXSawwwZEcT2EGsP1vnCRIHIOsRMbA1PGYW9MYTg3NoEmeQBDihk0F9vv0oN_E:1wCI5w:bM2l5gxuu9x1LFmikTywjYlJDpBgihb5QIQUMrAFYFI",
+    "expire_date": "2026-04-27T14:16:56.650Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "pvhvpgfwq8qiovf6y4wkfeet21spsg8t",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2pChwFBcuvcMZIBBqoYmpV0Z765NutDtf-_9lwi0rTVsnZcwZXEWBsTpd4yUHtx2ku_UbrNMc1uXKcpdkQft8jpnfl4O9--gUq_fGlPMDp1SzhvA6PRImgFU9kMyyENBM1KxMSlbFFgobByi9lZbKhlQvD_qjDdH:1wDDvO:PZUfEWTpmTjz4eaxtLwxE6CClRXkAadzV7Hk1zGgshs",
+    "expire_date": "2026-04-30T04:01:54.276Z"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 2,
+  "fields": {
+    "user": 2,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 3,
+  "fields": {
+    "user": 3,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 4,
+  "fields": {
+    "user": 4,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 5,
+  "fields": {
+    "user": 5,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 6,
+  "fields": {
+    "user": 6,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 7,
+  "fields": {
+    "user": 7,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 8,
+  "fields": {
+    "user": 8,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 9,
+  "fields": {
+    "user": 9,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 10,
+  "fields": {
+    "user": 10,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 11,
+  "fields": {
+    "user": 11,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 12,
+  "fields": {
+    "user": 12,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 13,
+  "fields": {
+    "user": 13,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 14,
+  "fields": {
+    "user": 14,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 15,
+  "fields": {
+    "user": 15,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 16,
+  "fields": {
+    "user": 16,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 17,
+  "fields": {
+    "user": 17,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 18,
+  "fields": {
+    "user": 18,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 19,
+  "fields": {
+    "user": 19,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 20,
+  "fields": {
+    "user": 20,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 21,
+  "fields": {
+    "user": 21,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 22,
+  "fields": {
+    "user": 22,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 23,
+  "fields": {
+    "user": 23,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 24,
+  "fields": {
+    "user": 24,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 25,
+  "fields": {
+    "user": 25,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 26,
+  "fields": {
+    "user": 26,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 27,
+  "fields": {
+    "user": 27,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 28,
+  "fields": {
+    "user": 28,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 29,
+  "fields": {
+    "user": 29,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 30,
+  "fields": {
+    "user": 30,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 31,
+  "fields": {
+    "user": 31,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 32,
+  "fields": {
+    "user": 32,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 33,
+  "fields": {
+    "user": 33,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 34,
+  "fields": {
+    "user": 34,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 35,
+  "fields": {
+    "user": 35,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 36,
+  "fields": {
+    "user": 36,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 37,
+  "fields": {
+    "user": 37,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 38,
+  "fields": {
+    "user": 38,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 39,
+  "fields": {
+    "user": 39,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 40,
+  "fields": {
+    "user": 40,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 41,
+  "fields": {
+    "user": 41,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 42,
+  "fields": {
+    "user": 42,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 43,
+  "fields": {
+    "user": 43,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 44,
+  "fields": {
+    "user": 44,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 45,
+  "fields": {
+    "user": 45,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 46,
+  "fields": {
+    "user": 46,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 47,
+  "fields": {
+    "user": 47,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 48,
+  "fields": {
+    "user": 48,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 49,
+  "fields": {
+    "user": 49,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 50,
+  "fields": {
+    "user": 50,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 51,
+  "fields": {
+    "user": 51,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 52,
+  "fields": {
+    "user": 52,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 53,
+  "fields": {
+    "user": 53,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 54,
+  "fields": {
+    "user": 54,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 55,
+  "fields": {
+    "user": 55,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 56,
+  "fields": {
+    "user": 56,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 57,
+  "fields": {
+    "user": 57,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 58,
+  "fields": {
+    "user": 58,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 59,
+  "fields": {
+    "user": 59,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 60,
+  "fields": {
+    "user": 60,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 61,
+  "fields": {
+    "user": 61,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 62,
+  "fields": {
+    "user": 62,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 63,
+  "fields": {
+    "user": 63,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 64,
+  "fields": {
+    "user": 64,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 65,
+  "fields": {
+    "user": 65,
+    "role": "parent"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 66,
+  "fields": {
+    "user": 66,
+    "role": "parent"
+  }
+},
+{
+  "model": "students.student",
+  "pk": 1,
+  "fields": {
+    "name": "جواد شيخ ورق",
+    "birth_date": "2018-12-12",
+    "parent": 1,
+    "parent_phone": "0996138558",
+    "address": "0",
+    "grade": "0",
+    "category": null,
+    "halaqa": null,
+    "previous_memorization_amount": 0,
+    "access_token": "6279d2f3-3a6a-401a-a9ef-8d3fb662b172",
+    "enrollment_date": "2025-07-23",
+    "created_at": "2025-07-23T08:45:56.546Z",
+    "created_by": 1
+  }
+},
+{
+  "model": "students.student",
+  "pk": 2,
+  "fields": {
+    "name": "سامي",
+    "birth_date": "2025-07-10",
+    "parent": 6,
+    "parent_phone": "0943680048",
+    "address": "شارع خولة",
+    "grade": "uy,d",
+    "category": 1,
+    "halaqa": 1,
+    "previous_memorization_amount": 0,
+    "access_token": "28313c82-397d-4bbb-8c82-5e2c1f0b66f2",
+    "enrollment_date": null,
+    "created_at": "2025-07-26T05:45:03.875Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 3,
+  "fields": {
+    "name": "علي",
+    "birth_date": "2025-07-12",
+    "parent": 6,
+    "parent_phone": "0943680048",
+    "address": "حميدة الطاهر",
+    "grade": "33",
+    "category": 1,
+    "halaqa": 1,
+    "previous_memorization_amount": 0,
+    "access_token": "957827ec-df37-42ff-9468-79f491f6c744",
+    "enrollment_date": null,
+    "created_at": "2025-07-26T05:47:30.563Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 4,
+  "fields": {
+    "name": "سليم",
+    "birth_date": "2025-07-23",
+    "parent": 7,
+    "parent_phone": "d,u",
+    "address": "هولة",
+    "grade": "80",
+    "category": 1,
+    "halaqa": 1,
+    "previous_memorization_amount": 0,
+    "access_token": "c6f4f70d-b90f-407c-93cf-9d4122cf6434",
+    "enrollment_date": null,
+    "created_at": "2025-07-26T05:49:41.911Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 5,
+  "fields": {
+    "name": "علا",
+    "birth_date": "2025-08-06",
+    "parent": 2,
+    "parent_phone": "0996138558",
+    "address": "شارع خولة",
+    "grade": "الثالث ثانوي",
+    "category": 1,
+    "halaqa": 1,
+    "previous_memorization_amount": 0,
+    "access_token": "1a57e935-6a4a-4620-b0a7-796e9c92f5fe",
+    "enrollment_date": null,
+    "created_at": "2025-07-26T05:50:30.184Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 6,
+  "fields": {
+    "name": "شادي طحلة",
+    "birth_date": "2025-07-17",
+    "parent": 9,
+    "parent_phone": "وةوةى",
+    "address": "o,gm",
+    "grade": "60",
+    "category": 2,
+    "halaqa": 2,
+    "previous_memorization_amount": 0,
+    "access_token": "3ca231b7-52b9-4ebc-8aac-e6123642675e",
+    "enrollment_date": null,
+    "created_at": "2025-07-26T05:58:46.734Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 7,
+  "fields": {
+    "name": "شادي",
+    "birth_date": "2025-07-11",
+    "parent": 12,
+    "parent_phone": "09961385585",
+    "address": "fdh",
+    "grade": "61",
+    "category": 1,
+    "halaqa": 4,
+    "previous_memorization_amount": 0,
+    "access_token": "a7e5c009-7031-45db-92d2-0394087c3a90",
+    "enrollment_date": null,
+    "created_at": "2025-07-27T04:55:32.657Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 8,
+  "fields": {
+    "name": "tn",
+    "birth_date": "2025-07-17",
+    "parent": 14,
+    "parent_phone": "rhjm",
+    "address": "rjm",
+    "grade": "rjm",
+    "category": 1,
+    "halaqa": 3,
+    "previous_memorization_amount": 0,
+    "access_token": "b3d90b94-181e-4def-80eb-07ac0519e378",
+    "enrollment_date": null,
+    "created_at": "2025-07-27T06:45:29.104Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 9,
+  "fields": {
+    "name": "afdb",
+    "birth_date": "2025-08-07",
+    "parent": 15,
+    "parent_phone": "dfab",
+    "address": "adfb",
+    "grade": "الثالث متوسط",
+    "category": 1,
+    "halaqa": 1,
+    "previous_memorization_amount": 0,
+    "access_token": "a5ced5da-7e50-4661-a6c1-30d7c1ea2e12",
+    "enrollment_date": null,
+    "created_at": "2025-07-27T09:14:01.462Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 10,
+  "fields": {
+    "name": "خالد بن الوليد",
+    "birth_date": "2025-07-30",
+    "parent": 16,
+    "parent_phone": "fg",
+    "address": "nfsg",
+    "grade": "الأول ثانوي",
+    "category": 1,
+    "halaqa": 1,
+    "previous_memorization_amount": 0,
+    "access_token": "fa1359eb-a1db-40c0-9300-d0356db7b04b",
+    "enrollment_date": null,
+    "created_at": "2025-07-28T03:14:24.746Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 11,
+  "fields": {
+    "name": "جاد",
+    "birth_date": "2025-07-30",
+    "parent": 17,
+    "parent_phone": "fg 52045",
+    "address": "nfsg",
+    "grade": "الأول ثانوي",
+    "category": 1,
+    "halaqa": 1,
+    "previous_memorization_amount": 0,
+    "access_token": "ff28f538-5498-443b-b75e-e656b3e1834e",
+    "enrollment_date": null,
+    "created_at": "2025-07-28T03:15:37.953Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 12,
+  "fields": {
+    "name": "يب",
+    "birth_date": "2025-07-08",
+    "parent": 19,
+    "parent_phone": "شلى",
+    "address": "شلى",
+    "grade": "الأول ثانوي",
+    "category": 1,
+    "halaqa": 1,
+    "previous_memorization_amount": 0,
+    "access_token": "4a7e8df4-9e44-47e7-874b-9f2dcca7d4fa",
+    "enrollment_date": null,
+    "created_at": "2025-07-30T03:30:51.823Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 13,
+  "fields": {
+    "name": "يب",
+    "birth_date": "2025-07-08",
+    "parent": 19,
+    "parent_phone": "شلى",
+    "address": "شلى",
+    "grade": "الأول ثانوي",
+    "category": 1,
+    "halaqa": 1,
+    "previous_memorization_amount": 0,
+    "access_token": "ccf31ede-6861-4102-8ac6-b3fad1ab4163",
+    "enrollment_date": null,
+    "created_at": "2025-07-30T03:31:59.099Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 14,
+  "fields": {
+    "name": "بى",
+    "birth_date": "2025-07-15",
+    "parent": 20,
+    "parent_phone": "سبى",
+    "address": "بسىل",
+    "grade": "الثالث متوسط",
+    "category": 1,
+    "halaqa": 1,
+    "previous_memorization_amount": 0,
+    "access_token": "cabed2d2-d6f3-48bf-a750-c4d61ed50f3d",
+    "enrollment_date": null,
+    "created_at": "2025-07-30T04:23:38.696Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 15,
+  "fields": {
+    "name": "بى",
+    "birth_date": "2025-07-15",
+    "parent": 20,
+    "parent_phone": "سبى",
+    "address": "بسىل",
+    "grade": "الثالث متوسط",
+    "category": 1,
+    "halaqa": 1,
+    "previous_memorization_amount": 0,
+    "access_token": "00934736-25e6-44e6-8560-caa0f0c50a57",
+    "enrollment_date": null,
+    "created_at": "2025-07-30T04:23:58.362Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 16,
+  "fields": {
+    "name": "لاس",
+    "birth_date": "2025-07-24",
+    "parent": 21,
+    "parent_phone": "سب",
+    "address": "بس",
+    "grade": "الثاني متوسط",
+    "category": 1,
+    "halaqa": 7,
+    "previous_memorization_amount": 0,
+    "access_token": "c096ed8d-4536-4f61-ae3e-d0ca160588bb",
+    "enrollment_date": null,
+    "created_at": "2025-07-30T04:32:12.234Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 17,
+  "fields": {
+    "name": "وناتةلبل",
+    "birth_date": "2025-07-16",
+    "parent": 22,
+    "parent_phone": "تةغاى",
+    "address": "ثفاىثفاى",
+    "grade": "الثالث متوسط",
+    "category": 1,
+    "halaqa": 5,
+    "previous_memorization_amount": 0,
+    "access_token": "c8ed0e69-aec3-400e-b562-04f9e04de4bd",
+    "enrollment_date": null,
+    "created_at": "2025-07-30T05:27:51.217Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 18,
+  "fields": {
+    "name": "تاى",
+    "birth_date": "2025-07-22",
+    "parent": 23,
+    "parent_phone": "ق",
+    "address": "قغت",
+    "grade": "الثالث متوسط",
+    "category": 1,
+    "halaqa": 1,
+    "previous_memorization_amount": 0,
+    "access_token": "e8f19d74-e962-42d3-b87f-56ee44d7448f",
+    "enrollment_date": null,
+    "created_at": "2025-07-30T05:51:14.356Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 19,
+  "fields": {
+    "name": "لاس",
+    "birth_date": "2025-07-24",
+    "parent": 21,
+    "parent_phone": "سب",
+    "address": "بس",
+    "grade": "الثاني متوسط",
+    "category": 1,
+    "halaqa": 1,
+    "previous_memorization_amount": 0,
+    "access_token": "e9849b5c-f908-450d-85ce-f078cde3c935",
+    "enrollment_date": null,
+    "created_at": "2025-07-30T05:51:51.284Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 20,
+  "fields": {
+    "name": "تالا",
+    "birth_date": "2025-07-22",
+    "parent": 23,
+    "parent_phone": "ق",
+    "address": "قغت",
+    "grade": "الثالث متوسط",
+    "category": 1,
+    "halaqa": 1,
+    "previous_memorization_amount": 0,
+    "access_token": "f119d0e1-1461-4f50-b8ed-54cbb358be91",
+    "enrollment_date": null,
+    "created_at": "2025-07-30T05:52:18.576Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 21,
+  "fields": {
+    "name": "تالا",
+    "birth_date": "2025-07-22",
+    "parent": 23,
+    "parent_phone": "ق",
+    "address": "قغت",
+    "grade": "الثالث متوسط",
+    "category": 1,
+    "halaqa": 1,
+    "previous_memorization_amount": 0,
+    "access_token": "b80c5924-b6e7-4353-8b37-900dac632c81",
+    "enrollment_date": null,
+    "created_at": "2025-07-30T05:52:31.246Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 22,
+  "fields": {
+    "name": "لاسg",
+    "birth_date": "2025-07-24",
+    "parent": 21,
+    "parent_phone": "سب",
+    "address": "بس",
+    "grade": "الثاني متوسط",
+    "category": 1,
+    "halaqa": 1,
+    "previous_memorization_amount": 0,
+    "access_token": "5a76e605-5060-4401-8029-08006aa1fdab",
+    "enrollment_date": null,
+    "created_at": "2025-07-30T05:59:30.944Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 23,
+  "fields": {
+    "name": "سل",
+    "birth_date": "2025-07-16",
+    "parent": 24,
+    "parent_phone": "سلا",
+    "address": "سال",
+    "grade": "الأول ثانوي",
+    "category": 1,
+    "halaqa": 6,
+    "previous_memorization_amount": 0,
+    "access_token": "beddb571-c1b3-4de4-8232-d717ca17c535",
+    "enrollment_date": null,
+    "created_at": "2025-07-30T06:05:18.228Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 24,
+  "fields": {
+    "name": "تلانبسر",
+    "birth_date": "2025-08-06",
+    "parent": 25,
+    "parent_phone": "504",
+    "address": "بلي",
+    "grade": "الثاني ثانوي",
+    "category": 1,
+    "halaqa": 3,
+    "previous_memorization_amount": 0,
+    "access_token": "776b5bd5-79ed-45f3-8d11-b439289a8e52",
+    "enrollment_date": null,
+    "created_at": "2025-07-30T06:44:32.306Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 25,
+  "fields": {
+    "name": "تلانبسر",
+    "birth_date": "2025-08-06",
+    "parent": 25,
+    "parent_phone": "504",
+    "address": "بلي",
+    "grade": "الثاني ثانوي",
+    "category": 1,
+    "halaqa": 3,
+    "previous_memorization_amount": 0,
+    "access_token": "e04adccc-e0e8-4106-a4bf-46bcc5c18dd5",
+    "enrollment_date": null,
+    "created_at": "2025-07-30T09:26:39.503Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 26,
+  "fields": {
+    "name": "تلانبسر",
+    "birth_date": "2025-08-06",
+    "parent": 25,
+    "parent_phone": "504",
+    "address": "بلي",
+    "grade": "الثاني ثانوي",
+    "category": 1,
+    "halaqa": 3,
+    "previous_memorization_amount": 0,
+    "access_token": "9d33694b-872e-461f-98e3-f2d5d223feaa",
+    "enrollment_date": null,
+    "created_at": "2025-07-30T09:33:41.310Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 27,
+  "fields": {
+    "name": "تلانبسر",
+    "birth_date": "2025-08-06",
+    "parent": 25,
+    "parent_phone": "504",
+    "address": "بلي",
+    "grade": "الثاني ثانوي",
+    "category": 1,
+    "halaqa": 3,
+    "previous_memorization_amount": 0,
+    "access_token": "ab1d9ce8-3bed-47ea-a478-3a1a03820561",
+    "enrollment_date": null,
+    "created_at": "2025-07-30T09:35:46.022Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 28,
+  "fields": {
+    "name": "لين",
+    "birth_date": "2025-08-06",
+    "parent": 26,
+    "parent_phone": "504شيلا",
+    "address": "بلييشلال",
+    "grade": "الأول متوسط",
+    "category": 1,
+    "halaqa": 4,
+    "previous_memorization_amount": 0,
+    "access_token": "1bb59b8d-7870-49e6-84bc-544872024f25",
+    "enrollment_date": null,
+    "created_at": "2025-07-30T09:48:24.236Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 29,
+  "fields": {
+    "name": "راما",
+    "birth_date": "2025-07-25",
+    "parent": 27,
+    "parent_phone": "5تغة",
+    "address": "5غتة",
+    "grade": "الثالث متوسط",
+    "category": 1,
+    "halaqa": 4,
+    "previous_memorization_amount": 0,
+    "access_token": "8bc67a4e-d550-41dd-9c4f-a53f48e56fa4",
+    "enrollment_date": null,
+    "created_at": "2025-07-30T11:02:39.419Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 30,
+  "fields": {
+    "name": "اسامة",
+    "birth_date": "2025-07-31",
+    "parent": 28,
+    "parent_phone": "09905151",
+    "address": "جامع مصعب",
+    "grade": "الثالث ابتدائي",
+    "category": 1,
+    "halaqa": 1,
+    "previous_memorization_amount": 0,
+    "access_token": "7df207c0-6ccf-499a-a6b6-76ba26b05954",
+    "enrollment_date": null,
+    "created_at": "2025-07-30T14:26:11.951Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 31,
+  "fields": {
+    "name": "اسامة",
+    "birth_date": "2025-07-31",
+    "parent": 28,
+    "parent_phone": "09905151",
+    "address": "جامع مصعب",
+    "grade": "الثالث ابتدائي",
+    "category": 1,
+    "halaqa": 7,
+    "previous_memorization_amount": 0,
+    "access_token": "cbab80df-8489-44e4-8de8-dd3a169c19e9",
+    "enrollment_date": null,
+    "created_at": "2025-07-30T14:33:24.454Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 32,
+  "fields": {
+    "name": "سهير",
+    "birth_date": "2025-07-07",
+    "parent": 29,
+    "parent_phone": "897645312.0",
+    "address": "خولة",
+    "grade": "الثالث ثانوي",
+    "category": 1,
+    "halaqa": 4,
+    "previous_memorization_amount": 0,
+    "access_token": "6d20895b-28dd-43d1-ac28-f2acbf5c0e57",
+    "enrollment_date": null,
+    "created_at": "2025-07-30T21:18:07.949Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 33,
+  "fields": {
+    "name": "سهير",
+    "birth_date": "2025-07-07",
+    "parent": 29,
+    "parent_phone": "897645312.0",
+    "address": "خولة",
+    "grade": "الثالث ثانوي",
+    "category": 1,
+    "halaqa": 4,
+    "previous_memorization_amount": 0,
+    "access_token": "4858f913-737d-46ce-a81a-4c460e5ed8c3",
+    "enrollment_date": null,
+    "created_at": "2025-07-30T21:18:13.509Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 34,
+  "fields": {
+    "name": "saif",
+    "birth_date": "2025-08-12",
+    "parent": 30,
+    "parent_phone": "5412.0453120",
+    "address": "plw",
+    "grade": "الثالث ثانوي",
+    "category": 1,
+    "halaqa": 3,
+    "previous_memorization_amount": 0,
+    "access_token": "4a216b97-b3f2-49eb-a6fe-b5c6c460938c",
+    "enrollment_date": null,
+    "created_at": "2025-08-01T15:23:17.886Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 35,
+  "fields": {
+    "name": "عمرو بن العاص",
+    "birth_date": "2010-11-24",
+    "parent": 31,
+    "parent_phone": "09111121",
+    "address": "الانشاءات,شارع خولة",
+    "grade": "الثالث ابتدائي",
+    "category": 1,
+    "halaqa": 1,
+    "previous_memorization_amount": 0,
+    "access_token": "d2a739c9-3f67-4ade-9a51-b3a80fae6cfd",
+    "enrollment_date": null,
+    "created_at": "2025-08-05T08:23:56.613Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 36,
+  "fields": {
+    "name": "عمرو بن العاص",
+    "birth_date": "2010-11-24",
+    "parent": 31,
+    "parent_phone": "09111121",
+    "address": "الانشاءات,شارع خولة",
+    "grade": "الثالث ابتدائي",
+    "category": 1,
+    "halaqa": 1,
+    "previous_memorization_amount": 0,
+    "access_token": "46529c57-b75b-47e9-9cea-e72204125721",
+    "enrollment_date": null,
+    "created_at": "2025-08-05T08:53:09.750Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 37,
+  "fields": {
+    "name": "رشي\\",
+    "birth_date": "2025-08-20",
+    "parent": 32,
+    "parent_phone": "مسيىرمط",
+    "address": "نلايرن",
+    "grade": "الخامس ابتدائي",
+    "category": 1,
+    "halaqa": 7,
+    "previous_memorization_amount": 0,
+    "access_token": "bf80dc46-987d-49d3-92bb-1a0fbd6853b8",
+    "enrollment_date": null,
+    "created_at": "2025-08-11T14:34:50.327Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 38,
+  "fields": {
+    "name": "عالعس",
+    "birth_date": "2025-08-27",
+    "parent": 33,
+    "parent_phone": "حختلب",
+    "address": "سيبةلن",
+    "grade": "الثالث متوسط",
+    "category": 1,
+    "halaqa": 4,
+    "previous_memorization_amount": 0,
+    "access_token": "065c434a-c5cb-4cd7-80c5-7f941e9ada02",
+    "enrollment_date": null,
+    "created_at": "2025-08-12T10:51:29.516Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 39,
+  "fields": {
+    "name": "jwejcl",
+    "birth_date": "2025-09-02",
+    "parent": 34,
+    "parent_phone": "lewnc",
+    "address": "nk ewkc",
+    "grade": "الثالث ثانوي",
+    "category": 1,
+    "halaqa": 1,
+    "previous_memorization_amount": 0,
+    "access_token": "b674614f-9862-4036-a027-2ee6a16c9dfc",
+    "enrollment_date": null,
+    "created_at": "2025-09-15T22:10:23.767Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 40,
+  "fields": {
+    "name": "مسميةؤحس",
+    "birth_date": "2025-09-01",
+    "parent": 35,
+    "parent_phone": "84+612",
+    "address": "30يبل ات",
+    "grade": "السادس ابتدائي",
+    "category": 1,
+    "halaqa": 1,
+    "previous_memorization_amount": 0,
+    "access_token": "88f196d9-7c16-43d8-94d3-5dff7e40ee1e",
+    "enrollment_date": null,
+    "created_at": "2025-09-16T16:47:02.919Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 41,
+  "fields": {
+    "name": "جواد شيخ ورق",
+    "birth_date": "2025-09-17",
+    "parent": 2,
+    "parent_phone": "0996138558",
+    "address": "الانشاءات,شارع خولة,جانب مشفى الحكمة",
+    "grade": "الأول ثانوي",
+    "category": 1,
+    "halaqa": 1,
+    "previous_memorization_amount": 0,
+    "access_token": "c7561a76-13f3-46f6-a715-655a5c992397",
+    "enrollment_date": null,
+    "created_at": "2025-09-16T18:40:50.385Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 42,
+  "fields": {
+    "name": "جواد شيخ ورق",
+    "birth_date": "2025-09-17",
+    "parent": 2,
+    "parent_phone": "0996138558",
+    "address": "الانشاءات,شارع خولة,جانب مشفى الحكمة",
+    "grade": "الأول ثانوي",
+    "category": 1,
+    "halaqa": 1,
+    "previous_memorization_amount": 0,
+    "access_token": "66a26668-0edf-45cc-b38c-07dc9c66d37a",
+    "enrollment_date": null,
+    "created_at": "2025-09-16T18:54:28.110Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 43,
+  "fields": {
+    "name": "جاد حلبية",
+    "birth_date": "2024-10-15",
+    "parent": 35,
+    "parent_phone": "0997416201",
+    "address": "الانشاءات ,قرب جامع قباء",
+    "grade": "الرابع",
+    "category": 2,
+    "halaqa": 2,
+    "previous_memorization_amount": 0,
+    "access_token": "0fcf991a-5ee1-4250-ba47-f8a12202e43c",
+    "enrollment_date": "2025-09-18",
+    "created_at": "2025-09-18T14:54:17.225Z",
+    "created_by": 16
+  }
+},
+{
+  "model": "students.student",
+  "pk": 44,
+  "fields": {
+    "name": "جاد حلبية",
+    "birth_date": "2013-06-17",
+    "parent": 4,
+    "parent_phone": "0997416201",
+    "address": "انشاءات -قرب جامع قباء",
+    "grade": "الرابع ابتدائي",
+    "category": 2,
+    "halaqa": 8,
+    "previous_memorization_amount": 0,
+    "access_token": "52d4a03f-d557-4033-824e-c649a7ea78a4",
+    "enrollment_date": null,
+    "created_at": "2025-09-18T14:58:45.587Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 45,
+  "fields": {
+    "name": "محمد قانصو",
+    "birth_date": "2015-06-29",
+    "parent": 4,
+    "parent_phone": "0997416201",
+    "address": "التوزيع الاجباري -قرب الفرن الالي",
+    "grade": "الخامس ابتدائي",
+    "category": 1,
+    "halaqa": 1,
+    "previous_memorization_amount": 0,
+    "access_token": "508e3b5c-b8fe-4798-a4cb-40960b7e5905",
+    "enrollment_date": null,
+    "created_at": "2025-09-18T15:00:36.159Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 46,
+  "fields": {
+    "name": "محمد قانصو",
+    "birth_date": "2015-06-29",
+    "parent": 4,
+    "parent_phone": "0997416201",
+    "address": "التوزيع الاجباري -قرب الفرن الالي",
+    "grade": "الخامس ابتدائي",
+    "category": 2,
+    "halaqa": 8,
+    "previous_memorization_amount": 0,
+    "access_token": "4fb4bfa2-0dbe-4f57-a13e-0389574276aa",
+    "enrollment_date": null,
+    "created_at": "2025-09-18T15:00:56.613Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 47,
+  "fields": {
+    "name": "جواد عمار",
+    "birth_date": "2012-06-12",
+    "parent": 36,
+    "parent_phone": "غسان",
+    "address": "شارع الكرامة",
+    "grade": "الرابع ابتدائي",
+    "category": 2,
+    "halaqa": 8,
+    "previous_memorization_amount": 0,
+    "access_token": "09135b8d-e718-47d8-9fb0-2d23d983e76d",
+    "enrollment_date": null,
+    "created_at": "2025-09-18T15:04:12.067Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 48,
+  "fields": {
+    "name": "ريان شما",
+    "birth_date": "2012-11-29",
+    "parent": 4,
+    "parent_phone": "0997416201",
+    "address": "شارع جامع قباء",
+    "grade": "الرابع ابتدائي",
+    "category": 2,
+    "halaqa": 8,
+    "previous_memorization_amount": 0,
+    "access_token": "402b67d1-29e5-4970-9bb7-a0ed1ad0231d",
+    "enrollment_date": null,
+    "created_at": "2025-09-18T15:05:54.146Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 49,
+  "fields": {
+    "name": "غسان مغربل",
+    "birth_date": "2025-09-22",
+    "parent": 4,
+    "parent_phone": "0997416201",
+    "address": "شارع الكرامة",
+    "grade": "الرابع ابتدائي",
+    "category": 2,
+    "halaqa": 8,
+    "previous_memorization_amount": 0,
+    "access_token": "2a6a98ec-d2a7-44cf-b691-a33db9065ab2",
+    "enrollment_date": null,
+    "created_at": "2025-09-18T15:07:11.779Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 50,
+  "fields": {
+    "name": "عبدالله تميم",
+    "birth_date": "2013-06-08",
+    "parent": 4,
+    "parent_phone": "0997416201",
+    "address": "الانشاءات -التوزيع الاجباري -قرب جامع قباء",
+    "grade": "الثالث ابتدائي",
+    "category": 2,
+    "halaqa": 8,
+    "previous_memorization_amount": 0,
+    "access_token": "340e9a2a-1b1b-4050-9612-6f1ba66dc9c8",
+    "enrollment_date": null,
+    "created_at": "2025-09-18T18:18:51.202Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 51,
+  "fields": {
+    "name": "وليد",
+    "birth_date": "2025-09-09",
+    "parent": 37,
+    "parent_phone": "305952952952",
+    "address": "قرابيص",
+    "grade": "الثاني ابتدائي",
+    "category": 1,
+    "halaqa": 5,
+    "previous_memorization_amount": 0,
+    "access_token": "41d24915-9c51-4a03-be7b-d1424996f581",
+    "enrollment_date": null,
+    "created_at": "2025-09-24T17:19:09.316Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 52,
+  "fields": {
+    "name": "وليد",
+    "birth_date": "2025-09-09",
+    "parent": 37,
+    "parent_phone": "305952952952",
+    "address": "قرابيص",
+    "grade": "الثاني ابتدائي",
+    "category": 1,
+    "halaqa": 5,
+    "previous_memorization_amount": 0,
+    "access_token": "bf207851-ff93-44ac-9dd6-a4d53ae077eb",
+    "enrollment_date": null,
+    "created_at": "2025-09-24T17:19:16.179Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 53,
+  "fields": {
+    "name": "خالد بن الوليد",
+    "birth_date": "2025-10-13",
+    "parent": 2,
+    "parent_phone": "0996138558",
+    "address": "hbjkl",
+    "grade": "الأول متوسط",
+    "category": 1,
+    "halaqa": 7,
+    "previous_memorization_amount": 0,
+    "access_token": "b7bdde39-bd57-48cf-ba48-bcdbcad3c63e",
+    "enrollment_date": null,
+    "created_at": "2025-10-25T07:58:27.964Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 54,
+  "fields": {
+    "name": "Tmp Student Action",
+    "birth_date": "2014-01-01",
+    "parent": 41,
+    "parent_phone": "1",
+    "address": "",
+    "grade": "???????",
+    "category": null,
+    "halaqa": 9,
+    "previous_memorization_amount": 0,
+    "access_token": "39a5cdf9-2577-4347-b090-ffec6ac8995f",
+    "enrollment_date": null,
+    "created_at": "2026-04-16T04:01:54.178Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 55,
+  "fields": {
+    "name": "Tmp Student Action 2",
+    "birth_date": "2014-01-01",
+    "parent": 43,
+    "parent_phone": "1",
+    "address": "",
+    "grade": "???????",
+    "category": null,
+    "halaqa": 10,
+    "previous_memorization_amount": 0,
+    "access_token": "87f11670-2e3f-492a-a3ce-45d23211dd88",
+    "enrollment_date": null,
+    "created_at": "2026-04-16T04:02:28.963Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 56,
+  "fields": {
+    "name": "طالب معاينة",
+    "birth_date": "2014-01-01",
+    "parent": 45,
+    "parent_phone": "0123",
+    "address": "",
+    "grade": "ابتدائي رابع",
+    "category": 2,
+    "halaqa": 11,
+    "previous_memorization_amount": 0,
+    "access_token": "68cf3183-ef1d-4f1b-9b9f-c8594b8ab0f7",
+    "enrollment_date": null,
+    "created_at": "2026-04-16T04:18:33.877Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 57,
+  "fields": {
+    "name": "Tmp Student 2",
+    "birth_date": "2014-02-02",
+    "parent": 46,
+    "parent_phone": "1",
+    "address": "",
+    "grade": "",
+    "category": null,
+    "halaqa": 12,
+    "previous_memorization_amount": 0,
+    "access_token": "0bdf2805-154b-4e60-940d-5a28d1f30e50",
+    "enrollment_date": null,
+    "created_at": "2026-04-18T17:35:40.197Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 58,
+  "fields": {
+    "name": "S1",
+    "birth_date": "2014-01-01",
+    "parent": null,
+    "parent_phone": "",
+    "address": "",
+    "grade": "",
+    "category": null,
+    "halaqa": 13,
+    "previous_memorization_amount": 0,
+    "access_token": "f8b7a92d-dd8f-4903-b0b5-5183bc36ae30",
+    "enrollment_date": null,
+    "created_at": "2026-04-18T17:37:33.010Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 59,
+  "fields": {
+    "name": "S_637f2a",
+    "birth_date": "2014-01-01",
+    "parent": null,
+    "parent_phone": "",
+    "address": "",
+    "grade": "",
+    "category": null,
+    "halaqa": 14,
+    "previous_memorization_amount": 0,
+    "access_token": "b300e8c4-8c92-4be6-b311-662dbf8c132a",
+    "enrollment_date": null,
+    "created_at": "2026-04-18T17:37:50.936Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 60,
+  "fields": {
+    "name": "S 173809940750",
+    "birth_date": "2014-02-02",
+    "parent": 50,
+    "parent_phone": "0888000",
+    "address": "",
+    "grade": "ابتدائي خامس",
+    "category": 2,
+    "halaqa": 15,
+    "previous_memorization_amount": 0,
+    "access_token": "a56c0ebf-274f-4d6c-9df8-3391e57ab760",
+    "enrollment_date": null,
+    "created_at": "2026-04-18T17:38:10.886Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 61,
+  "fields": {
+    "name": "S 173827263001",
+    "birth_date": "2014-02-02",
+    "parent": 52,
+    "parent_phone": "0888000",
+    "address": "",
+    "grade": "ابتدائي خامس",
+    "category": 2,
+    "halaqa": 16,
+    "previous_memorization_amount": 0,
+    "access_token": "97c4e85e-dc68-4f2d-9f15-51d13d3b3262",
+    "enrollment_date": null,
+    "created_at": "2026-04-18T17:38:28.068Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 62,
+  "fields": {
+    "name": "S2 173842960548",
+    "birth_date": "2014-02-02",
+    "parent": 54,
+    "parent_phone": "0888000",
+    "address": "",
+    "grade": "ابتدائي خامس",
+    "category": 2,
+    "halaqa": 17,
+    "previous_memorization_amount": 0,
+    "access_token": "eec05057-df43-471c-b1fb-b595a126b4db",
+    "enrollment_date": null,
+    "created_at": "2026-04-18T17:38:43.733Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 63,
+  "fields": {
+    "name": "SS c0b6af",
+    "birth_date": "2014-01-01",
+    "parent": null,
+    "parent_phone": "",
+    "address": "",
+    "grade": "",
+    "category": null,
+    "halaqa": 18,
+    "previous_memorization_amount": 0,
+    "access_token": "76928b3e-a07d-416b-a78d-0682f5e9fed5",
+    "enrollment_date": null,
+    "created_at": "2026-04-18T17:38:50.819Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 64,
+  "fields": {
+    "name": "S3 174050229933",
+    "birth_date": "2014-02-02",
+    "parent": 57,
+    "parent_phone": "0888000",
+    "address": "",
+    "grade": "ابتدائي خامس",
+    "category": 2,
+    "halaqa": 19,
+    "previous_memorization_amount": 0,
+    "access_token": "69ffd868-a30c-4cff-8b28-9f0459c4f084",
+    "enrollment_date": null,
+    "created_at": "2026-04-18T17:40:51.035Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 65,
+  "fields": {
+    "name": "S4 174105420045",
+    "birth_date": "2014-02-02",
+    "parent": 59,
+    "parent_phone": "0888000",
+    "address": "",
+    "grade": "Grade",
+    "category": null,
+    "halaqa": 20,
+    "previous_memorization_amount": 0,
+    "access_token": "d47848be-387c-48ce-9e53-667bdb21ddbc",
+    "enrollment_date": null,
+    "created_at": "2026-04-18T17:41:06.193Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 66,
+  "fields": {
+    "name": "S5_174118558303",
+    "birth_date": "2014-02-02",
+    "parent": 61,
+    "parent_phone": "0888000",
+    "address": "",
+    "grade": "Grade",
+    "category": null,
+    "halaqa": 21,
+    "previous_memorization_amount": 0,
+    "access_token": "1d610c46-50f4-434d-ad8c-f8dbe04d6460",
+    "enrollment_date": null,
+    "created_at": "2026-04-18T17:41:19.320Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 67,
+  "fields": {
+    "name": "S6_174137245343",
+    "birth_date": "2014-02-02",
+    "parent": 63,
+    "parent_phone": "0888000",
+    "address": "",
+    "grade": "Grade",
+    "category": null,
+    "halaqa": 22,
+    "previous_memorization_amount": 0,
+    "access_token": "19df3417-76b0-4ac2-9473-fa98eb7373ff",
+    "enrollment_date": null,
+    "created_at": "2026-04-18T17:41:38.050Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 68,
+  "fields": {
+    "name": "SX_139a1f",
+    "birth_date": "2014-01-01",
+    "parent": null,
+    "parent_phone": "",
+    "address": "",
+    "grade": "",
+    "category": null,
+    "halaqa": 23,
+    "previous_memorization_amount": 0,
+    "access_token": "7dedc86f-4c6a-4ef3-b8fa-921106096373",
+    "enrollment_date": null,
+    "created_at": "2026-04-18T17:41:56.876Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 69,
+  "fields": {
+    "name": "Debug Student",
+    "birth_date": "2012-01-01",
+    "parent": 65,
+    "parent_phone": "0900000001",
+    "address": "",
+    "grade": "5",
+    "category": 2,
+    "halaqa": 2,
+    "previous_memorization_amount": 0,
+    "access_token": "353d17e0-62d3-41a0-a232-540295960b92",
+    "enrollment_date": null,
+    "created_at": "2026-04-26T11:11:40.728Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.student",
+  "pk": 70,
+  "fields": {
+    "name": "Debug Student 2",
+    "birth_date": "2012-01-01",
+    "parent": 66,
+    "parent_phone": "0900000002",
+    "address": "",
+    "grade": "5",
+    "category": 2,
+    "halaqa": 25,
+    "previous_memorization_amount": 0,
+    "access_token": "fc3bf5b2-dc47-4eea-a61e-bcb45f8ca7dc",
+    "enrollment_date": null,
+    "created_at": "2026-04-26T11:14:05.135Z",
+    "created_by": null
+  }
+},
+{
+  "model": "students.memorizationrecord",
+  "pk": 1,
+  "fields": {
+    "student": 2,
+    "surah": "النازعات",
+    "from_verse": 1,
+    "to_verse": 2,
+    "date": "2025-07-28",
+    "evaluation": "",
+    "is_approved": false,
+    "approved_by": null
+  }
+},
+{
+  "model": "students.memorizationrecord",
+  "pk": 2,
+  "fields": {
+    "student": 2,
+    "surah": "ال عمران",
+    "from_verse": 1,
+    "to_verse": 20,
+    "date": "2025-07-28",
+    "evaluation": "",
+    "is_approved": false,
+    "approved_by": null
+  }
+},
+{
+  "model": "students.memorizationrecord",
+  "pk": 3,
+  "fields": {
+    "student": 2,
+    "surah": "ن",
+    "from_verse": 1,
+    "to_verse": 2,
+    "date": "2025-07-28",
+    "evaluation": "",
+    "is_approved": false,
+    "approved_by": null
+  }
+},
+{
+  "model": "students.memorizationrecord",
+  "pk": 4,
+  "fields": {
+    "student": 2,
+    "surah": "الاخلاص",
+    "from_verse": 1,
+    "to_verse": 5,
+    "date": "2025-07-28",
+    "evaluation": "",
+    "is_approved": false,
+    "approved_by": null
+  }
+},
+{
+  "model": "students.memorizationrecord",
+  "pk": 5,
+  "fields": {
+    "student": 8,
+    "surah": "الناس",
+    "from_verse": 1,
+    "to_verse": 7,
+    "date": "2025-07-28",
+    "evaluation": "",
+    "is_approved": false,
+    "approved_by": null
+  }
+},
+{
+  "model": "students.memorizationrecord",
+  "pk": 6,
+  "fields": {
+    "student": 2,
+    "surah": "البقرة",
+    "from_verse": 1,
+    "to_verse": 5,
+    "date": "2025-07-29",
+    "evaluation": "",
+    "is_approved": false,
+    "approved_by": null
+  }
+},
+{
+  "model": "students.memorizationrecord",
+  "pk": 7,
+  "fields": {
+    "student": 7,
+    "surah": "البقرة",
+    "from_verse": 1,
+    "to_verse": 5,
+    "date": "2025-07-29",
+    "evaluation": "",
+    "is_approved": false,
+    "approved_by": null
+  }
+},
+{
+  "model": "students.memorizationrecord",
+  "pk": 8,
+  "fields": {
+    "student": 45,
+    "surah": "البقرة",
+    "from_verse": 1,
+    "to_verse": 20,
+    "date": "2026-04-16",
+    "evaluation": "",
+    "is_approved": true,
+    "approved_by": null
+  }
+},
+{
+  "model": "students.memorizationrecord",
+  "pk": 9,
+  "fields": {
+    "student": 25,
+    "surah": "البقرة",
+    "from_verse": 1,
+    "to_verse": 70,
+    "date": "2026-04-16",
+    "evaluation": "excellent",
+    "is_approved": true,
+    "approved_by": null
+  }
+},
+{
+  "model": "students.memorizationrecord",
+  "pk": 10,
+  "fields": {
+    "student": 25,
+    "surah": "البقرة",
+    "from_verse": 1,
+    "to_verse": 70,
+    "date": "2026-04-16",
+    "evaluation": "very_good",
+    "is_approved": true,
+    "approved_by": null
+  }
+},
+{
+  "model": "students.memorizationrecord",
+  "pk": 11,
+  "fields": {
+    "student": 27,
+    "surah": "الأعراف",
+    "from_verse": 1,
+    "to_verse": 66,
+    "date": "2026-04-16",
+    "evaluation": "",
+    "is_approved": true,
+    "approved_by": null
+  }
+},
+{
+  "model": "students.memorizationrecord",
+  "pk": 12,
+  "fields": {
+    "student": 26,
+    "surah": "النساء",
+    "from_verse": 1,
+    "to_verse": 50,
+    "date": "2026-04-16",
+    "evaluation": "",
+    "is_approved": true,
+    "approved_by": null
+  }
+},
+{
+  "model": "students.memorizationrecord",
+  "pk": 13,
+  "fields": {
+    "student": 24,
+    "surah": "النساء",
+    "from_verse": 1,
+    "to_verse": 22,
+    "date": "2026-04-16",
+    "evaluation": "good",
+    "is_approved": true,
+    "approved_by": null
+  }
+},
+{
+  "model": "students.memorizationrecord",
+  "pk": 14,
+  "fields": {
+    "student": 34,
+    "surah": "النساء",
+    "from_verse": 1,
+    "to_verse": 100,
+    "date": "2026-04-16",
+    "evaluation": "excellent",
+    "is_approved": true,
+    "approved_by": null
+  }
+},
+{
+  "model": "students.memorizationrecord",
+  "pk": 15,
+  "fields": {
+    "student": 30,
+    "surah": "النساء",
+    "from_verse": 1,
+    "to_verse": 2,
+    "date": "2026-04-16",
+    "evaluation": "",
+    "is_approved": true,
+    "approved_by": null
+  }
+},
+{
+  "model": "students.memorizationrecord",
+  "pk": 16,
+  "fields": {
+    "student": 12,
+    "surah": "البقرة",
+    "from_verse": 1,
+    "to_verse": 20,
+    "date": "2026-04-18",
+    "evaluation": "",
+    "is_approved": true,
+    "approved_by": null
+  }
+},
+{
+  "model": "students.memorizationrecord",
+  "pk": 17,
+  "fields": {
+    "student": 45,
+    "surah": "البقرة",
+    "from_verse": 1,
+    "to_verse": 90,
+    "date": "2026-04-18",
+    "evaluation": "",
+    "is_approved": true,
+    "approved_by": null
+  }
+},
+{
+  "model": "students.memorizationrecord",
+  "pk": 18,
+  "fields": {
+    "student": 60,
+    "surah": "الملك",
+    "from_verse": 1,
+    "to_verse": 10,
+    "date": "2026-04-17",
+    "evaluation": "excellent",
+    "is_approved": true,
+    "approved_by": null
+  }
+},
+{
+  "model": "students.memorizationrecord",
+  "pk": 19,
+  "fields": {
+    "student": 61,
+    "surah": "الملك",
+    "from_verse": 1,
+    "to_verse": 10,
+    "date": "2026-04-17",
+    "evaluation": "excellent",
+    "is_approved": true,
+    "approved_by": null
+  }
+},
+{
+  "model": "students.memorizationrecord",
+  "pk": 20,
+  "fields": {
+    "student": 62,
+    "surah": "الملك",
+    "from_verse": 1,
+    "to_verse": 10,
+    "date": "2026-04-17",
+    "evaluation": "excellent",
+    "is_approved": true,
+    "approved_by": null
+  }
+},
+{
+  "model": "students.memorizationrecord",
+  "pk": 21,
+  "fields": {
+    "student": 64,
+    "surah": "الملك",
+    "from_verse": 1,
+    "to_verse": 10,
+    "date": "2026-04-17",
+    "evaluation": "excellent",
+    "is_approved": true,
+    "approved_by": null
+  }
+},
+{
+  "model": "students.memorizationrecord",
+  "pk": 22,
+  "fields": {
+    "student": 65,
+    "surah": "Surah",
+    "from_verse": 1,
+    "to_verse": 10,
+    "date": "2026-04-17",
+    "evaluation": "excellent",
+    "is_approved": true,
+    "approved_by": null
+  }
+},
+{
+  "model": "students.memorizationrecord",
+  "pk": 23,
+  "fields": {
+    "student": 14,
+    "surah": "البقرة",
+    "from_verse": 1,
+    "to_verse": 20,
+    "date": "2026-04-18",
+    "evaluation": "",
+    "is_approved": true,
+    "approved_by": null
+  }
+},
+{
+  "model": "students.memorizationrecord",
+  "pk": 24,
+  "fields": {
+    "student": 39,
+    "surah": "البقرة",
+    "from_verse": 1,
+    "to_verse": 20,
+    "date": "2026-04-18",
+    "evaluation": "",
+    "is_approved": true,
+    "approved_by": null
+  }
+},
+{
+  "model": "students.memorizationrecord",
+  "pk": 29,
+  "fields": {
+    "student": 20,
+    "surah": "البقرة",
+    "from_verse": 1,
+    "to_verse": 2,
+    "date": "2026-04-26",
+    "evaluation": "",
+    "is_approved": true,
+    "approved_by": null
+  }
+},
+{
+  "model": "halaqas.category",
+  "pk": 1,
+  "fields": {
+    "code": "1",
+    "name": "الفئة 1",
+    "grade_span": "الصفوف 1، 2، 3",
+    "display_order": 1,
+    "is_special": false,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.category",
+  "pk": 2,
+  "fields": {
+    "code": "2",
+    "name": "الفئة 2",
+    "grade_span": "الصفوف 4، 5",
+    "display_order": 2,
+    "is_special": false,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.category",
+  "pk": 3,
+  "fields": {
+    "code": "3",
+    "name": "الفئة 3",
+    "grade_span": "الصفوف 6، 7",
+    "display_order": 3,
+    "is_special": false,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.category",
+  "pk": 4,
+  "fields": {
+    "code": "4",
+    "name": "الفئة 4",
+    "grade_span": "الصف 8",
+    "display_order": 4,
+    "is_special": false,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.category",
+  "pk": 5,
+  "fields": {
+    "code": "5",
+    "name": "الفئة 5",
+    "grade_span": "الصفوف 9، 10، 11",
+    "display_order": 5,
+    "is_special": false,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.category",
+  "pk": 6,
+  "fields": {
+    "code": "S",
+    "name": "الفئة S",
+    "grade_span": "طلاب الجامعة",
+    "display_order": 6,
+    "is_special": true,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.teacher",
+  "pk": 1,
+  "fields": {
+    "full_name": "عمر صافي",
+    "phone": "0997416201",
+    "qualification": "0",
+    "join_date": "2025-07-23",
+    "current_halaqa": 8
+  }
+},
+{
+  "model": "halaqas.teacher",
+  "pk": 3,
+  "fields": {
+    "full_name": "حمزة",
+    "phone": "2050",
+    "qualification": "30",
+    "join_date": "2025-07-26",
+    "current_halaqa": 3
+  }
+},
+{
+  "model": "halaqas.teacher",
+  "pk": 8,
+  "fields": {
+    "full_name": "يوسف شاهين",
+    "phone": "099871338",
+    "qualification": "0",
+    "join_date": "2025-07-26",
+    "current_halaqa": null
+  }
+},
+{
+  "model": "halaqas.teacher",
+  "pk": 10,
+  "fields": {
+    "full_name": "فاطمة",
+    "phone": "8536520",
+    "qualification": "52",
+    "join_date": "2025-07-26",
+    "current_halaqa": 4
+  }
+},
+{
+  "model": "halaqas.teacher",
+  "pk": 11,
+  "fields": {
+    "full_name": "سلمى سباعي",
+    "phone": "85256320",
+    "qualification": "80",
+    "join_date": "2025-07-27",
+    "current_halaqa": 5
+  }
+},
+{
+  "model": "halaqas.teacher",
+  "pk": 13,
+  "fields": {
+    "full_name": "f",
+    "phone": "fs",
+    "qualification": "fb",
+    "join_date": "2025-07-27",
+    "current_halaqa": 6
+  }
+},
+{
+  "model": "halaqas.teacher",
+  "pk": 18,
+  "fields": {
+    "full_name": "علي الجوري",
+    "phone": "2050520",
+    "qualification": "77",
+    "join_date": "2025-07-28",
+    "current_halaqa": 7
+  }
+},
+{
+  "model": "halaqas.teacher",
+  "pk": 40,
+  "fields": {
+    "full_name": "Tmp Teacher",
+    "phone": "1",
+    "qualification": "",
+    "join_date": "2026-04-16",
+    "current_halaqa": 9
+  }
+},
+{
+  "model": "halaqas.teacher",
+  "pk": 42,
+  "fields": {
+    "full_name": "Tmp Teacher",
+    "phone": "1",
+    "qualification": "",
+    "join_date": "2026-04-16",
+    "current_halaqa": 10
+  }
+},
+{
+  "model": "halaqas.teacher",
+  "pk": 44,
+  "fields": {
+    "full_name": "معاينة معلم",
+    "phone": "0999",
+    "qualification": "",
+    "join_date": "2026-04-16",
+    "current_halaqa": 11
+  }
+},
+{
+  "model": "halaqas.teacher",
+  "pk": 47,
+  "fields": {
+    "full_name": "????? ??????",
+    "phone": "1",
+    "qualification": "",
+    "join_date": "2026-04-18",
+    "current_halaqa": 12
+  }
+},
+{
+  "model": "halaqas.teacher",
+  "pk": 48,
+  "fields": {
+    "full_name": "Teacher 1",
+    "phone": "1",
+    "qualification": "",
+    "join_date": "2026-04-18",
+    "current_halaqa": 13
+  }
+},
+{
+  "model": "halaqas.teacher",
+  "pk": 49,
+  "fields": {
+    "full_name": "Teacher 637f2a",
+    "phone": "1",
+    "qualification": "",
+    "join_date": "2026-04-18",
+    "current_halaqa": 14
+  }
+},
+{
+  "model": "halaqas.teacher",
+  "pk": 51,
+  "fields": {
+    "full_name": "استاذ 173809940750",
+    "phone": "1",
+    "qualification": "",
+    "join_date": "2026-04-18",
+    "current_halaqa": 15
+  }
+},
+{
+  "model": "halaqas.teacher",
+  "pk": 53,
+  "fields": {
+    "full_name": "استاذ 173827263001",
+    "phone": "1",
+    "qualification": "",
+    "join_date": "2026-04-18",
+    "current_halaqa": 16
+  }
+},
+{
+  "model": "halaqas.teacher",
+  "pk": 55,
+  "fields": {
+    "full_name": "استاذ 173842960548",
+    "phone": "1",
+    "qualification": "",
+    "join_date": "2026-04-18",
+    "current_halaqa": 17
+  }
+},
+{
+  "model": "halaqas.teacher",
+  "pk": 56,
+  "fields": {
+    "full_name": "Teacher c0b6af",
+    "phone": "1",
+    "qualification": "",
+    "join_date": "2026-04-18",
+    "current_halaqa": 18
+  }
+},
+{
+  "model": "halaqas.teacher",
+  "pk": 58,
+  "fields": {
+    "full_name": "استاذ 174050229933",
+    "phone": "1",
+    "qualification": "",
+    "join_date": "2026-04-18",
+    "current_halaqa": 19
+  }
+},
+{
+  "model": "halaqas.teacher",
+  "pk": 60,
+  "fields": {
+    "full_name": "Teacher 174105420045",
+    "phone": "1",
+    "qualification": "",
+    "join_date": "2026-04-18",
+    "current_halaqa": 20
+  }
+},
+{
+  "model": "halaqas.teacher",
+  "pk": 62,
+  "fields": {
+    "full_name": "Teacher_174118558303",
+    "phone": "1",
+    "qualification": "",
+    "join_date": "2026-04-18",
+    "current_halaqa": 21
+  }
+},
+{
+  "model": "halaqas.teacher",
+  "pk": 64,
+  "fields": {
+    "full_name": "Teacher_174137245343",
+    "phone": "1",
+    "qualification": "",
+    "join_date": "2026-04-18",
+    "current_halaqa": 22
+  }
+},
+{
+  "model": "halaqas.halaqa",
+  "pk": 1,
+  "fields": {
+    "name": "عمرو بن العاص",
+    "category": 1,
+    "join_code": "0",
+    "shareable_link": "",
+    "is_active": true,
+    "teachers": []
+  }
+},
+{
+  "model": "halaqas.halaqa",
+  "pk": 2,
+  "fields": {
+    "name": "افتراضي",
+    "category": 2,
+    "join_code": "DEFAULT",
+    "shareable_link": "QrGoJgQH8L4bYVPAgBqOLQ",
+    "is_active": true,
+    "teachers": []
+  }
+},
+{
+  "model": "halaqas.halaqa",
+  "pk": 3,
+  "fields": {
+    "name": "خالد بن الوليد",
+    "category": 1,
+    "join_code": "1",
+    "shareable_link": "12",
+    "is_active": true,
+    "teachers": [
+      3
+    ]
+  }
+},
+{
+  "model": "halaqas.halaqa",
+  "pk": 4,
+  "fields": {
+    "name": "عثمان بن عفان",
+    "category": 1,
+    "join_code": "3",
+    "shareable_link": "3",
+    "is_active": true,
+    "teachers": [
+      10
+    ]
+  }
+},
+{
+  "model": "halaqas.halaqa",
+  "pk": 5,
+  "fields": {
+    "name": "ابو هريرة",
+    "category": 1,
+    "join_code": "4",
+    "shareable_link": "13",
+    "is_active": true,
+    "teachers": [
+      11
+    ]
+  }
+},
+{
+  "model": "halaqas.halaqa",
+  "pk": 6,
+  "fields": {
+    "name": "لا",
+    "category": 1,
+    "join_code": "5",
+    "shareable_link": "5",
+    "is_active": true,
+    "teachers": [
+      13
+    ]
+  }
+},
+{
+  "model": "halaqas.halaqa",
+  "pk": 7,
+  "fields": {
+    "name": "علي الجوري",
+    "category": 1,
+    "join_code": "6",
+    "shareable_link": "15",
+    "is_active": true,
+    "teachers": [
+      18
+    ]
+  }
+},
+{
+  "model": "halaqas.halaqa",
+  "pk": 8,
+  "fields": {
+    "name": "حلقة عمرو بن العاص",
+    "category": 2,
+    "join_code": "2S6G36",
+    "shareable_link": "1",
+    "is_active": true,
+    "teachers": [
+      1
+    ]
+  }
+},
+{
+  "model": "halaqas.halaqa",
+  "pk": 9,
+  "fields": {
+    "name": "Tmp Halaqa Action Check",
+    "category": null,
+    "join_code": "33XESF",
+    "shareable_link": "Fgm8f5165bBUeyOFT55z3Q",
+    "is_active": true,
+    "teachers": [
+      40
+    ]
+  }
+},
+{
+  "model": "halaqas.halaqa",
+  "pk": 10,
+  "fields": {
+    "name": "Tmp Halaqa Action Check 2",
+    "category": null,
+    "join_code": "DP67JS",
+    "shareable_link": "7quoBzdjU2e4RXaN4x19eA",
+    "is_active": true,
+    "teachers": [
+      42
+    ]
+  }
+},
+{
+  "model": "halaqas.halaqa",
+  "pk": 11,
+  "fields": {
+    "name": "حلقة المعاينة",
+    "category": 2,
+    "join_code": "PUQBNU",
+    "shareable_link": "GEwp78L9hxKdKjrzopwDSg",
+    "is_active": true,
+    "teachers": [
+      44
+    ]
+  }
+},
+{
+  "model": "halaqas.halaqa",
+  "pk": 12,
+  "fields": {
+    "name": "Tmp Halaqa 2",
+    "category": null,
+    "join_code": "X8F7PG",
+    "shareable_link": "S2st9opsvN4tvNpN8qe6Bg",
+    "is_active": true,
+    "teachers": [
+      47
+    ]
+  }
+},
+{
+  "model": "halaqas.halaqa",
+  "pk": 13,
+  "fields": {
+    "name": "H1",
+    "category": null,
+    "join_code": "UPK3NF",
+    "shareable_link": "faz4JFFdyMohC-ZfUykenw",
+    "is_active": true,
+    "teachers": [
+      48
+    ]
+  }
+},
+{
+  "model": "halaqas.halaqa",
+  "pk": 14,
+  "fields": {
+    "name": "H_637f2a",
+    "category": null,
+    "join_code": "VFCYXX",
+    "shareable_link": "TZBDZAVQePDMBANC6ZcWdA",
+    "is_active": true,
+    "teachers": [
+      49
+    ]
+  }
+},
+{
+  "model": "halaqas.halaqa",
+  "pk": 15,
+  "fields": {
+    "name": "H 173809940750",
+    "category": 2,
+    "join_code": "ADSCCH",
+    "shareable_link": "HhcuKJcdFhzwakLSJqc_YQ",
+    "is_active": true,
+    "teachers": [
+      51
+    ]
+  }
+},
+{
+  "model": "halaqas.halaqa",
+  "pk": 16,
+  "fields": {
+    "name": "H 173827263001",
+    "category": 2,
+    "join_code": "5PHPSE",
+    "shareable_link": "honcfUoFzXa-2QC5mkpRIQ",
+    "is_active": true,
+    "teachers": [
+      53
+    ]
+  }
+},
+{
+  "model": "halaqas.halaqa",
+  "pk": 17,
+  "fields": {
+    "name": "H2 173842960548",
+    "category": 2,
+    "join_code": "7VK79G",
+    "shareable_link": "eUrB8ZTqbRFg5LmmQkeO_A",
+    "is_active": true,
+    "teachers": [
+      55
+    ]
+  }
+},
+{
+  "model": "halaqas.halaqa",
+  "pk": 18,
+  "fields": {
+    "name": "HH c0b6af",
+    "category": null,
+    "join_code": "CDTPA7",
+    "shareable_link": "mpU4hSYOXBVGPKzmWpUihA",
+    "is_active": true,
+    "teachers": [
+      56
+    ]
+  }
+},
+{
+  "model": "halaqas.halaqa",
+  "pk": 19,
+  "fields": {
+    "name": "H3 174050229933",
+    "category": 2,
+    "join_code": "44QTX7",
+    "shareable_link": "yxHhSbzf-Wz_0LlaOkxyag",
+    "is_active": true,
+    "teachers": [
+      58
+    ]
+  }
+},
+{
+  "model": "halaqas.halaqa",
+  "pk": 20,
+  "fields": {
+    "name": "H4 174105420045",
+    "category": null,
+    "join_code": "UEQA5K",
+    "shareable_link": "w36vrVzy5MWBGdSwdVmGgQ",
+    "is_active": true,
+    "teachers": [
+      60
+    ]
+  }
+},
+{
+  "model": "halaqas.halaqa",
+  "pk": 21,
+  "fields": {
+    "name": "H5_174118558303",
+    "category": null,
+    "join_code": "A6BP2B",
+    "shareable_link": "CHe-tnnRIhY6OTSi2N3vXA",
+    "is_active": true,
+    "teachers": [
+      62
+    ]
+  }
+},
+{
+  "model": "halaqas.halaqa",
+  "pk": 22,
+  "fields": {
+    "name": "H6_174137245343",
+    "category": null,
+    "join_code": "EHM7LA",
+    "shareable_link": "lw0TFt-EQgEqJjItpsuM8A",
+    "is_active": true,
+    "teachers": [
+      64
+    ]
+  }
+},
+{
+  "model": "halaqas.halaqa",
+  "pk": 23,
+  "fields": {
+    "name": "HX_139a1f",
+    "category": null,
+    "join_code": "RSPPFA",
+    "shareable_link": "3cehNs2wCtDL9rgC4F7odQ",
+    "is_active": true,
+    "teachers": []
+  }
+},
+{
+  "model": "halaqas.halaqa",
+  "pk": 24,
+  "fields": {
+    "name": "Debug Halaqa",
+    "category": null,
+    "join_code": "Z67E2K",
+    "shareable_link": "bTHxKtDJfn9pq7WzvORd-Q",
+    "is_active": true,
+    "teachers": []
+  }
+},
+{
+  "model": "halaqas.halaqa",
+  "pk": 25,
+  "fields": {
+    "name": "Debug Halaqa 2",
+    "category": 2,
+    "join_code": "MTMQ7G",
+    "shareable_link": "JQL_kI_u91K_6IE3zQyRrA",
+    "is_active": true,
+    "teachers": []
+  }
+},
+{
+  "model": "halaqas.teacherassignment",
+  "pk": 1,
+  "fields": {
+    "teacher": 1,
+    "halaqa": 8,
+    "start_date": "2026-04-26",
+    "end_date": null,
+    "is_active": true,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.teacherassignment",
+  "pk": 2,
+  "fields": {
+    "teacher": 3,
+    "halaqa": 3,
+    "start_date": "2026-04-26",
+    "end_date": null,
+    "is_active": true,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.teacherassignment",
+  "pk": 3,
+  "fields": {
+    "teacher": 10,
+    "halaqa": 4,
+    "start_date": "2026-04-26",
+    "end_date": null,
+    "is_active": true,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.teacherassignment",
+  "pk": 4,
+  "fields": {
+    "teacher": 11,
+    "halaqa": 5,
+    "start_date": "2026-04-26",
+    "end_date": null,
+    "is_active": true,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.teacherassignment",
+  "pk": 5,
+  "fields": {
+    "teacher": 13,
+    "halaqa": 6,
+    "start_date": "2026-04-26",
+    "end_date": null,
+    "is_active": true,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.teacherassignment",
+  "pk": 6,
+  "fields": {
+    "teacher": 18,
+    "halaqa": 7,
+    "start_date": "2026-04-26",
+    "end_date": null,
+    "is_active": true,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.teacherassignment",
+  "pk": 7,
+  "fields": {
+    "teacher": 40,
+    "halaqa": 9,
+    "start_date": "2026-04-26",
+    "end_date": null,
+    "is_active": true,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.teacherassignment",
+  "pk": 8,
+  "fields": {
+    "teacher": 42,
+    "halaqa": 10,
+    "start_date": "2026-04-26",
+    "end_date": null,
+    "is_active": true,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.teacherassignment",
+  "pk": 9,
+  "fields": {
+    "teacher": 44,
+    "halaqa": 11,
+    "start_date": "2026-04-26",
+    "end_date": null,
+    "is_active": true,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.teacherassignment",
+  "pk": 10,
+  "fields": {
+    "teacher": 47,
+    "halaqa": 12,
+    "start_date": "2026-04-26",
+    "end_date": null,
+    "is_active": true,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.teacherassignment",
+  "pk": 11,
+  "fields": {
+    "teacher": 48,
+    "halaqa": 13,
+    "start_date": "2026-04-26",
+    "end_date": null,
+    "is_active": true,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.teacherassignment",
+  "pk": 12,
+  "fields": {
+    "teacher": 49,
+    "halaqa": 14,
+    "start_date": "2026-04-26",
+    "end_date": null,
+    "is_active": true,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.teacherassignment",
+  "pk": 13,
+  "fields": {
+    "teacher": 51,
+    "halaqa": 15,
+    "start_date": "2026-04-26",
+    "end_date": null,
+    "is_active": true,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.teacherassignment",
+  "pk": 14,
+  "fields": {
+    "teacher": 53,
+    "halaqa": 16,
+    "start_date": "2026-04-26",
+    "end_date": null,
+    "is_active": true,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.teacherassignment",
+  "pk": 15,
+  "fields": {
+    "teacher": 55,
+    "halaqa": 17,
+    "start_date": "2026-04-26",
+    "end_date": null,
+    "is_active": true,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.teacherassignment",
+  "pk": 16,
+  "fields": {
+    "teacher": 56,
+    "halaqa": 18,
+    "start_date": "2026-04-26",
+    "end_date": null,
+    "is_active": true,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.teacherassignment",
+  "pk": 17,
+  "fields": {
+    "teacher": 58,
+    "halaqa": 19,
+    "start_date": "2026-04-26",
+    "end_date": null,
+    "is_active": true,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.teacherassignment",
+  "pk": 18,
+  "fields": {
+    "teacher": 60,
+    "halaqa": 20,
+    "start_date": "2026-04-26",
+    "end_date": null,
+    "is_active": true,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.teacherassignment",
+  "pk": 19,
+  "fields": {
+    "teacher": 62,
+    "halaqa": 21,
+    "start_date": "2026-04-26",
+    "end_date": null,
+    "is_active": true,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.teacherassignment",
+  "pk": 20,
+  "fields": {
+    "teacher": 64,
+    "halaqa": 22,
+    "start_date": "2026-04-26",
+    "end_date": null,
+    "is_active": true,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 1,
+  "fields": {
+    "student": 2,
+    "halaqa": 2,
+    "join_date": "2025-07-26",
+    "end_date": "2025-07-26",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 2,
+  "fields": {
+    "student": 2,
+    "halaqa": 1,
+    "join_date": "2025-07-26",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 3,
+  "fields": {
+    "student": 3,
+    "halaqa": 2,
+    "join_date": "2025-07-26",
+    "end_date": "2025-07-26",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 4,
+  "fields": {
+    "student": 3,
+    "halaqa": 1,
+    "join_date": "2025-07-26",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 5,
+  "fields": {
+    "student": 4,
+    "halaqa": 2,
+    "join_date": "2025-07-26",
+    "end_date": "2025-07-26",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 6,
+  "fields": {
+    "student": 4,
+    "halaqa": 1,
+    "join_date": "2025-07-26",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 7,
+  "fields": {
+    "student": 5,
+    "halaqa": 2,
+    "join_date": "2025-07-26",
+    "end_date": "2025-07-26",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 8,
+  "fields": {
+    "student": 5,
+    "halaqa": 1,
+    "join_date": "2025-07-26",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 9,
+  "fields": {
+    "student": 6,
+    "halaqa": 2,
+    "join_date": "2025-07-26",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 10,
+  "fields": {
+    "student": 7,
+    "halaqa": 2,
+    "join_date": "2025-07-27",
+    "end_date": "2025-07-27",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 11,
+  "fields": {
+    "student": 7,
+    "halaqa": 4,
+    "join_date": "2025-07-27",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 12,
+  "fields": {
+    "student": 8,
+    "halaqa": 2,
+    "join_date": "2025-07-27",
+    "end_date": "2025-07-27",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 13,
+  "fields": {
+    "student": 8,
+    "halaqa": 3,
+    "join_date": "2025-07-27",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 14,
+  "fields": {
+    "student": 9,
+    "halaqa": 2,
+    "join_date": "2025-07-27",
+    "end_date": "2025-07-27",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 15,
+  "fields": {
+    "student": 9,
+    "halaqa": 1,
+    "join_date": "2025-07-27",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 16,
+  "fields": {
+    "student": 10,
+    "halaqa": 2,
+    "join_date": "2025-07-28",
+    "end_date": "2025-07-28",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 17,
+  "fields": {
+    "student": 10,
+    "halaqa": 1,
+    "join_date": "2025-07-28",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 18,
+  "fields": {
+    "student": 11,
+    "halaqa": 2,
+    "join_date": "2025-07-28",
+    "end_date": "2025-07-28",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 19,
+  "fields": {
+    "student": 11,
+    "halaqa": 1,
+    "join_date": "2025-07-28",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 20,
+  "fields": {
+    "student": 12,
+    "halaqa": 2,
+    "join_date": "2025-07-30",
+    "end_date": "2025-07-30",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 21,
+  "fields": {
+    "student": 12,
+    "halaqa": 1,
+    "join_date": "2025-07-30",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 22,
+  "fields": {
+    "student": 13,
+    "halaqa": 2,
+    "join_date": "2025-07-30",
+    "end_date": "2025-07-30",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 23,
+  "fields": {
+    "student": 13,
+    "halaqa": 1,
+    "join_date": "2025-07-30",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 24,
+  "fields": {
+    "student": 14,
+    "halaqa": 2,
+    "join_date": "2025-07-30",
+    "end_date": "2025-07-30",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 25,
+  "fields": {
+    "student": 14,
+    "halaqa": 1,
+    "join_date": "2025-07-30",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 26,
+  "fields": {
+    "student": 15,
+    "halaqa": 2,
+    "join_date": "2025-07-30",
+    "end_date": "2025-07-30",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 27,
+  "fields": {
+    "student": 15,
+    "halaqa": 1,
+    "join_date": "2025-07-30",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 28,
+  "fields": {
+    "student": 16,
+    "halaqa": 2,
+    "join_date": "2025-07-30",
+    "end_date": "2025-07-30",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 29,
+  "fields": {
+    "student": 16,
+    "halaqa": 7,
+    "join_date": "2025-07-30",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 30,
+  "fields": {
+    "student": 17,
+    "halaqa": 2,
+    "join_date": "2025-07-30",
+    "end_date": "2025-07-30",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 31,
+  "fields": {
+    "student": 17,
+    "halaqa": 5,
+    "join_date": "2025-07-30",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 32,
+  "fields": {
+    "student": 18,
+    "halaqa": 2,
+    "join_date": "2025-07-30",
+    "end_date": "2025-07-30",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 33,
+  "fields": {
+    "student": 18,
+    "halaqa": 1,
+    "join_date": "2025-07-30",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 34,
+  "fields": {
+    "student": 19,
+    "halaqa": 2,
+    "join_date": "2025-07-30",
+    "end_date": "2025-07-30",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 35,
+  "fields": {
+    "student": 19,
+    "halaqa": 1,
+    "join_date": "2025-07-30",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 36,
+  "fields": {
+    "student": 20,
+    "halaqa": 2,
+    "join_date": "2025-07-30",
+    "end_date": "2025-07-30",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 37,
+  "fields": {
+    "student": 20,
+    "halaqa": 1,
+    "join_date": "2025-07-30",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 38,
+  "fields": {
+    "student": 21,
+    "halaqa": 2,
+    "join_date": "2025-07-30",
+    "end_date": "2025-07-30",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 39,
+  "fields": {
+    "student": 21,
+    "halaqa": 1,
+    "join_date": "2025-07-30",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 40,
+  "fields": {
+    "student": 22,
+    "halaqa": 2,
+    "join_date": "2025-07-30",
+    "end_date": "2025-07-30",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 41,
+  "fields": {
+    "student": 22,
+    "halaqa": 1,
+    "join_date": "2025-07-30",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 42,
+  "fields": {
+    "student": 23,
+    "halaqa": 2,
+    "join_date": "2025-07-30",
+    "end_date": "2025-07-30",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 43,
+  "fields": {
+    "student": 23,
+    "halaqa": 6,
+    "join_date": "2025-07-30",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 44,
+  "fields": {
+    "student": 24,
+    "halaqa": 2,
+    "join_date": "2025-07-30",
+    "end_date": "2025-07-30",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 45,
+  "fields": {
+    "student": 24,
+    "halaqa": 3,
+    "join_date": "2025-07-30",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 46,
+  "fields": {
+    "student": 25,
+    "halaqa": 2,
+    "join_date": "2025-07-30",
+    "end_date": "2025-07-30",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 47,
+  "fields": {
+    "student": 25,
+    "halaqa": 3,
+    "join_date": "2025-07-30",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 48,
+  "fields": {
+    "student": 26,
+    "halaqa": 2,
+    "join_date": "2025-07-30",
+    "end_date": "2025-07-30",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 49,
+  "fields": {
+    "student": 26,
+    "halaqa": 3,
+    "join_date": "2025-07-30",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 50,
+  "fields": {
+    "student": 27,
+    "halaqa": 2,
+    "join_date": "2025-07-30",
+    "end_date": "2025-07-30",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 51,
+  "fields": {
+    "student": 27,
+    "halaqa": 3,
+    "join_date": "2025-07-30",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 52,
+  "fields": {
+    "student": 28,
+    "halaqa": 2,
+    "join_date": "2025-07-30",
+    "end_date": "2025-07-30",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 53,
+  "fields": {
+    "student": 28,
+    "halaqa": 4,
+    "join_date": "2025-07-30",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 54,
+  "fields": {
+    "student": 29,
+    "halaqa": 2,
+    "join_date": "2025-07-30",
+    "end_date": "2025-07-30",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 55,
+  "fields": {
+    "student": 29,
+    "halaqa": 4,
+    "join_date": "2025-07-30",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 56,
+  "fields": {
+    "student": 30,
+    "halaqa": 2,
+    "join_date": "2025-07-30",
+    "end_date": "2025-07-30",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 57,
+  "fields": {
+    "student": 30,
+    "halaqa": 1,
+    "join_date": "2025-07-30",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 58,
+  "fields": {
+    "student": 31,
+    "halaqa": 2,
+    "join_date": "2025-07-30",
+    "end_date": "2025-07-30",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 59,
+  "fields": {
+    "student": 31,
+    "halaqa": 7,
+    "join_date": "2025-07-30",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 60,
+  "fields": {
+    "student": 32,
+    "halaqa": 2,
+    "join_date": "2025-07-31",
+    "end_date": "2025-07-31",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 61,
+  "fields": {
+    "student": 32,
+    "halaqa": 4,
+    "join_date": "2025-07-31",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 62,
+  "fields": {
+    "student": 33,
+    "halaqa": 2,
+    "join_date": "2025-07-31",
+    "end_date": "2025-07-31",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 63,
+  "fields": {
+    "student": 33,
+    "halaqa": 4,
+    "join_date": "2025-07-31",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 64,
+  "fields": {
+    "student": 34,
+    "halaqa": 2,
+    "join_date": "2025-08-01",
+    "end_date": "2025-08-01",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 65,
+  "fields": {
+    "student": 34,
+    "halaqa": 3,
+    "join_date": "2025-08-01",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 66,
+  "fields": {
+    "student": 35,
+    "halaqa": 2,
+    "join_date": "2025-08-05",
+    "end_date": "2025-08-05",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 67,
+  "fields": {
+    "student": 35,
+    "halaqa": 1,
+    "join_date": "2025-08-05",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 68,
+  "fields": {
+    "student": 36,
+    "halaqa": 2,
+    "join_date": "2025-08-05",
+    "end_date": "2025-08-05",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 69,
+  "fields": {
+    "student": 36,
+    "halaqa": 1,
+    "join_date": "2025-08-05",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 70,
+  "fields": {
+    "student": 37,
+    "halaqa": 2,
+    "join_date": "2025-08-11",
+    "end_date": "2025-08-11",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 71,
+  "fields": {
+    "student": 37,
+    "halaqa": 7,
+    "join_date": "2025-08-11",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 72,
+  "fields": {
+    "student": 38,
+    "halaqa": 2,
+    "join_date": "2025-08-12",
+    "end_date": "2025-08-12",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 73,
+  "fields": {
+    "student": 38,
+    "halaqa": 4,
+    "join_date": "2025-08-12",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 74,
+  "fields": {
+    "student": 39,
+    "halaqa": 2,
+    "join_date": "2025-09-16",
+    "end_date": "2025-09-16",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 75,
+  "fields": {
+    "student": 39,
+    "halaqa": 1,
+    "join_date": "2025-09-16",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 76,
+  "fields": {
+    "student": 40,
+    "halaqa": 2,
+    "join_date": "2025-09-16",
+    "end_date": "2025-09-16",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 77,
+  "fields": {
+    "student": 40,
+    "halaqa": 1,
+    "join_date": "2025-09-16",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 78,
+  "fields": {
+    "student": 41,
+    "halaqa": 2,
+    "join_date": "2025-09-16",
+    "end_date": "2025-09-16",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 79,
+  "fields": {
+    "student": 41,
+    "halaqa": 1,
+    "join_date": "2025-09-16",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 80,
+  "fields": {
+    "student": 42,
+    "halaqa": 2,
+    "join_date": "2025-09-16",
+    "end_date": "2025-09-16",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 81,
+  "fields": {
+    "student": 42,
+    "halaqa": 1,
+    "join_date": "2025-09-16",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 82,
+  "fields": {
+    "student": 43,
+    "halaqa": 2,
+    "join_date": "2025-09-18",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 83,
+  "fields": {
+    "student": 44,
+    "halaqa": 2,
+    "join_date": "2025-09-18",
+    "end_date": "2025-09-18",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 84,
+  "fields": {
+    "student": 44,
+    "halaqa": 8,
+    "join_date": "2025-09-18",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 85,
+  "fields": {
+    "student": 45,
+    "halaqa": 2,
+    "join_date": "2025-09-18",
+    "end_date": "2025-09-18",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 86,
+  "fields": {
+    "student": 45,
+    "halaqa": 1,
+    "join_date": "2025-09-18",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 87,
+  "fields": {
+    "student": 46,
+    "halaqa": 2,
+    "join_date": "2025-09-18",
+    "end_date": "2025-09-18",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 88,
+  "fields": {
+    "student": 46,
+    "halaqa": 8,
+    "join_date": "2025-09-18",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 89,
+  "fields": {
+    "student": 47,
+    "halaqa": 2,
+    "join_date": "2025-09-18",
+    "end_date": "2025-09-18",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 90,
+  "fields": {
+    "student": 47,
+    "halaqa": 8,
+    "join_date": "2025-09-18",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 91,
+  "fields": {
+    "student": 48,
+    "halaqa": 2,
+    "join_date": "2025-09-18",
+    "end_date": "2025-09-18",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 92,
+  "fields": {
+    "student": 48,
+    "halaqa": 8,
+    "join_date": "2025-09-18",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 93,
+  "fields": {
+    "student": 49,
+    "halaqa": 2,
+    "join_date": "2025-09-18",
+    "end_date": "2025-09-18",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 94,
+  "fields": {
+    "student": 49,
+    "halaqa": 8,
+    "join_date": "2025-09-18",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 95,
+  "fields": {
+    "student": 50,
+    "halaqa": 2,
+    "join_date": "2025-09-18",
+    "end_date": "2025-09-18",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 96,
+  "fields": {
+    "student": 50,
+    "halaqa": 8,
+    "join_date": "2025-09-18",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 97,
+  "fields": {
+    "student": 51,
+    "halaqa": 2,
+    "join_date": "2025-09-24",
+    "end_date": "2025-09-24",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 98,
+  "fields": {
+    "student": 51,
+    "halaqa": 5,
+    "join_date": "2025-09-24",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 99,
+  "fields": {
+    "student": 52,
+    "halaqa": 2,
+    "join_date": "2025-09-24",
+    "end_date": "2025-09-24",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 100,
+  "fields": {
+    "student": 52,
+    "halaqa": 5,
+    "join_date": "2025-09-24",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 101,
+  "fields": {
+    "student": 53,
+    "halaqa": 2,
+    "join_date": "2025-10-25",
+    "end_date": "2025-10-25",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 102,
+  "fields": {
+    "student": 53,
+    "halaqa": 7,
+    "join_date": "2025-10-25",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 103,
+  "fields": {
+    "student": 54,
+    "halaqa": 2,
+    "join_date": "2026-04-16",
+    "end_date": "2026-04-16",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 104,
+  "fields": {
+    "student": 54,
+    "halaqa": 9,
+    "join_date": "2026-04-16",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 105,
+  "fields": {
+    "student": 55,
+    "halaqa": 2,
+    "join_date": "2026-04-16",
+    "end_date": "2026-04-16",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 106,
+  "fields": {
+    "student": 55,
+    "halaqa": 10,
+    "join_date": "2026-04-16",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 107,
+  "fields": {
+    "student": 56,
+    "halaqa": 2,
+    "join_date": "2026-04-16",
+    "end_date": "2026-04-16",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 108,
+  "fields": {
+    "student": 56,
+    "halaqa": 11,
+    "join_date": "2026-04-16",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 109,
+  "fields": {
+    "student": 57,
+    "halaqa": 2,
+    "join_date": "2026-04-18",
+    "end_date": "2026-04-18",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 110,
+  "fields": {
+    "student": 57,
+    "halaqa": 12,
+    "join_date": "2026-04-18",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 111,
+  "fields": {
+    "student": 58,
+    "halaqa": 2,
+    "join_date": "2026-04-18",
+    "end_date": "2026-04-18",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 112,
+  "fields": {
+    "student": 58,
+    "halaqa": 13,
+    "join_date": "2026-04-18",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 113,
+  "fields": {
+    "student": 59,
+    "halaqa": 2,
+    "join_date": "2026-04-18",
+    "end_date": "2026-04-18",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 114,
+  "fields": {
+    "student": 59,
+    "halaqa": 14,
+    "join_date": "2026-04-18",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 115,
+  "fields": {
+    "student": 60,
+    "halaqa": 2,
+    "join_date": "2026-04-18",
+    "end_date": "2026-04-18",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 116,
+  "fields": {
+    "student": 60,
+    "halaqa": 15,
+    "join_date": "2026-04-18",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 117,
+  "fields": {
+    "student": 61,
+    "halaqa": 2,
+    "join_date": "2026-04-18",
+    "end_date": "2026-04-18",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 118,
+  "fields": {
+    "student": 61,
+    "halaqa": 16,
+    "join_date": "2026-04-18",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 119,
+  "fields": {
+    "student": 62,
+    "halaqa": 2,
+    "join_date": "2026-04-18",
+    "end_date": "2026-04-18",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 120,
+  "fields": {
+    "student": 62,
+    "halaqa": 17,
+    "join_date": "2026-04-18",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 121,
+  "fields": {
+    "student": 63,
+    "halaqa": 2,
+    "join_date": "2026-04-18",
+    "end_date": "2026-04-18",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 122,
+  "fields": {
+    "student": 63,
+    "halaqa": 18,
+    "join_date": "2026-04-18",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 123,
+  "fields": {
+    "student": 64,
+    "halaqa": 2,
+    "join_date": "2026-04-18",
+    "end_date": "2026-04-18",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 124,
+  "fields": {
+    "student": 64,
+    "halaqa": 19,
+    "join_date": "2026-04-18",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 125,
+  "fields": {
+    "student": 65,
+    "halaqa": 2,
+    "join_date": "2026-04-18",
+    "end_date": "2026-04-18",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 126,
+  "fields": {
+    "student": 65,
+    "halaqa": 20,
+    "join_date": "2026-04-18",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 127,
+  "fields": {
+    "student": 66,
+    "halaqa": 2,
+    "join_date": "2026-04-18",
+    "end_date": "2026-04-18",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 128,
+  "fields": {
+    "student": 66,
+    "halaqa": 21,
+    "join_date": "2026-04-18",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 129,
+  "fields": {
+    "student": 67,
+    "halaqa": 2,
+    "join_date": "2026-04-18",
+    "end_date": "2026-04-18",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 130,
+  "fields": {
+    "student": 67,
+    "halaqa": 22,
+    "join_date": "2026-04-18",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 131,
+  "fields": {
+    "student": 68,
+    "halaqa": 2,
+    "join_date": "2026-04-18",
+    "end_date": "2026-04-18",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 132,
+  "fields": {
+    "student": 68,
+    "halaqa": 23,
+    "join_date": "2026-04-18",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 133,
+  "fields": {
+    "student": 69,
+    "halaqa": 2,
+    "join_date": "2026-04-26",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 134,
+  "fields": {
+    "student": 70,
+    "halaqa": 2,
+    "join_date": "2026-04-26",
+    "end_date": "2026-04-26",
+    "is_active": false
+  }
+},
+{
+  "model": "halaqas.halaqamembership",
+  "pk": 135,
+  "fields": {
+    "student": 70,
+    "halaqa": 25,
+    "join_date": "2026-04-26",
+    "end_date": null,
+    "is_active": true
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 1,
+  "fields": {
+    "halaqa": 1,
+    "date": "2025-07-28",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 2,
+  "fields": {
+    "halaqa": 2,
+    "date": "2025-07-28",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 3,
+  "fields": {
+    "halaqa": 3,
+    "date": "2025-07-28",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 4,
+  "fields": {
+    "halaqa": 4,
+    "date": "2025-07-28",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 5,
+  "fields": {
+    "halaqa": 1,
+    "date": "2025-07-29",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 6,
+  "fields": {
+    "halaqa": 2,
+    "date": "2025-07-29",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 7,
+  "fields": {
+    "halaqa": 3,
+    "date": "2025-07-29",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 8,
+  "fields": {
+    "halaqa": 4,
+    "date": "2025-07-29",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 9,
+  "fields": {
+    "halaqa": 1,
+    "date": "2025-07-30",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 10,
+  "fields": {
+    "halaqa": 5,
+    "date": "2025-07-30",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 11,
+  "fields": {
+    "halaqa": 7,
+    "date": "2025-07-30",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 12,
+  "fields": {
+    "halaqa": 2,
+    "date": "2025-07-30",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 13,
+  "fields": {
+    "halaqa": 3,
+    "date": "2025-07-30",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 14,
+  "fields": {
+    "halaqa": 6,
+    "date": "2025-07-30",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 15,
+  "fields": {
+    "halaqa": 4,
+    "date": "2025-07-30",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 16,
+  "fields": {
+    "halaqa": 2,
+    "date": "2025-07-31",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 17,
+  "fields": {
+    "halaqa": 4,
+    "date": "2025-07-31",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 18,
+  "fields": {
+    "halaqa": 2,
+    "date": "2025-08-01",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 19,
+  "fields": {
+    "halaqa": 3,
+    "date": "2025-08-01",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 20,
+  "fields": {
+    "halaqa": 1,
+    "date": "2025-08-03",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 21,
+  "fields": {
+    "halaqa": 2,
+    "date": "2025-08-05",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 22,
+  "fields": {
+    "halaqa": 1,
+    "date": "2025-08-05",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 23,
+  "fields": {
+    "halaqa": 1,
+    "date": "2025-08-11",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 24,
+  "fields": {
+    "halaqa": 2,
+    "date": "2025-08-11",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 25,
+  "fields": {
+    "halaqa": 2,
+    "date": "2025-08-12",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 26,
+  "fields": {
+    "halaqa": 4,
+    "date": "2025-08-12",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 27,
+  "fields": {
+    "halaqa": 1,
+    "date": "2025-09-16",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 28,
+  "fields": {
+    "halaqa": 2,
+    "date": "2025-09-16",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 29,
+  "fields": {
+    "halaqa": 7,
+    "date": "2025-09-16",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 30,
+  "fields": {
+    "halaqa": 3,
+    "date": "2025-09-18",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 31,
+  "fields": {
+    "halaqa": 1,
+    "date": "2025-09-18",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 32,
+  "fields": {
+    "halaqa": 2,
+    "date": "2025-09-18",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 33,
+  "fields": {
+    "halaqa": 8,
+    "date": "2025-09-18",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 34,
+  "fields": {
+    "halaqa": 5,
+    "date": "2025-09-24",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 35,
+  "fields": {
+    "halaqa": 2,
+    "date": "2025-09-24",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 36,
+  "fields": {
+    "halaqa": 2,
+    "date": "2025-10-25",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 37,
+  "fields": {
+    "halaqa": 7,
+    "date": "2025-10-25",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 38,
+  "fields": {
+    "halaqa": 8,
+    "date": "2026-03-12",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 39,
+  "fields": {
+    "halaqa": 1,
+    "date": "2026-04-13",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 40,
+  "fields": {
+    "halaqa": 7,
+    "date": "2026-04-13",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 41,
+  "fields": {
+    "halaqa": 4,
+    "date": "2026-04-13",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 42,
+  "fields": {
+    "halaqa": 9,
+    "date": "2026-04-16",
+    "start_time": "16:00:00",
+    "end_time": "17:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 43,
+  "fields": {
+    "halaqa": 10,
+    "date": "2026-04-16",
+    "start_time": "16:00:00",
+    "end_time": "17:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 44,
+  "fields": {
+    "halaqa": 1,
+    "date": "2026-04-16",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 45,
+  "fields": {
+    "halaqa": 2,
+    "date": "2026-04-16",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 46,
+  "fields": {
+    "halaqa": 3,
+    "date": "2026-04-16",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 47,
+  "fields": {
+    "halaqa": 1,
+    "date": "2026-04-17",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 48,
+  "fields": {
+    "halaqa": 1,
+    "date": "2026-04-18",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 49,
+  "fields": {
+    "halaqa": 15,
+    "date": "2026-04-17",
+    "start_time": "16:00:00",
+    "end_time": "18:00:00",
+    "notes": "note"
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 50,
+  "fields": {
+    "halaqa": 16,
+    "date": "2026-04-17",
+    "start_time": "16:00:00",
+    "end_time": "18:00:00",
+    "notes": "note"
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 51,
+  "fields": {
+    "halaqa": 17,
+    "date": "2026-04-17",
+    "start_time": "16:00:00",
+    "end_time": "18:00:00",
+    "notes": "note"
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 52,
+  "fields": {
+    "halaqa": 19,
+    "date": "2026-04-17",
+    "start_time": "16:00:00",
+    "end_time": "18:00:00",
+    "notes": "note"
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 53,
+  "fields": {
+    "halaqa": 20,
+    "date": "2026-04-17",
+    "start_time": "16:00:00",
+    "end_time": "18:00:00",
+    "notes": "note"
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 54,
+  "fields": {
+    "halaqa": 21,
+    "date": "2026-04-17",
+    "start_time": "16:00:00",
+    "end_time": "18:00:00",
+    "notes": "note"
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 55,
+  "fields": {
+    "halaqa": 1,
+    "date": "2026-04-20",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 56,
+  "fields": {
+    "halaqa": 1,
+    "date": "2026-04-22",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 57,
+  "fields": {
+    "halaqa": 1,
+    "date": "2026-04-23",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 58,
+  "fields": {
+    "halaqa": 1,
+    "date": "2026-04-25",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.session",
+  "pk": 59,
+  "fields": {
+    "halaqa": 1,
+    "date": "2026-04-26",
+    "start_time": "00:00:00",
+    "end_time": "00:00:00",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 1,
+  "fields": {
+    "session": 1,
+    "student": 2,
+    "status": "absent",
+    "notes": "ب"
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 2,
+  "fields": {
+    "session": 1,
+    "student": 3,
+    "status": "absent",
+    "notes": "ب"
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 3,
+  "fields": {
+    "session": 1,
+    "student": 11,
+    "status": "absent",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 4,
+  "fields": {
+    "session": 3,
+    "student": 8,
+    "status": "present",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 5,
+  "fields": {
+    "session": 5,
+    "student": 2,
+    "status": "present",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 6,
+  "fields": {
+    "session": 8,
+    "student": 7,
+    "status": "present",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 7,
+  "fields": {
+    "session": 13,
+    "student": 24,
+    "status": "present",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 8,
+  "fields": {
+    "session": 13,
+    "student": 8,
+    "status": "excused",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 9,
+  "fields": {
+    "session": 12,
+    "student": 28,
+    "status": "present",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 10,
+  "fields": {
+    "session": 9,
+    "student": 2,
+    "status": "present",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 11,
+  "fields": {
+    "session": 19,
+    "student": 8,
+    "status": "present",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 12,
+  "fields": {
+    "session": 33,
+    "student": 44,
+    "status": "present",
+    "notes": "لا يوجد"
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 13,
+  "fields": {
+    "session": 33,
+    "student": 46,
+    "status": "absent",
+    "notes": "لا يوجد"
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 14,
+  "fields": {
+    "session": 33,
+    "student": 47,
+    "status": "present",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 15,
+  "fields": {
+    "session": 34,
+    "student": 17,
+    "status": "present",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 16,
+  "fields": {
+    "session": 34,
+    "student": 51,
+    "status": "absent",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 17,
+  "fields": {
+    "session": 37,
+    "student": 16,
+    "status": "present",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 18,
+  "fields": {
+    "session": 41,
+    "student": 7,
+    "status": "absent",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 19,
+  "fields": {
+    "session": 41,
+    "student": 28,
+    "status": "present",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 20,
+  "fields": {
+    "session": 43,
+    "student": 55,
+    "status": "present",
+    "notes": "test"
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 21,
+  "fields": {
+    "session": 44,
+    "student": 45,
+    "status": "present",
+    "notes": "بدون ملاحظات"
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 22,
+  "fields": {
+    "session": 44,
+    "student": 21,
+    "status": "present",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 23,
+  "fields": {
+    "session": 44,
+    "student": 39,
+    "status": "absent",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 24,
+  "fields": {
+    "session": 45,
+    "student": 54,
+    "status": "present",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 25,
+  "fields": {
+    "session": 46,
+    "student": 27,
+    "status": "present",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 26,
+  "fields": {
+    "session": 46,
+    "student": 26,
+    "status": "excused",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 27,
+  "fields": {
+    "session": 46,
+    "student": 25,
+    "status": "absent",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 28,
+  "fields": {
+    "session": 47,
+    "student": 39,
+    "status": "excused",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 29,
+  "fields": {
+    "session": 49,
+    "student": 60,
+    "status": "present",
+    "notes": "att"
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 30,
+  "fields": {
+    "session": 50,
+    "student": 61,
+    "status": "present",
+    "notes": "att"
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 31,
+  "fields": {
+    "session": 51,
+    "student": 62,
+    "status": "present",
+    "notes": "att"
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 32,
+  "fields": {
+    "session": 52,
+    "student": 64,
+    "status": "present",
+    "notes": "att"
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 33,
+  "fields": {
+    "session": 53,
+    "student": 65,
+    "status": "present",
+    "notes": "att"
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 34,
+  "fields": {
+    "session": 48,
+    "student": 39,
+    "status": "present",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 35,
+  "fields": {
+    "session": 57,
+    "student": 30,
+    "status": "present",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.attendance",
+  "pk": 39,
+  "fields": {
+    "session": 59,
+    "student": 20,
+    "status": "absent",
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 1,
+  "fields": {
+    "student": 3,
+    "halaqa": 1,
+    "value": 500,
+    "balance_after": 500,
+    "reason": "وحش حقيقي",
+    "date": "2025-07-28T03:43:12.591Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 2,
+  "fields": {
+    "student": 9,
+    "halaqa": 1,
+    "value": 601,
+    "balance_after": 601,
+    "reason": "وحش حقيقي",
+    "date": "2025-07-28T04:13:03.732Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 3,
+  "fields": {
+    "student": 5,
+    "halaqa": 1,
+    "value": 80,
+    "balance_after": 80,
+    "reason": "وحش حقيقي",
+    "date": "2025-07-28T05:10:38.912Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 4,
+  "fields": {
+    "student": 2,
+    "halaqa": 1,
+    "value": 0,
+    "balance_after": 0,
+    "reason": "وحش حقيقي",
+    "date": "2025-07-28T07:08:16.978Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 5,
+  "fields": {
+    "student": 2,
+    "halaqa": 1,
+    "value": 50,
+    "balance_after": 50,
+    "reason": "ك",
+    "date": "2025-07-28T11:09:30.256Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 6,
+  "fields": {
+    "student": 4,
+    "halaqa": 1,
+    "value": 40,
+    "balance_after": 40,
+    "reason": "ا",
+    "date": "2025-07-28T11:09:49.219Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 7,
+  "fields": {
+    "student": 11,
+    "halaqa": 1,
+    "value": 1,
+    "balance_after": 1,
+    "reason": "و",
+    "date": "2025-07-28T11:10:05.931Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 8,
+  "fields": {
+    "student": 10,
+    "halaqa": 1,
+    "value": 123,
+    "balance_after": 123,
+    "reason": "ت",
+    "date": "2025-07-28T11:10:36.991Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 9,
+  "fields": {
+    "student": 10,
+    "halaqa": 1,
+    "value": 1,
+    "balance_after": 124,
+    "reason": "ن",
+    "date": "2025-07-28T11:10:50.135Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 10,
+  "fields": {
+    "student": 10,
+    "halaqa": 1,
+    "value": 2,
+    "balance_after": 126,
+    "reason": "85",
+    "date": "2025-07-28T11:10:59.449Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 11,
+  "fields": {
+    "student": 2,
+    "halaqa": 1,
+    "value": 2,
+    "balance_after": 52,
+    "reason": "ل",
+    "date": "2025-07-28T11:16:43.790Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 12,
+  "fields": {
+    "student": 2,
+    "halaqa": 1,
+    "value": 1,
+    "balance_after": 53,
+    "reason": "لا",
+    "date": "2025-07-28T11:28:21.920Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 13,
+  "fields": {
+    "student": 2,
+    "halaqa": 1,
+    "value": 4,
+    "balance_after": 57,
+    "reason": "ن",
+    "date": "2025-07-28T11:28:31.251Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 14,
+  "fields": {
+    "student": 2,
+    "halaqa": 1,
+    "value": 9,
+    "balance_after": 66,
+    "reason": "مشاركة في الحلقة",
+    "date": "2025-07-28T11:37:27.706Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 15,
+  "fields": {
+    "student": 8,
+    "halaqa": 3,
+    "value": 10,
+    "balance_after": 10,
+    "reason": "مشاركة في الحلقة",
+    "date": "2025-07-28T11:38:33.095Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 16,
+  "fields": {
+    "student": 2,
+    "halaqa": 1,
+    "value": 0,
+    "balance_after": 66,
+    "reason": "مشاركة في الحلقة",
+    "date": "2025-07-29T09:26:31.071Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 17,
+  "fields": {
+    "student": 2,
+    "halaqa": 1,
+    "value": 1,
+    "balance_after": 67,
+    "reason": "مشاركة في الحلقة",
+    "date": "2025-07-29T09:26:41.751Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 18,
+  "fields": {
+    "student": 7,
+    "halaqa": 4,
+    "value": 10,
+    "balance_after": 10,
+    "reason": "مشاركة في الحلقة",
+    "date": "2025-07-29T15:06:08.039Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 19,
+  "fields": {
+    "student": 16,
+    "halaqa": 7,
+    "value": 10,
+    "balance_after": 10,
+    "reason": "مشاركة في الحلقة",
+    "date": "2025-07-30T04:48:33.627Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 20,
+  "fields": {
+    "student": 24,
+    "halaqa": 3,
+    "value": 10,
+    "balance_after": 10,
+    "reason": "مشاركة في الحلقة",
+    "date": "2025-07-30T06:46:00.022Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 21,
+  "fields": {
+    "student": 29,
+    "halaqa": 4,
+    "value": 10,
+    "balance_after": 10,
+    "reason": "مشاركة في الحلقة",
+    "date": "2025-07-30T11:03:03.243Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 22,
+  "fields": {
+    "student": 31,
+    "halaqa": 7,
+    "value": 20,
+    "balance_after": 20,
+    "reason": "مشاركة في الحلقة",
+    "date": "2025-07-30T14:34:37.626Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 23,
+  "fields": {
+    "student": 33,
+    "halaqa": 4,
+    "value": 10,
+    "balance_after": 10,
+    "reason": "مشاركة في الحلقة",
+    "date": "2025-07-30T21:19:54.636Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 24,
+  "fields": {
+    "student": 33,
+    "halaqa": 4,
+    "value": 10,
+    "balance_after": 20,
+    "reason": "مشاركة في الحلقة",
+    "date": "2025-07-30T21:20:04.043Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 25,
+  "fields": {
+    "student": 34,
+    "halaqa": 3,
+    "value": 50,
+    "balance_after": 50,
+    "reason": "مشاركة في الحلقة",
+    "date": "2025-08-01T15:25:10.865Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 26,
+  "fields": {
+    "student": 9,
+    "halaqa": 1,
+    "value": 5000,
+    "balance_after": 5601,
+    "reason": "مشاركة في الحلقة",
+    "date": "2025-08-11T14:33:52.264Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 27,
+  "fields": {
+    "student": 38,
+    "halaqa": 4,
+    "value": 10,
+    "balance_after": 10,
+    "reason": "مشاركة في الحلقة",
+    "date": "2025-08-12T10:52:09.798Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 28,
+  "fields": {
+    "student": 44,
+    "halaqa": 8,
+    "value": 10,
+    "balance_after": 10,
+    "reason": "مشاركة في الحلقة",
+    "date": "2025-09-18T15:01:48.848Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 29,
+  "fields": {
+    "student": 46,
+    "halaqa": 8,
+    "value": 200,
+    "balance_after": 200,
+    "reason": "مشاركة في الحلقة",
+    "date": "2025-09-18T15:02:49.237Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 30,
+  "fields": {
+    "student": 47,
+    "halaqa": 8,
+    "value": 100,
+    "balance_after": 100,
+    "reason": "مشاركة في الحلقة",
+    "date": "2025-09-18T15:04:25.831Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 31,
+  "fields": {
+    "student": 49,
+    "halaqa": 8,
+    "value": 80,
+    "balance_after": 80,
+    "reason": "مشاركة في الحلقة",
+    "date": "2025-09-18T15:08:55.469Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 32,
+  "fields": {
+    "student": 48,
+    "halaqa": 8,
+    "value": 77,
+    "balance_after": 77,
+    "reason": "مشاركة في الحلقة",
+    "date": "2025-09-18T15:09:07.606Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 33,
+  "fields": {
+    "student": 47,
+    "halaqa": 8,
+    "value": 20,
+    "balance_after": 120,
+    "reason": "مشاركة في الحلقة",
+    "date": "2025-09-18T15:09:19.769Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 34,
+  "fields": {
+    "student": 47,
+    "halaqa": 8,
+    "value": 40,
+    "balance_after": 160,
+    "reason": "مشاركة في الحلقة",
+    "date": "2025-09-18T15:09:26.384Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 35,
+  "fields": {
+    "student": 48,
+    "halaqa": 8,
+    "value": 50,
+    "balance_after": 127,
+    "reason": "مشاركة في الحلقة",
+    "date": "2025-09-18T15:09:35.060Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 36,
+  "fields": {
+    "student": 44,
+    "halaqa": 8,
+    "value": 40,
+    "balance_after": 50,
+    "reason": "مشاركة في الحلقة",
+    "date": "2025-09-18T15:09:42.024Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 37,
+  "fields": {
+    "student": 17,
+    "halaqa": 5,
+    "value": 10,
+    "balance_after": 10,
+    "reason": "مشاركة في الحلقة",
+    "date": "2025-09-24T17:19:57.141Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 38,
+  "fields": {
+    "student": 51,
+    "halaqa": 5,
+    "value": 10,
+    "balance_after": 10,
+    "reason": "مشاركة في الحلقة",
+    "date": "2025-09-24T17:21:33.475Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 39,
+  "fields": {
+    "student": 16,
+    "halaqa": 7,
+    "value": 10,
+    "balance_after": 20,
+    "reason": "مشاركة في الحلقة",
+    "date": "2025-10-25T07:59:26.881Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 40,
+  "fields": {
+    "student": 9,
+    "halaqa": 1,
+    "value": 5,
+    "balance_after": 5606,
+    "reason": "مشاركة مميزة",
+    "date": "2026-04-16T03:54:53.151Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 41,
+  "fields": {
+    "student": 9,
+    "halaqa": 1,
+    "value": 10,
+    "balance_after": 5616,
+    "reason": "مشاركة مميزة",
+    "date": "2026-04-16T04:35:13.573Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 42,
+  "fields": {
+    "student": 45,
+    "halaqa": 1,
+    "value": 300,
+    "balance_after": 300,
+    "reason": "مشاركة مميزة",
+    "date": "2026-04-16T04:35:51.572Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 43,
+  "fields": {
+    "student": 11,
+    "halaqa": 1,
+    "value": 70,
+    "balance_after": 71,
+    "reason": "مشاركة مميزة",
+    "date": "2026-04-16T04:57:04.178Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 44,
+  "fields": {
+    "student": 35,
+    "halaqa": 1,
+    "value": 5000,
+    "balance_after": 5000,
+    "reason": "مشاركة مميزة",
+    "date": "2026-04-16T04:57:39.183Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 45,
+  "fields": {
+    "student": 45,
+    "halaqa": 1,
+    "value": 7000,
+    "balance_after": 7300,
+    "reason": "مشاركة مميزة",
+    "date": "2026-04-16T04:58:01.152Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 46,
+  "fields": {
+    "student": 30,
+    "halaqa": 1,
+    "value": 5000,
+    "balance_after": 5000,
+    "reason": "مشاركة مميزة",
+    "date": "2026-04-16T08:01:30.286Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 47,
+  "fields": {
+    "student": 30,
+    "halaqa": 1,
+    "value": 5000,
+    "balance_after": 10000,
+    "reason": "مشاركة مميزة",
+    "date": "2026-04-16T08:01:44.416Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 48,
+  "fields": {
+    "student": 6,
+    "halaqa": 2,
+    "value": 5,
+    "balance_after": 5,
+    "reason": "مشاركة مميزة",
+    "date": "2026-04-16T08:08:32.834Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 49,
+  "fields": {
+    "student": 8,
+    "halaqa": 3,
+    "value": 6,
+    "balance_after": 16,
+    "reason": "مشاركة مميزة",
+    "date": "2026-04-16T08:11:33.169Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 50,
+  "fields": {
+    "student": 30,
+    "halaqa": 1,
+    "value": 10,
+    "balance_after": 10010,
+    "reason": "مشاركة مميزة",
+    "date": "2026-04-16T15:46:14.160Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 51,
+  "fields": {
+    "student": 60,
+    "halaqa": 15,
+    "value": 8,
+    "balance_after": 8,
+    "reason": "reason",
+    "date": "2026-04-17T12:00:00Z",
+    "created_by": 51
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 52,
+  "fields": {
+    "student": 61,
+    "halaqa": 16,
+    "value": 8,
+    "balance_after": 8,
+    "reason": "reason",
+    "date": "2026-04-17T12:00:00Z",
+    "created_by": 53
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 53,
+  "fields": {
+    "student": 62,
+    "halaqa": 17,
+    "value": 8,
+    "balance_after": 8,
+    "reason": "reason",
+    "date": "2026-04-17T12:00:00Z",
+    "created_by": 55
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 54,
+  "fields": {
+    "student": 64,
+    "halaqa": 19,
+    "value": 8,
+    "balance_after": 8,
+    "reason": "reason",
+    "date": "2026-04-17T12:00:00Z",
+    "created_by": 58
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 55,
+  "fields": {
+    "student": 65,
+    "halaqa": 20,
+    "value": 8,
+    "balance_after": 8,
+    "reason": "reason",
+    "date": "2026-04-17T12:00:00Z",
+    "created_by": 60
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 56,
+  "fields": {
+    "student": 66,
+    "halaqa": 21,
+    "value": 8,
+    "balance_after": 8,
+    "reason": "reason",
+    "date": "2026-04-17T12:00:00Z",
+    "created_by": 62
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 57,
+  "fields": {
+    "student": 67,
+    "halaqa": 22,
+    "value": 8,
+    "balance_after": 8,
+    "reason": "reason",
+    "date": "2026-04-17T12:00:00Z",
+    "created_by": 64
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 58,
+  "fields": {
+    "student": 39,
+    "halaqa": 1,
+    "value": 5,
+    "balance_after": 5,
+    "reason": "مشاركة مميزة",
+    "date": "2026-04-18T12:00:00Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.pointtransaction",
+  "pk": 63,
+  "fields": {
+    "student": 20,
+    "halaqa": 1,
+    "value": 5,
+    "balance_after": 5,
+    "reason": "مشاركة مميزة",
+    "date": "2026-04-26T12:00:00Z",
+    "created_by": null
+  }
+},
+{
+  "model": "halaqas.plan",
+  "pk": 1,
+  "fields": {
+    "student": 2,
+    "halaqa": 1,
+    "start_date": "2025-07-04",
+    "end_date": "2025-07-26",
+    "target": "البقرة",
+    "is_completed": false,
+    "notes": "تم"
+  }
+},
+{
+  "model": "halaqas.plan",
+  "pk": 2,
+  "fields": {
+    "student": 3,
+    "halaqa": 1,
+    "start_date": "2025-07-03",
+    "end_date": "2025-07-04",
+    "target": "تمر",
+    "is_completed": false,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.plan",
+  "pk": 3,
+  "fields": {
+    "student": 5,
+    "halaqa": 1,
+    "start_date": "2025-07-29",
+    "end_date": "2025-07-24",
+    "target": "تمر",
+    "is_completed": false,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.plan",
+  "pk": 4,
+  "fields": {
+    "student": 2,
+    "halaqa": 1,
+    "start_date": "2025-07-01",
+    "end_date": "2025-07-09",
+    "target": "520",
+    "is_completed": false,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.plan",
+  "pk": 5,
+  "fields": {
+    "student": 2,
+    "halaqa": 1,
+    "start_date": "2025-07-02",
+    "end_date": "2025-07-03",
+    "target": "لبة",
+    "is_completed": false,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.plan",
+  "pk": 6,
+  "fields": {
+    "student": 10,
+    "halaqa": 1,
+    "start_date": "2025-07-30",
+    "end_date": "2025-08-01",
+    "target": "تمر",
+    "is_completed": false,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.plan",
+  "pk": 7,
+  "fields": {
+    "student": 8,
+    "halaqa": 3,
+    "start_date": "2025-07-28",
+    "end_date": "2025-08-04",
+    "target": "حفظ سورة البقرة من 1 إلى 20",
+    "is_completed": false,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.plan",
+  "pk": 8,
+  "fields": {
+    "student": 7,
+    "halaqa": 4,
+    "start_date": "2025-07-29",
+    "end_date": "2025-08-05",
+    "target": "حفظ سورة البقرة من 1 إلى 20",
+    "is_completed": false,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.plan",
+  "pk": 9,
+  "fields": {
+    "student": 8,
+    "halaqa": 3,
+    "start_date": "2025-07-30",
+    "end_date": "2025-08-06",
+    "target": "حفظ سورة البقرة من 1 إلى 20",
+    "is_completed": false,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.plan",
+  "pk": 10,
+  "fields": {
+    "student": 24,
+    "halaqa": 3,
+    "start_date": "2025-07-30",
+    "end_date": "2025-08-06",
+    "target": "حفظ سورة البقرة من 1 إلى 20",
+    "is_completed": false,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.plan",
+  "pk": 11,
+  "fields": {
+    "student": 28,
+    "halaqa": 2,
+    "start_date": "2025-07-30",
+    "end_date": "2025-08-06",
+    "target": "حفظ سورة البقرة من 1 إلى 20",
+    "is_completed": false,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.plan",
+  "pk": 12,
+  "fields": {
+    "student": 8,
+    "halaqa": 3,
+    "start_date": "2025-08-01",
+    "end_date": "2025-08-08",
+    "target": "حفظ سورة البقرة من 1 إلى 20",
+    "is_completed": false,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.plan",
+  "pk": 13,
+  "fields": {
+    "student": 46,
+    "halaqa": 8,
+    "start_date": "2025-09-18",
+    "end_date": "2025-09-25",
+    "target": "حفظ سورة البقرة من 1 إلى 20",
+    "is_completed": false,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.plan",
+  "pk": 14,
+  "fields": {
+    "student": 52,
+    "halaqa": 5,
+    "start_date": "2025-09-24",
+    "end_date": "2025-10-01",
+    "target": "حفظ سورة البقرة من 1 إلى 20",
+    "is_completed": false,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.plan",
+  "pk": 15,
+  "fields": {
+    "student": 55,
+    "halaqa": 10,
+    "start_date": "2026-04-16",
+    "end_date": "2026-04-20",
+    "target": "test",
+    "is_completed": false,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.plan",
+  "pk": 16,
+  "fields": {
+    "student": 45,
+    "halaqa": 1,
+    "start_date": "2026-04-16",
+    "end_date": "2026-04-23",
+    "target": "مراجعة المحفوظ الحالي",
+    "is_completed": false,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.plan",
+  "pk": 17,
+  "fields": {
+    "student": 60,
+    "halaqa": 15,
+    "start_date": "2026-04-17",
+    "end_date": "2026-04-23",
+    "target": "target",
+    "is_completed": false,
+    "notes": "plan"
+  }
+},
+{
+  "model": "halaqas.plan",
+  "pk": 18,
+  "fields": {
+    "student": 61,
+    "halaqa": 16,
+    "start_date": "2026-04-17",
+    "end_date": "2026-04-23",
+    "target": "target",
+    "is_completed": false,
+    "notes": "plan"
+  }
+},
+{
+  "model": "halaqas.plan",
+  "pk": 19,
+  "fields": {
+    "student": 62,
+    "halaqa": 17,
+    "start_date": "2026-04-17",
+    "end_date": "2026-04-23",
+    "target": "target",
+    "is_completed": false,
+    "notes": "plan"
+  }
+},
+{
+  "model": "halaqas.plan",
+  "pk": 20,
+  "fields": {
+    "student": 64,
+    "halaqa": 19,
+    "start_date": "2026-04-17",
+    "end_date": "2026-04-23",
+    "target": "target",
+    "is_completed": false,
+    "notes": "plan"
+  }
+},
+{
+  "model": "halaqas.plan",
+  "pk": 21,
+  "fields": {
+    "student": 65,
+    "halaqa": 20,
+    "start_date": "2026-04-17",
+    "end_date": "2026-04-23",
+    "target": "target",
+    "is_completed": false,
+    "notes": "plan"
+  }
+},
+{
+  "model": "halaqas.plan",
+  "pk": 22,
+  "fields": {
+    "student": 30,
+    "halaqa": 1,
+    "start_date": "2026-04-18",
+    "end_date": "2026-04-25",
+    "target": "مراجعة المحفوظ الحالي",
+    "is_completed": false,
+    "notes": ""
+  }
+},
+{
+  "model": "halaqas.homework",
+  "pk": 1,
+  "fields": {
+    "student": 13,
+    "halaqa": 1,
+    "assigned_date": "2026-04-18",
+    "assignment_type": "surah",
+    "assignment_text": "كمنتالرؤ",
+    "assignment_notes": "",
+    "evaluation_date": null,
+    "evaluation": "",
+    "evaluation_notes": "",
+    "created_by": null,
+    "evaluated_by": null,
+    "created_at": "2026-04-18T13:24:16.943Z",
+    "updated_at": "2026-04-18T13:24:16.943Z"
+  }
+},
+{
+  "model": "halaqas.homework",
+  "pk": 2,
+  "fields": {
+    "student": 60,
+    "halaqa": 15,
+    "assigned_date": "2026-04-17",
+    "assignment_type": "surah",
+    "assignment_text": "سورة الملك",
+    "assignment_notes": "note",
+    "evaluation_date": "2026-04-18",
+    "evaluation": "completed",
+    "evaluation_notes": "done",
+    "created_by": 51,
+    "evaluated_by": 51,
+    "created_at": "2026-04-18T17:38:10.913Z",
+    "updated_at": "2026-04-18T17:38:10.913Z"
+  }
+},
+{
+  "model": "halaqas.homework",
+  "pk": 3,
+  "fields": {
+    "student": 61,
+    "halaqa": 16,
+    "assigned_date": "2026-04-17",
+    "assignment_type": "surah",
+    "assignment_text": "سورة الملك",
+    "assignment_notes": "note",
+    "evaluation_date": "2026-04-18",
+    "evaluation": "completed",
+    "evaluation_notes": "done",
+    "created_by": 53,
+    "evaluated_by": 53,
+    "created_at": "2026-04-18T17:38:28.098Z",
+    "updated_at": "2026-04-18T17:38:28.098Z"
+  }
+},
+{
+  "model": "halaqas.homework",
+  "pk": 4,
+  "fields": {
+    "student": 62,
+    "halaqa": 17,
+    "assigned_date": "2026-04-17",
+    "assignment_type": "surah",
+    "assignment_text": "سورة الملك",
+    "assignment_notes": "note",
+    "evaluation_date": "2026-04-18",
+    "evaluation": "completed",
+    "evaluation_notes": "done",
+    "created_by": 55,
+    "evaluated_by": 55,
+    "created_at": "2026-04-18T17:38:43.754Z",
+    "updated_at": "2026-04-18T17:38:43.754Z"
+  }
+},
+{
+  "model": "halaqas.homework",
+  "pk": 5,
+  "fields": {
+    "student": 64,
+    "halaqa": 19,
+    "assigned_date": "2026-04-17",
+    "assignment_type": "surah",
+    "assignment_text": "سورة الملك",
+    "assignment_notes": "note",
+    "evaluation_date": "2026-04-18",
+    "evaluation": "completed",
+    "evaluation_notes": "done",
+    "created_by": 58,
+    "evaluated_by": 58,
+    "created_at": "2026-04-18T17:40:51.065Z",
+    "updated_at": "2026-04-18T17:40:51.065Z"
+  }
+},
+{
+  "model": "halaqas.homework",
+  "pk": 6,
+  "fields": {
+    "student": 65,
+    "halaqa": 20,
+    "assigned_date": "2026-04-17",
+    "assignment_type": "surah",
+    "assignment_text": "Task",
+    "assignment_notes": "note",
+    "evaluation_date": "2026-04-18",
+    "evaluation": "completed",
+    "evaluation_notes": "done",
+    "created_by": 60,
+    "evaluated_by": 60,
+    "created_at": "2026-04-18T17:41:06.223Z",
+    "updated_at": "2026-04-18T17:41:06.223Z"
+  }
+},
+{
+  "model": "halaqas.homework",
+  "pk": 7,
+  "fields": {
+    "student": 66,
+    "halaqa": 21,
+    "assigned_date": "2026-04-17",
+    "assignment_type": "surah",
+    "assignment_text": "Task",
+    "assignment_notes": "note",
+    "evaluation_date": "2026-04-18",
+    "evaluation": "completed",
+    "evaluation_notes": "done",
+    "created_by": 62,
+    "evaluated_by": 62,
+    "created_at": "2026-04-18T17:41:19.347Z",
+    "updated_at": "2026-04-18T17:41:19.347Z"
+  }
+},
+{
+  "model": "halaqas.homework",
+  "pk": 8,
+  "fields": {
+    "student": 67,
+    "halaqa": 22,
+    "assigned_date": "2026-04-17",
+    "assignment_type": "surah",
+    "assignment_text": "Task",
+    "assignment_notes": "note",
+    "evaluation_date": "2026-04-18",
+    "evaluation": "completed",
+    "evaluation_notes": "done",
+    "created_by": 64,
+    "evaluated_by": 64,
+    "created_at": "2026-04-18T17:41:38.065Z",
+    "updated_at": "2026-04-18T17:41:38.065Z"
+  }
+},
+{
+  "model": "halaqas.homework",
+  "pk": 9,
+  "fields": {
+    "student": 39,
+    "halaqa": 1,
+    "assigned_date": "2026-04-18",
+    "assignment_type": "surah",
+    "assignment_text": "ئءؤرلا",
+    "assignment_notes": "",
+    "evaluation_date": null,
+    "evaluation": "",
+    "evaluation_notes": "",
+    "created_by": null,
+    "evaluated_by": null,
+    "created_at": "2026-04-18T17:47:39.762Z",
+    "updated_at": "2026-04-18T17:47:39.762Z"
+  }
+},
+{
+  "model": "halaqas.homework",
+  "pk": 10,
+  "fields": {
+    "student": 30,
+    "halaqa": 1,
+    "assigned_date": "2026-04-23",
+    "assignment_type": "pages",
+    "assignment_text": "كمنتالرؤ",
+    "assignment_notes": "",
+    "evaluation_date": "2026-04-23",
+    "evaluation": "excellent",
+    "evaluation_notes": "",
+    "created_by": null,
+    "evaluated_by": null,
+    "created_at": "2026-04-23T08:50:05.269Z",
+    "updated_at": "2026-04-23T08:50:30.851Z"
+  }
+}
+]
