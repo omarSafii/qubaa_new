@@ -221,8 +221,3 @@ REST_FRAMEWORK = {
     ),
 }
 
-
-
-if os.environ.get("CREATE_SUPERUSER") == "1":
-    from .create_superuser import create_superuser
-    create_superuser()
