@@ -222,13 +222,7 @@ REST_FRAMEWORK = {
 }
 
 
+
 if os.environ.get("CREATE_SUPERUSER") == "1":
-    from django.contrib.auth import get_user_model
-    User = get_user_model()
-    
-    if not User.objects.filter(username="hamza").exists():
-        User.objects.create_superuser(
-            username="hamza",
-            email="hamza@gmail.com",
-            password="Hamza@123"
-        )
+    from .create_superuser import create_superuser
+    create_superuser()
