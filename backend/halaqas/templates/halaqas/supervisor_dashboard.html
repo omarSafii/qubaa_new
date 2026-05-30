@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة الموجه - الحضور</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --color-primary: #0B3C54;
+      --color-secondary: #31617F;
+      --color-accent: #968960;
+      --color-light: #F2D8A1;
+      --color-success: #4CAF50;
+      --color-warning: #FFC107;
+      --color-danger: #F44336;
+      --shadow-soft: 0 10px 28px rgba(11, 60, 84, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      padding-top: 74px;
+      background: linear-gradient(135deg, #f8f9fa 0%, #f1f3f5 100%);
+      color: var(--color-primary);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .navbar {
+      background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 10px 20px;
+    }
+
+    .navbar-brand,
+    .supervisor-info {
+      color: #fff !important;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.18rem;
+    }
+
+    .brand-icon,
+    .supervisor-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+    }
+
+    .brand-icon {
+      background: linear-gradient(45deg, var(--color-light), var(--color-accent));
+    }
+
+    .supervisor-avatar {
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    .supervisor-info .small {
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .dashboard-shell {
+      padding: 24px 0 44px;
+    }
+
+    .dashboard-card,
+    .stat-card,
+    .halaqa-card,
+    .student-card {
+      background: #fff;
+      border: 1px solid rgba(11, 60, 84, 0.06);
+      border-radius: 16px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .hero-card {
+      padding: 20px;
+      margin-bottom: 20px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(242, 216, 161, 0.08));
+    }
+
+    .hero-grid,
+    .stats-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-grid {
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 390px);
+      align-items: end;
+    }
+
+    .hero-title {
+      margin: 0 0 8px;
+      font-size: 1.7rem;
+      font-weight: 800;
+    }
+
+    .muted-text {
+      color: #62727d;
+      line-height: 1.8;
+      margin: 0;
+    }
+
+    .date-form {
+      display: flex;
+      gap: 10px;
+      align-items: end;
+      padding: 14px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(11, 60, 84, 0.08);
+    }
+
+    .form-control {
+      min-height: 44px;
+      border-radius: 12px;
+      border-color: rgba(11, 60, 84, 0.12);
+      box-shadow: none !important;
+    }
+
+    .form-control:focus {
+      border-color: rgba(150, 137, 96, 0.82);
+      box-shadow: 0 0 0 0.18rem rgba(150, 137, 96, 0.15) !important;
+    }
+
+    .btn-soft {
+      min-height: 44px;
+      border-radius: 12px;
+      border: 1px solid rgba(11, 60, 84, 0.12);
+      background: #fff;
+      color: var(--color-primary);
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary-soft {
+      color: #fff;
+      border: none;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+    }
+
+    .btn-soft:hover {
+      color: var(--color-primary);
+      background: rgba(11, 60, 84, 0.05);
+    }
+
+    .btn-primary-soft:hover {
+      color: #fff;
+      opacity: 0.95;
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-top: 4px solid var(--color-accent);
+    }
+
+    .stat-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(150, 137, 96, 0.14);
+      color: var(--color-accent);
+      flex: 0 0 auto;
+    }
+
+    .stat-card small {
+      display: block;
+      color: #687783;
+      margin-bottom: 3px;
+    }
+
+    .stat-card strong {
+      font-size: 1.3rem;
+      line-height: 1.3;
+    }
+
+    .message-stack {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .alert {
+      border-radius: 14px;
+      border: 0;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .save-bar {
+      position: sticky;
+      top: 82px;
+      z-index: 20;
+      margin-bottom: 16px;
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid rgba(11, 60, 84, 0.08);
+      box-shadow: 0 10px 24px rgba(11, 60, 84, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .halaqa-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .halaqa-card {
+      overflow: hidden;
+    }
+
+    .halaqa-card summary {
+      min-height: 68px;
+      padding: 16px 18px;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: linear-gradient(90deg, rgba(150, 137, 96, 0.12), rgba(249, 246, 239, 0.95));
+    }
+
+    .halaqa-card summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .halaqa-heading {
+      min-width: 0;
+    }
+
+    .halaqa-title {
+      margin: 0 0 5px;
+      font-size: 1.08rem;
+      font-weight: 800;
+    }
+
+    .halaqa-meta,
+    .student-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      color: #60707a;
+      font-size: 0.88rem;
+    }
+
+    .meta-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: rgba(11, 60, 84, 0.06);
+      font-weight: 700;
+    }
+
+    .halaqa-chevron {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(11, 60, 84, 0.08);
+      transition: transform 0.2s ease, background 0.2s ease;
+      flex: 0 0 auto;
+    }
+
+    .halaqa-card[open] .halaqa-chevron {
+      transform: rotate(180deg);
+      background: var(--color-primary);
+      color: #fff;
+    }
+
+    .halaqa-body {
+      padding: 14px;
+    }
+
+    .student-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .student-card {
+      padding: 14px;
+      box-shadow: none;
+    }
+
+    .student-card.is-locked {
+      background: #f0f2f4;
+      border-color: rgba(11, 60, 84, 0.18);
+      box-shadow: inset 0 0 0 1px rgba(11, 60, 84, 0.04);
+    }
+
+    .student-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .student-name {
+      margin: 0 0 5px;
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--color-primary);
+    }
+
+    .source-line {
+      color: #6c7a84;
+      font-size: 0.84rem;
+      line-height: 1.7;
+    }
+
+    .lock-message {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 8px;
+      padding: 7px 10px;
+      border-radius: 10px;
+      background: rgba(11, 60, 84, 0.1);
+      color: #33424c;
+      font-weight: 800;
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .status-option {
+      display: block;
+      margin: 0;
+    }
+
+    .status-option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .status-option span {
+      min-height: 44px;
+      border-radius: 12px;
+      border: 1px solid rgba(11, 60, 84, 0.1);
+      background: rgba(11, 60, 84, 0.03);
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 800;
+      text-align: center;
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .status-present input:checked + span {
+      background: rgba(76, 175, 80, 0.14);
+      color: #2e7d32;
+      border-color: rgba(76, 175, 80, 0.34);
+      box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+    }
+
+    .status-absent input:checked + span {
+      background: rgba(244, 67, 54, 0.12);
+      color: #c62828;
+      border-color: rgba(244, 67, 54, 0.32);
+      box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.09);
+    }
+
+    .status-excused input:checked + span {
+      background: rgba(255, 193, 7, 0.18);
+      color: #856300;
+      border-color: rgba(255, 193, 7, 0.42);
+      box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.12);
+    }
+
+    .student-card.is-locked .status-option span,
+    .student-card.is-locked .form-control {
+      background: #e1e5e8;
+      color: #5a6770;
+      border-color: rgba(11, 60, 84, 0.14);
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    .student-card.is-locked .status-option input:checked + span {
+      background: #d7dde1;
+      color: #33424c;
+      border-color: rgba(11, 60, 84, 0.24);
+    }
+
+    .empty-state {
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px dashed rgba(11, 60, 84, 0.16);
+      background: rgba(11, 60, 84, 0.03);
+      color: #6e7d87;
+      text-align: center;
+      font-weight: 700;
+      line-height: 1.8;
+    }
+
+    .footer-note {
+      color: #74828c;
+      text-align: center;
+      margin-top: 22px;
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 991px) {
+      .hero-grid,
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .save-bar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .save-bar .btn {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 767px) {
+      body {
+        padding-top: 104px;
+      }
+
+      .navbar {
+        padding: 10px 14px;
+      }
+
+      .navbar .container-fluid {
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .navbar-brand {
+        font-size: 1rem;
+      }
+
+      .supervisor-info {
+        width: 100%;
+        justify-content: flex-end;
+      }
+
+      .supervisor-info .small {
+        display: none;
+      }
+
+      .dashboard-shell {
+        padding-top: 18px;
+      }
+
+      .hero-title {
+        font-size: 1.42rem;
+      }
+
+      .date-form,
+      .student-top {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .date-form .btn {
+        width: 100%;
+      }
+
+      .save-bar {
+        top: 112px;
+      }
+
+      .status-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .halaqa-card summary,
+      .halaqa-body,
+      .student-card {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .meta-pill {
+        flex: 1 1 auto;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{% url 'halaqas:supervisor_dashboard' %}">
+        <span class="brand-icon"><i class="fas fa-book-quran"></i></span>
+        معهد قباء لتحفيظ القرآن الكريم
+      </a>
+      <div class="supervisor-info">
+        <div class="supervisor-avatar"><i class="fas fa-user-shield"></i></div>
+        <div>
+          <div class="fw-semibold">لوحة الموجه</div>
+          <div class="small">الحضور اليومي للحلقات</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="dashboard-shell container">
+    <section class="dashboard-card hero-card">
+      <div class="hero-grid">
+        <div>
+          <h1 class="hero-title"><i class="fas fa-clipboard-check"></i> تسجيل حضور الطلاب</h1>
+          <p class="muted-text">اليوم المحدد: {{ selected_date|date:"Y-m-d" }}</p>
+        </div>
+        <form method="get" class="date-form">
+          <div class="w-100">
+            <label for="attendanceDate" class="form-label small mb-2">التاريخ</label>
+            <input type="date" class="form-control" id="attendanceDate" name="date" value="{{ selected_date|date:'Y-m-d' }}">
+          </div>
+          <button type="submit" class="btn btn-soft"><i class="fas fa-calendar-day"></i> عرض</button>
+        </form>
+      </div>
+    </section>
+
+    <div class="stats-grid">
+      <article class="stat-card">
+        <span class="stat-icon"><i class="fas fa-mosque"></i></span>
+        <div><small>الحلقات النشطة</small><strong>{{ summary.halaqa_count }}</strong></div>
+      </article>
+      <article class="stat-card">
+        <span class="stat-icon"><i class="fas fa-user-graduate"></i></span>
+        <div><small>الطلاب النشطون</small><strong>{{ summary.student_count }}</strong></div>
+      </article>
+      <article class="stat-card">
+        <span class="stat-icon"><i class="fas fa-user-check"></i></span>
+        <div><small>مسجل لهذا التاريخ</small><strong>{{ summary.marked_count }}</strong></div>
+      </article>
+    </div>
+
+    {% if messages %}
+    <div class="message-stack">
+      {% for message in messages %}
+      <div class="alert alert-{{ message.tags|default:'info' }} mb-0">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="selected_date" value="{{ selected_date|date:'Y-m-d' }}">
+
+      <div class="save-bar">
+        <div class="muted-text"><i class="fas fa-calendar-check"></i> {{ selected_date|date:"Y-m-d" }}</div>
+        <button type="submit" class="btn btn-soft btn-primary-soft"><i class="fas fa-floppy-disk"></i> حفظ الحضور</button>
+      </div>
+
+      <div class="halaqa-list">
+        {% for row in halaqa_rows %}
+        <details class="halaqa-card" {% if forloop.first %}open{% endif %}>
+          <summary>
+            <div class="halaqa-heading">
+              <h2 class="halaqa-title">{{ row.halaqa.name }}</h2>
+              <div class="halaqa-meta">
+                <span class="meta-pill"><i class="fas fa-users"></i> {{ row.student_count }} طالب</span>
+                <span class="meta-pill"><i class="fas fa-check"></i> {{ row.marked_count }} مسجل</span>
+                <span class="meta-pill"><i class="fas fa-user-check"></i> {{ row.status_counts.present }} حاضر</span>
+                <span class="meta-pill"><i class="fas fa-user-xmark"></i> {{ row.status_counts.absent }} غائب</span>
+                <span class="meta-pill"><i class="fas fa-circle-exclamation"></i> {{ row.status_counts.excused }} مبرر</span>
+              </div>
+            </div>
+            <span class="halaqa-chevron"><i class="fas fa-chevron-down"></i></span>
+          </summary>
+          <div class="halaqa-body">
+            {% if row.students %}
+            <div class="student-list">
+              {% for student_row in row.students %}
+              <article class="student-card {% if student_row.locked_for_supervisor %}is-locked{% endif %}">
+                <div class="student-top">
+                  <div>
+                    <h3 class="student-name">{{ student_row.student.name }}</h3>
+                    <div class="student-meta">
+                      {% if student_row.student.grade %}<span class="meta-pill"><i class="fas fa-layer-group"></i> {{ student_row.student.grade }}</span>{% endif %}
+                      <span class="meta-pill"><i class="fas fa-circle-info"></i> {{ student_row.status_label }}</span>
+                    </div>
+                    {% if student_row.locked_for_supervisor %}
+                    <div class="lock-message"><i class="fas fa-lock"></i> {{ student_row.lock_message }}</div>
+                    {% endif %}
+                  </div>
+                  <div class="source-line">
+                    {% if student_row.source_label %}{{ student_row.source_label }}{% else %}لا يوجد مصدر مسجل{% endif %}
+                    {% if student_row.notes %}<br>ملاحظة: {{ student_row.notes }}{% endif %}
+                  </div>
+                </div>
+
+                <div class="status-grid" role="radiogroup" aria-label="حضور {{ student_row.student.name }}">
+                  {% for option in status_options %}
+                  <label class="status-option status-{{ option.value }}">
+                    <input type="radio" name="status_{{ student_row.student.id }}" value="{{ option.value }}" {% if student_row.status == option.value %}checked{% endif %} {% if student_row.locked_for_supervisor %}disabled{% endif %}>
+                    <span><i class="{{ option.icon }}"></i> {{ option.label }}</span>
+                  </label>
+                  {% endfor %}
+                </div>
+
+                <label class="form-label small mb-2" for="notes_{{ student_row.student.id }}">ملاحظة قصيرة</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="notes_{{ student_row.student.id }}"
+                  name="notes_{{ student_row.student.id }}"
+                  value="{{ student_row.notes }}"
+                  maxlength="255"
+                  placeholder="اختياري"
+                  {% if student_row.locked_for_supervisor %}disabled{% endif %}
+                >
+              </article>
+              {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">لا يوجد طلاب نشطون في هذه الحلقة.</div>
+            {% endif %}
+          </div>
+        </details>
+        {% empty %}
+        <div class="empty-state">لا توجد حلقات نشطة حالياً.</div>
+        {% endfor %}
+      </div>
+    </form>
+
+    <div class="footer-note">معهد قباء لتحفيظ القرآن الكريم - لوحة الموجه</div>
+  </main>
+</body>
+</html>

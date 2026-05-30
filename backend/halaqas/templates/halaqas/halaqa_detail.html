@@ -272,6 +272,145 @@
       background: rgba(11, 60, 84, 0.04);
     }
 
+    .student-table thead {
+      display: none;
+    }
+
+    .student-table .student-card-cell {
+      padding: 0 0 10px !important;
+      text-align: initial;
+      border-bottom: 0;
+      background: transparent !important;
+    }
+
+    .student-table tbody tr:hover .student-card-cell {
+      background: transparent !important;
+    }
+
+    .student-row-toggle {
+      width: 100%;
+      min-height: 64px;
+      border: 1px solid rgba(11, 60, 84, 0.1);
+      border-radius: 12px;
+      padding: 12px 14px;
+      background: #fff;
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      text-align: right;
+      box-shadow: var(--shadow-soft);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, background 0.2s ease;
+    }
+
+    .student-row-toggle:hover,
+    .student-expandable-row.is-expanded .student-row-toggle {
+      border-color: rgba(150, 137, 96, 0.34);
+      background: linear-gradient(90deg, rgba(242, 216, 161, 0.14), #fff);
+      box-shadow: 0 14px 26px rgba(11, 60, 84, 0.1);
+    }
+
+    .student-expandable-row.is-expanded .student-row-toggle {
+      transform: translateY(-1px);
+    }
+
+    .student-toggle-main {
+      min-width: 0;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .student-toggle-summary {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 5px;
+    }
+
+    .student-toggle-summary .student-name {
+      margin-bottom: 0;
+      font-size: 1rem;
+    }
+
+    .student-toggle-hint {
+      color: #6b7680;
+      font-size: 0.84rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .student-toggle-chevron {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      background: rgba(11, 60, 84, 0.06);
+      color: var(--color-primary);
+      transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    .student-expandable-row.is-expanded .student-toggle-chevron {
+      transform: rotate(180deg);
+      background: var(--color-primary);
+      color: #fff;
+    }
+
+    .student-detail-panel {
+      margin-top: 8px;
+      padding: 14px;
+      border: 1px solid rgba(11, 60, 84, 0.08);
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .student-detail-panel[hidden] {
+      display: none !important;
+    }
+
+    .student-detail-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .student-detail-block {
+      min-width: 0;
+      padding: 12px;
+      border: 1px solid rgba(11, 60, 84, 0.07);
+      border-radius: 10px;
+      background: rgba(250, 251, 252, 0.86);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .student-detail-title {
+      color: var(--color-secondary);
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    .student-detail-actions {
+      grid-column: 1 / -1;
+      align-items: stretch;
+    }
+
+    .student-detail-actions .action-buttons {
+      justify-content: flex-start;
+    }
+
     .student-name {
       font-weight: 700;
       color: var(--color-primary);
@@ -283,6 +422,22 @@
       font-size: 0.88rem;
       color: #6b7680;
       line-height: 1.5;
+    }
+
+    .attendance-meta-line {
+      max-width: 100%;
+      text-align: center;
+    }
+
+    .attendance-lock-line {
+      width: 100%;
+      padding: 7px 10px;
+      border-radius: 10px;
+      background: rgba(11, 60, 84, 0.08);
+      color: #33424c;
+      font-size: 0.84rem;
+      font-weight: 800;
+      text-align: center;
     }
 
     .student-badges {
@@ -393,6 +548,11 @@
       color: #8a6700;
     }
 
+    .today-status-pill.locked {
+      background: rgba(11, 60, 84, 0.16);
+      color: #33424c;
+    }
+
     .points-pill {
       background: rgba(76, 175, 80, 0.12);
       color: #2e7d32;
@@ -486,6 +646,13 @@
     .btn-attendance {
       background: var(--color-warning);
       color: #4b4100;
+    }
+
+    .btn-attendance.attendance-locked,
+    .btn-attendance.attendance-locked:disabled {
+      background: #4f5961;
+      color: #fff;
+      opacity: 0.72;
     }
 
     .btn-plan {
@@ -1092,6 +1259,67 @@
         justify-content: flex-start;
       }
 
+      .student-expandable-row {
+        box-shadow: none !important;
+        overflow: visible !important;
+      }
+
+      .student-card-cell {
+        display: block !important;
+        padding: 0 !important;
+        border-bottom: 0 !important;
+        background: transparent !important;
+      }
+
+      .student-card-cell::before {
+        display: none !important;
+        content: none !important;
+      }
+
+      .student-row-toggle {
+        min-height: 58px;
+        padding: 12px;
+      }
+
+      .student-toggle-main {
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 6px;
+      }
+
+      .student-toggle-hint {
+        white-space: normal;
+      }
+
+      .student-detail-panel {
+        padding: 12px;
+      }
+
+      .student-detail-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .student-detail-block {
+        align-items: flex-start;
+      }
+
+      .student-detail-block .mini-stack,
+      .student-detail-block .student-badges,
+      .student-detail-block .attendance-summary {
+        align-items: flex-start;
+        justify-content: flex-start;
+      }
+
+      .student-detail-actions .action-buttons {
+        gap: 8px;
+      }
+
+      .student-detail-actions .btn-action {
+        width: 42px;
+        height: 42px;
+      }
+
       .report-header {
         flex-direction: column;
         align-items: stretch;
@@ -1294,147 +1522,188 @@
             </thead>
             <tbody>
               {% for entry in dashboard_data %}
-              <tr id="student-row-{{ entry.student.id }}">
-                <td data-label="اسم الطالب">
-                  <div>
-                    <div class="student-name">{{ entry.student.name }}</div>
-                    <div class="student-badges">
-                      {% if entry.grade_label != 'غير محدد' %}
-                      <span class="compact-badge">{{ entry.grade_label }}</span>
-                      {% endif %}
-                      {% if entry.category_label != 'غير مصنف' %}
-                      <span class="compact-badge">{{ entry.category_label }}</span>
-                      {% endif %}
-                    </div>
-                  </div>
-                </td>
-                <td data-label="آخر تسميع">
-                  <div class="mini-stack" id="student-memorization-{{ entry.student.id }}">
-                    {% if entry.last_memorization %}
-                    <strong>{{ entry.last_memorization.surah }}</strong>
-                    <span class="last-range">{{ entry.last_memorization.from_verse }} - {{ entry.last_memorization.to_verse }}</span>
-                    {% if entry.last_memorization.evaluation %}
-                    <span class="eval-pill {{ entry.last_memorization.evaluation }}">
-                      {{ entry.last_memorization.get_evaluation_display }}
-                    </span>
-                    {% endif %}
-                    {% else %}
-                    <span class="student-subtext">لا يوجد</span>
-                    {% endif %}
-                  </div>
-                </td>
-                <td data-label="النقاط">
-                  <span
-                    class="points-pill {% if entry.points < 0 %}negative{% endif %}"
-                    id="student-points-{{ entry.student.id }}"
+              <tr id="student-row-{{ entry.student.id }}" class="student-expandable-row">
+                <td colspan="7" class="student-card-cell">
+                  <button
+                    type="button"
+                    class="student-row-toggle"
+                    data-student-toggle="{{ entry.student.id }}"
+                    aria-expanded="false"
+                    aria-controls="student-details-{{ entry.student.id }}"
                   >
-                    {{ entry.points }}
-                  </span>
-                </td>
-                <td data-label="الحضور">
-                  <div class="mini-stack">
-                    <div class="attendance-summary">
-                      <span class="summary-badge present" id="student-present-{{ entry.student.id }}"><i class="fas fa-user-check"></i> {{ entry.present }}</span>
-                      <span class="summary-badge absent" id="student-absent-{{ entry.student.id }}"><i class="fas fa-user-xmark"></i> {{ entry.absent }}</span>
-                      <span class="summary-badge excused" id="student-excused-{{ entry.student.id }}"><i class="fas fa-circle-exclamation"></i> {{ entry.excused }}</span>
+                    <span class="student-toggle-main">
+                      <span class="student-toggle-summary">
+                        <span class="student-name">{{ entry.student.name }}</span>
+                        <span class="student-badges">
+                          {% if entry.grade_label != 'غير محدد' %}
+                          <span class="compact-badge">{{ entry.grade_label }}</span>
+                          {% endif %}
+                          {% if entry.category_label != 'غير مصنف' %}
+                          <span class="compact-badge">{{ entry.category_label }}</span>
+                          {% endif %}
+                        </span>
+                      </span>
+                      <span class="student-toggle-hint">تفاصيل وإجراءات</span>
+                    </span>
+                    <span class="student-toggle-chevron" aria-hidden="true">
+                      <i class="fas fa-chevron-down"></i>
+                    </span>
+                  </button>
+
+                  <div class="student-detail-panel" id="student-details-{{ entry.student.id }}" hidden>
+                    <div class="student-detail-grid">
+                      <section class="student-detail-block">
+                        <span class="student-detail-title">آخر تسميع</span>
+                        <div class="mini-stack" id="student-memorization-{{ entry.student.id }}">
+                          {% if entry.last_memorization %}
+                          <strong>{{ entry.last_memorization.surah }}</strong>
+                          <span class="last-range">{{ entry.last_memorization.from_verse }} - {{ entry.last_memorization.to_verse }}</span>
+                          {% if entry.last_memorization.evaluation %}
+                          <span class="eval-pill {{ entry.last_memorization.evaluation }}">
+                            {{ entry.last_memorization.get_evaluation_display }}
+                          </span>
+                          {% endif %}
+                          {% else %}
+                          <span class="student-subtext">لا يوجد</span>
+                          {% endif %}
+                        </div>
+                      </section>
+
+                      <section class="student-detail-block">
+                        <span class="student-detail-title">النقاط</span>
+                        <span
+                          class="points-pill {% if entry.points < 0 %}negative{% endif %}"
+                          id="student-points-{{ entry.student.id }}"
+                        >
+                          {{ entry.points }}
+                        </span>
+                      </section>
+
+                      <section class="student-detail-block">
+                        <span class="student-detail-title">الحضور</span>
+                        <div class="mini-stack">
+                          <div class="attendance-summary">
+                            <span class="summary-badge present" id="student-present-{{ entry.student.id }}"><i class="fas fa-user-check"></i> {{ entry.present }}</span>
+                            <span class="summary-badge absent" id="student-absent-{{ entry.student.id }}"><i class="fas fa-user-xmark"></i> {{ entry.absent }}</span>
+                            <span class="summary-badge excused" id="student-excused-{{ entry.student.id }}"><i class="fas fa-circle-exclamation"></i> {{ entry.excused }}</span>
+                          </div>
+                          <span
+                            class="today-status-pill {% if entry.today_attendance_status %}{{ entry.today_attendance_status }}{% endif %} {% if entry.attendance_locked_for_teacher %}locked{% endif %}"
+                            id="student-today-status-{{ entry.student.id }}"
+                          >
+                            {% if entry.today_attendance_status == 'present' %}
+                              حاضر
+                            {% elif entry.today_attendance_status == 'absent' %}
+                              غائب
+                            {% elif entry.today_attendance_status == 'excused' %}
+                              مبرر
+                            {% else %}
+                              غير مسجل
+                            {% endif %}
+                          </span>
+                          <span class="student-subtext attendance-meta-line" id="student-attendance-meta-{{ entry.student.id }}">
+                            {% if entry.today_attendance_status %}
+                              {% if entry.today_attendance_source_label %}{{ entry.today_attendance_source_label }}{% endif %}
+                              {% if entry.today_attendance_notes %}{% if entry.today_attendance_source_label %} • {% endif %}ملاحظة: {{ entry.today_attendance_notes }}{% endif %}
+                            {% else %}
+                              لا توجد ملاحظة حضور لهذا التاريخ
+                            {% endif %}
+                          </span>
+                          {% if entry.attendance_locked_for_teacher %}
+                          <span class="attendance-lock-line">{{ entry.attendance_lock_message }}</span>
+                          {% endif %}
+                        </div>
+                      </section>
+
+                      <section class="student-detail-block">
+                        <span class="student-detail-title">الخطة الحالية</span>
+                        <div class="mini-stack" id="student-plan-{{ entry.student.id }}">
+                          {% if entry.plan %}
+                          <span class="plan-pill" title="{{ entry.plan.target }}">{{ entry.plan.target }}</span>
+                          <span class="plan-dates">
+                            {{ entry.plan.start_date|date:"Y-m-d" }} إلى {{ entry.plan.end_date|date:"Y-m-d" }}
+                          </span>
+                          {% else %}
+                          <span class="student-subtext">لا توجد</span>
+                          {% endif %}
+                        </div>
+                      </section>
+
+                      <section class="student-detail-block">
+                        <span class="student-detail-title">الواجب</span>
+                        <div class="mini-stack" id="student-homework-{{ entry.student.id }}">
+                          {% if entry.homework %}
+                          <span class="homework-pill {{ entry.homework.status }}">{{ entry.homework.status_label }}</span>
+                          <strong class="homework-text" title="{{ entry.homework.meta_text }}">{{ entry.homework.meta_text }}</strong>
+                          <span class="student-subtext">{{ entry.homework.detail_text }}</span>
+                          {% else %}
+                          <span class="student-subtext">لا يوجد</span>
+                          {% endif %}
+                        </div>
+                      </section>
+
+                      <section class="student-detail-block student-detail-actions">
+                        <span class="student-detail-title">الإجراءات</span>
+                        <div
+                          class="action-buttons"
+                          data-student-id="{{ entry.student.id }}"
+                          data-student-name="{{ entry.student.name }}"
+                          data-session-id="{{ entry.current_session_id|default:'' }}"
+                          data-attendance-id="{{ entry.today_attendance_id|default:'' }}"
+                          data-attendance-status="{{ entry.today_attendance_status|default:'' }}"
+                          data-attendance-notes="{{ entry.today_attendance_notes|default:'' }}"
+                          data-plan-id="{{ entry.plan_id|default:'' }}"
+                          data-plan-target="{% if entry.plan %}{{ entry.plan.target }}{% endif %}"
+                          data-plan-start="{% if entry.plan %}{{ entry.plan.start_date|date:'Y-m-d' }}{% endif %}"
+                          data-plan-end="{% if entry.plan %}{{ entry.plan.end_date|date:'Y-m-d' }}{% endif %}"
+                          data-plan-notes="{% if entry.plan %}{{ entry.plan.notes }}{% endif %}"
+                          data-homework-id="{% if entry.homework %}{{ entry.homework.id }}{% endif %}"
+                          data-homework-status="{% if entry.homework %}{{ entry.homework.status }}{% endif %}"
+                          data-homework-assignment-type="{% if entry.homework %}{{ entry.homework.assignment_type }}{% endif %}"
+                          data-homework-assignment-text="{% if entry.homework %}{{ entry.homework.assignment_text }}{% endif %}"
+                          data-homework-assignment-notes="{% if entry.homework %}{{ entry.homework.assignment_notes }}{% endif %}"
+                          data-homework-assigned-date="{% if entry.homework %}{{ entry.homework.assigned_date_iso }}{% endif %}"
+                          data-homework-evaluation="{% if entry.homework %}{{ entry.homework.evaluation }}{% endif %}"
+                          data-homework-evaluation-notes="{% if entry.homework %}{{ entry.homework.evaluation_notes }}{% endif %}"
+                          data-homework-evaluation-date="{% if entry.homework %}{{ entry.homework.evaluation_date_iso }}{% endif %}"
+                        >
+                          <a
+                            href="{% url 'students:students_data' entry.student.access_token %}"
+                            target="_blank"
+                            class="btn-action btn-profile"
+                            title="عرض ملف الطالب"
+                          >
+                            <i class="fas fa-up-right-from-square"></i>
+                          </a>
+
+                          <button type="button" class="btn-action btn-points" title="إضافة نقاط" data-action="points">
+                            <i class="fas fa-plus"></i>
+                          </button>
+
+                          <button type="button" class="btn-action btn-save" title="تسجيل تسميع" data-action="memorization">
+                            <i class="fas fa-book"></i>
+                          </button>
+
+                          <button
+                            type="button"
+                            class="btn-action btn-attendance {% if entry.attendance_locked_for_teacher %}attendance-locked{% endif %}"
+                            title="{% if entry.attendance_locked_for_teacher %}تم تسجيل الحضور من قبل الموجّه{% else %}تسجيل حضور{% endif %}"
+                            data-action="attendance"
+                            {% if not entry.current_session_id or entry.attendance_locked_for_teacher %}disabled{% endif %}
+                          >
+                            <i class="fas fa-user-check"></i>
+                          </button>
+
+                          <button type="button" class="btn-action btn-plan" title="خطة الطالب" data-action="plan">
+                            <i class="fas fa-tasks"></i>
+                          </button>
+
+                          <button type="button" class="btn-action btn-homework" title="إدارة الواجب" data-action="homework">
+                            <i class="fas fa-clipboard-list"></i>
+                          </button>
+                        </div>
+                      </section>
                     </div>
-                    <span
-                      class="today-status-pill {% if entry.today_attendance_status %}{{ entry.today_attendance_status }}{% endif %}"
-                      id="student-today-status-{{ entry.student.id }}"
-                    >
-                      {% if entry.today_attendance_status == 'present' %}
-                        حاضر
-                      {% elif entry.today_attendance_status == 'absent' %}
-                        غائب
-                      {% elif entry.today_attendance_status == 'excused' %}
-                        مبرر
-                      {% else %}
-                        غير مسجل
-                      {% endif %}
-                    </span>
-                  </div>
-                </td>
-                <td data-label="الخطة الحالية">
-                  <div class="mini-stack" id="student-plan-{{ entry.student.id }}">
-                    {% if entry.plan %}
-                    <span class="plan-pill" title="{{ entry.plan.target }}">{{ entry.plan.target }}</span>
-                    <span class="plan-dates">
-                      {{ entry.plan.start_date|date:"Y-m-d" }} إلى {{ entry.plan.end_date|date:"Y-m-d" }}
-                    </span>
-                    {% else %}
-                    <span class="student-subtext">لا توجد</span>
-                    {% endif %}
-                  </div>
-                </td>
-                <td data-label="الواجب">
-                  <div class="mini-stack" id="student-homework-{{ entry.student.id }}">
-                    {% if entry.homework %}
-                    <span class="homework-pill {{ entry.homework.status }}">{{ entry.homework.status_label }}</span>
-                    <strong class="homework-text" title="{{ entry.homework.meta_text }}">{{ entry.homework.meta_text }}</strong>
-                    <span class="student-subtext">{{ entry.homework.detail_text }}</span>
-                    {% else %}
-                    <span class="student-subtext">لا يوجد</span>
-                    {% endif %}
-                  </div>
-                </td>
-                <td data-label="الإجراءات" class="actions-cell">
-                  <div
-                    class="action-buttons"
-                    data-student-id="{{ entry.student.id }}"
-                    data-student-name="{{ entry.student.name }}"
-                    data-session-id="{{ entry.current_session_id|default:'' }}"
-                    data-attendance-id="{{ entry.today_attendance_id|default:'' }}"
-                    data-attendance-status="{{ entry.today_attendance_status|default:'' }}"
-                    data-attendance-notes="{{ entry.today_attendance_notes|default:'' }}"
-                    data-plan-id="{{ entry.plan_id|default:'' }}"
-                    data-plan-target="{% if entry.plan %}{{ entry.plan.target }}{% endif %}"
-                    data-plan-start="{% if entry.plan %}{{ entry.plan.start_date|date:'Y-m-d' }}{% endif %}"
-                    data-plan-end="{% if entry.plan %}{{ entry.plan.end_date|date:'Y-m-d' }}{% endif %}"
-                    data-plan-notes="{% if entry.plan %}{{ entry.plan.notes }}{% endif %}"
-                    data-homework-id="{% if entry.homework %}{{ entry.homework.id }}{% endif %}"
-                    data-homework-status="{% if entry.homework %}{{ entry.homework.status }}{% endif %}"
-                    data-homework-assignment-type="{% if entry.homework %}{{ entry.homework.assignment_type }}{% endif %}"
-                    data-homework-assignment-text="{% if entry.homework %}{{ entry.homework.assignment_text }}{% endif %}"
-                    data-homework-assignment-notes="{% if entry.homework %}{{ entry.homework.assignment_notes }}{% endif %}"
-                    data-homework-assigned-date="{% if entry.homework %}{{ entry.homework.assigned_date_iso }}{% endif %}"
-                    data-homework-evaluation="{% if entry.homework %}{{ entry.homework.evaluation }}{% endif %}"
-                    data-homework-evaluation-notes="{% if entry.homework %}{{ entry.homework.evaluation_notes }}{% endif %}"
-                    data-homework-evaluation-date="{% if entry.homework %}{{ entry.homework.evaluation_date_iso }}{% endif %}"
-                  >
-                    <a
-                      href="{% url 'students:students_data' entry.student.access_token %}"
-                      target="_blank"
-                      class="btn-action btn-profile"
-                      title="عرض ملف الطالب"
-                    >
-                      <i class="fas fa-up-right-from-square"></i>
-                    </a>
-
-                    <button type="button" class="btn-action btn-points" title="إضافة نقاط" data-action="points">
-                      <i class="fas fa-plus"></i>
-                    </button>
-
-                    <button type="button" class="btn-action btn-save" title="تسجيل تسميع" data-action="memorization">
-                      <i class="fas fa-book"></i>
-                    </button>
-
-                    <button
-                      type="button"
-                      class="btn-action btn-attendance"
-                      title="تسجيل حضور"
-                      data-action="attendance"
-                      {% if not entry.current_session_id %}disabled{% endif %}
-                    >
-                      <i class="fas fa-user-check"></i>
-                    </button>
-
-                    <button type="button" class="btn-action btn-plan" title="خطة الطالب" data-action="plan">
-                      <i class="fas fa-tasks"></i>
-                    </button>
-
-                    <button type="button" class="btn-action btn-homework" title="إدارة الواجب" data-action="homework">
-                      <i class="fas fa-clipboard-list"></i>
-                    </button>
                   </div>
                 </td>
               </tr>
@@ -1893,6 +2162,19 @@
       return 'غير مسجل';
     }
 
+    function attendanceSourceLabel(role) {
+      if (role === 'supervisor') {
+        return 'المصدر: الموجه';
+      }
+      if (role === 'admin') {
+        return 'المصدر: الإدارة';
+      }
+      if (role === 'teacher') {
+        return 'المصدر: الأستاذ';
+      }
+      return '';
+    }
+
     function homeworkStatusLabel(status) {
       if (status === 'assigned') {
         return 'تم الإسناد';
@@ -2214,6 +2496,24 @@
 
       Object.entries(updates).forEach(([key, value]) => {
         container.dataset[key] = value ?? '';
+      });
+    }
+
+    function wireStudentToggles() {
+      document.querySelectorAll('[data-student-toggle]').forEach((toggle) => {
+        toggle.addEventListener('click', () => {
+          const studentId = toggle.dataset.studentToggle;
+          const row = document.getElementById(`student-row-${studentId}`);
+          const panel = document.getElementById(toggle.getAttribute('aria-controls'));
+          if (!row || !panel) {
+            return;
+          }
+
+          const shouldExpand = toggle.getAttribute('aria-expanded') !== 'true';
+          toggle.setAttribute('aria-expanded', String(shouldExpand));
+          row.classList.toggle('is-expanded', shouldExpand);
+          panel.hidden = !shouldExpand;
+        });
       });
     }
 
@@ -2582,7 +2882,14 @@
 
       const todayBadge = document.getElementById(`student-today-status-${studentId}`);
       todayBadge.textContent = statusLabel(student.today_attendance_status);
-      todayBadge.className = `today-status-pill ${student.today_attendance_status || ''}`.trim();
+      todayBadge.className = `today-status-pill ${student.today_attendance_status || ''} ${student.attendance_locked_for_teacher ? 'locked' : ''}`.trim();
+
+      const metaLine = document.getElementById(`student-attendance-meta-${studentId}`);
+      if (metaLine) {
+        const source = attendanceSourceLabel(student.today_attendance_recorded_by_role);
+        const note = student.today_attendance_notes ? `ملاحظة: ${student.today_attendance_notes}` : '';
+        metaLine.textContent = [source, note].filter(Boolean).join(' • ') || 'لا توجد ملاحظة حضور لهذا التاريخ';
+      }
     }
 
     function ensureMemorizationDayValue(dayDate, dayLabel, verses) {
@@ -2766,6 +3073,8 @@
 
         student[nextStatus] += 1;
         student.today_attendance_status = nextStatus;
+        student.today_attendance_notes = notes;
+        student.today_attendance_recorded_by_role = response?.recorded_by_role || 'teacher';
         reportState.today_attendance_summary[nextStatus] += 1;
         reportState.monthly_attendance[nextStatus] += 1;
 
@@ -2994,6 +3303,7 @@
       renderCharts();
       renderFullRanking();
       renderDailyHistory();
+      wireStudentToggles();
       wireRowActions();
       wireReportControls();
       refreshReportPreview();

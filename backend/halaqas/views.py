@@ -1,10 +1,14 @@
 from collections import Counter
 from datetime import time
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.db.models import Count, ExpressionWrapper, F, FloatField, IntegerField, Q, Sum, Value
 from django.db.models.functions import Coalesce
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.dateparse import parse_date
 from django.views.decorators.http import require_GET
@@ -56,6 +60,53 @@ PLAN_TARGET_PRESETS = [
     'مراجعة مع تثبيت',
     'إتقان سورة محددة',
 ]
+
+ATTENDANCE_STATUS_LABELS = {
+    'present': 'حاضر',
+    'absent': 'غائب',
+    'excused': 'غياب مبرر',
+}
+
+ATTENDANCE_SOURCE_LABELS = {
+    'teacher': 'المصدر: الأستاذ',
+    'supervisor': 'المصدر: الموجه',
+    'admin': 'المصدر: الإدارة',
+}
+ATTENDANCE_LOCKED_ROLES = {'teacher', 'supervisor'}
+
+
+def _role_for_user(user):
+    if not user or not getattr(user, 'is_authenticated', False):
+        return ''
+    if getattr(user, 'is_superuser', False) or getattr(user, 'is_staff', False):
+        return 'admin'
+    profile = getattr(user, 'profile', None)
+    return getattr(profile, 'role', '') or ''
+
+
+def _can_access_supervisor_dashboard(user):
+    return _role_for_user(user) in {'supervisor', 'admin'}
+
+
+def _attendance_source_label(attendance):
+    if not attendance:
+        return ''
+    return ATTENDANCE_SOURCE_LABELS.get(getattr(attendance, 'recorded_by_role', ''), '')
+
+
+def _attendance_conflict_message(attendance, actor_role):
+    if not attendance:
+        return ''
+
+    existing_role = getattr(attendance, 'recorded_by_role', '') or ''
+    if actor_role == 'admin' or existing_role not in ATTENDANCE_LOCKED_ROLES or existing_role == actor_role:
+        return ''
+
+    if existing_role == 'teacher':
+        return 'تم تسجيل الحضور من قبل الأستاذ ولا يمكن تعديله من لوحة الموجه.'
+    if existing_role == 'supervisor':
+        return 'تم تسجيل الحضور من قبل الموجّه ولا يمكن تعديله من صفحة الأستاذ.'
+    return 'تم تسجيل الحضور من قبل مستخدم آخر ولا يمكن تعديله.'
 
 
 def _infer_category(grade):
@@ -330,7 +381,7 @@ class TeacherAttendanceViewSet(viewsets.ModelViewSet):
     serializer_class = AttendanceSerializer
 
     def get_queryset(self):
-        queryset = Attendance.objects.select_related('student', 'session__halaqa')
+        queryset = Attendance.objects.select_related('student', 'session__halaqa', 'recorded_by')
         student_id = self.request.query_params.get('student')
         session_id = self.request.query_params.get('session')
         if student_id:
@@ -339,8 +390,54 @@ class TeacherAttendanceViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(session_id=session_id)
         return queryset
 
+    def create(self, request, *args, **kwargs):
+        user = request.user if getattr(request.user, 'is_authenticated', False) else None
+        role = _role_for_user(user)
+        session_id = request.data.get('session')
+        student_id = request.data.get('student')
+        existing_attendance = None
+        if session_id and student_id:
+            existing_attendance = Attendance.objects.filter(
+                session_id=session_id,
+                student_id=student_id,
+            ).first()
+        if existing_attendance:
+            conflict_message = _attendance_conflict_message(existing_attendance, role)
+            if conflict_message:
+                return Response({'detail': conflict_message}, status=status.HTTP_409_CONFLICT)
+
+            serializer = self.get_serializer(existing_attendance, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        user = request.user if getattr(request.user, 'is_authenticated', False) else None
+        role = _role_for_user(user)
+        conflict_message = _attendance_conflict_message(instance, role)
+        if conflict_message:
+            return Response({'detail': conflict_message}, status=status.HTTP_409_CONFLICT)
+
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
+
     def perform_create(self, serializer):
-        serializer.save()
+        user = self.request.user if getattr(self.request.user, 'is_authenticated', False) else None
+        serializer.save(recorded_by=user, recorded_by_role=_role_for_user(user))
+
+    def perform_update(self, serializer):
+        user = self.request.user if getattr(self.request.user, 'is_authenticated', False) else None
+        serializer.save(recorded_by=user, recorded_by_role=_role_for_user(user))
 
 
 class TeacherPointViewSet(viewsets.ModelViewSet):
@@ -456,6 +553,152 @@ def teacher_dashboard(request):
         'teacher': teacher,
         'dashboard_data': dashboard_data,
         'halaqas': halaqas,
+    })
+
+
+@login_required
+def supervisor_dashboard(request):
+    if not _can_access_supervisor_dashboard(request.user):
+        raise PermissionDenied("لا تملك صلاحية الوصول إلى لوحة الموجه.")
+
+    raw_date = request.POST.get('selected_date') if request.method == 'POST' else request.GET.get('date', '')
+    selected_date = parse_date(raw_date or '') or timezone.localdate()
+    active_memberships = list(
+        HalaqaMembership.objects.filter(
+            halaqa__is_active=True,
+            is_active=True,
+        )
+        .select_related('halaqa', 'student', 'student__parent')
+        .order_by('halaqa__name', 'student__name')
+    )
+
+    if request.method == 'POST':
+        saved_count = 0
+        conflict_count = 0
+        role = _role_for_user(request.user)
+        sessions_by_halaqa = {}
+
+        with transaction.atomic():
+            for membership in active_memberships:
+                student_id = membership.student_id
+                status_value = request.POST.get(f'status_{student_id}', '')
+                if status_value not in ATTENDANCE_STATUS_LABELS:
+                    continue
+
+                session = sessions_by_halaqa.get(membership.halaqa_id)
+                if session is None:
+                    session, _ = Session.objects.get_or_create(
+                        halaqa=membership.halaqa,
+                        date=selected_date,
+                        defaults={
+                            'start_time': time(0, 0),
+                            'end_time': time(0, 0),
+                        },
+                    )
+                    sessions_by_halaqa[membership.halaqa_id] = session
+
+                existing_attendance = (
+                    Attendance.objects.select_for_update()
+                    .filter(session=session, student_id=student_id)
+                    .first()
+                )
+                conflict_message = _attendance_conflict_message(existing_attendance, role)
+                if conflict_message:
+                    conflict_count += 1
+                    continue
+
+                Attendance.objects.update_or_create(
+                    session=session,
+                    student_id=student_id,
+                    defaults={
+                        'status': status_value,
+                        'notes': request.POST.get(f'notes_{student_id}', '').strip(),
+                        'recorded_by': request.user,
+                        'recorded_by_role': role,
+                    },
+                )
+                saved_count += 1
+
+        if saved_count:
+            messages.success(request, f'تم حفظ حضور {saved_count} طالب/طالبة ليوم {selected_date.isoformat()}.')
+        if conflict_count:
+            messages.error(request, f'لم يتم تعديل {conflict_count} سجل لأن الحضور مسجل من قبل الأستاذ.')
+        if not saved_count and not conflict_count:
+            messages.warning(request, 'لم يتم اختيار أي حالة حضور للحفظ.')
+        return redirect(f'{reverse("halaqas:supervisor_dashboard")}?date={selected_date.isoformat()}')
+
+    active_halaqas = list(
+        Halaqa.objects.filter(is_active=True)
+        .select_related('category')
+        .prefetch_related('teachers')
+        .order_by('name')
+    )
+    memberships_by_halaqa = {}
+    student_ids = []
+    for membership in active_memberships:
+        memberships_by_halaqa.setdefault(membership.halaqa_id, []).append(membership)
+        student_ids.append(membership.student_id)
+
+    sessions_by_halaqa = {
+        session.halaqa_id: session
+        for session in Session.objects.filter(
+            halaqa__in=active_halaqas,
+            date=selected_date,
+        )
+    }
+    attendance_map = {}
+    if sessions_by_halaqa and student_ids:
+        for attendance in Attendance.objects.filter(
+            session_id__in=[session.id for session in sessions_by_halaqa.values()],
+            student_id__in=student_ids,
+        ).select_related('recorded_by', 'session'):
+            attendance_map[(attendance.session.halaqa_id, attendance.student_id)] = attendance
+
+    halaqa_rows = []
+    marked_total = 0
+    for halaqa in active_halaqas:
+        student_rows = []
+        status_counts = {'present': 0, 'absent': 0, 'excused': 0}
+        for membership in memberships_by_halaqa.get(halaqa.id, []):
+            attendance = attendance_map.get((halaqa.id, membership.student_id))
+            status_value = attendance.status if attendance else ''
+            locked_for_supervisor = bool(attendance and attendance.recorded_by_role == 'teacher')
+            if status_value in status_counts:
+                status_counts[status_value] += 1
+                marked_total += 1
+            student_rows.append({
+                'student': membership.student,
+                'attendance': attendance,
+                'status': status_value,
+                'status_label': ATTENDANCE_STATUS_LABELS.get(status_value, 'غير مسجل'),
+                'notes': attendance.notes if attendance else '',
+                'source_label': _attendance_source_label(attendance),
+                'locked_for_supervisor': locked_for_supervisor,
+                'lock_message': 'تم تسجيل الحضور من قبل الأستاذ' if locked_for_supervisor else '',
+            })
+
+        halaqa_rows.append({
+            'halaqa': halaqa,
+            'students': student_rows,
+            'student_count': len(student_rows),
+            'marked_count': sum(status_counts.values()),
+            'status_counts': status_counts,
+            'session': sessions_by_halaqa.get(halaqa.id),
+        })
+
+    return render(request, 'halaqas/supervisor_dashboard.html', {
+        'selected_date': selected_date,
+        'halaqa_rows': halaqa_rows,
+        'status_options': [
+            {'value': 'present', 'label': 'حاضر', 'icon': 'fas fa-user-check'},
+            {'value': 'absent', 'label': 'غائب', 'icon': 'fas fa-user-xmark'},
+            {'value': 'excused', 'label': 'غياب مبرر', 'icon': 'fas fa-circle-exclamation'},
+        ],
+        'summary': {
+            'halaqa_count': len(active_halaqas),
+            'student_count': len(active_memberships),
+            'marked_count': marked_total,
+        },
     })
 
 
@@ -618,6 +861,7 @@ def prepare_halaqa_view(request, halaqa, template_name, ensure_current_session=F
         current_homework = current_homeworks.get(student.id)
         homework_snapshot = _build_homework_snapshot(current_homework, today)
         today_attendance = today_attendance_map.get(student.id)
+        attendance_locked_for_teacher = bool(today_attendance and today_attendance.recorded_by_role == 'supervisor')
         memorization_records = sorted(
             [record for record in student.memorization_records.all() if record.date <= today],
             key=lambda record: (record.date, record.id),
@@ -643,6 +887,10 @@ def prepare_halaqa_view(request, halaqa, template_name, ensure_current_session=F
             'today_attendance_id': today_attendance.id if today_attendance else None,
             'today_attendance_status': today_attendance.status if today_attendance else '',
             'today_attendance_notes': today_attendance.notes if today_attendance else '',
+            'today_attendance_recorded_by_role': today_attendance.recorded_by_role if today_attendance else '',
+            'today_attendance_source_label': _attendance_source_label(today_attendance),
+            'attendance_locked_for_teacher': attendance_locked_for_teacher,
+            'attendance_lock_message': 'تم تسجيل الحضور من قبل الموجّه' if attendance_locked_for_teacher else '',
             'last_memorization': last_memorization,
             'grade_label': grade_label or 'غير محدد',
             'category_label': _infer_category(student),
@@ -774,6 +1022,9 @@ def prepare_halaqa_view(request, halaqa, template_name, ensure_current_session=F
             'excused': entry['excused'],
             'today_attendance_status': entry['today_attendance_status'],
             'today_attendance_id': entry['today_attendance_id'],
+            'today_attendance_notes': entry['today_attendance_notes'],
+            'today_attendance_recorded_by_role': entry['today_attendance_recorded_by_role'],
+            'attendance_locked_for_teacher': entry['attendance_locked_for_teacher'],
             'plan_id': entry['plan_id'],
             'plan_target': entry['plan'].target if entry['plan'] else '',
             'plan_start': entry['plan'].start_date.isoformat() if entry['plan'] else '',

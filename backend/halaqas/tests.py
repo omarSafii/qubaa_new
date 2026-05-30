@@ -230,6 +230,170 @@ class HalaqaDetailPageTests(TestCase):
         self.assertEqual(response.context['memorization_chart']['entries'][-1]['date'], selected_date.isoformat())
 
 
+class SupervisorDashboardTests(TestCase):
+    def setUp(self):
+        self.supervisor = User.objects.create_user(username='supervisor_user', password='StrongPass123!')
+        self.supervisor.profile.role = 'supervisor'
+        self.supervisor.profile.save(update_fields=['role'])
+
+        self.admin_user = User.objects.create_user(username='role_admin_user', password='StrongPass123!')
+        self.admin_user.profile.role = 'admin'
+        self.admin_user.profile.save(update_fields=['role'])
+
+        self.teacher_user = User.objects.create_user(username='supervisor_teacher_user', password='StrongPass123!')
+        self.teacher_user.profile.role = 'teacher'
+        self.teacher_user.profile.save(update_fields=['role'])
+        self.teacher = Teacher.objects.create(
+            user=self.teacher_user,
+            full_name='معلم الحلقة',
+            phone='0999000111',
+        )
+
+        self.parent = User.objects.create_user(username='supervisor_parent', password='StrongPass123!')
+        self.halaqa = Halaqa.objects.create(name='حلقة إشرافية')
+        self.halaqa.teachers.add(self.teacher)
+        self.student = Student.objects.create(
+            name='طالب الموجه',
+            birth_date='2014-01-01',
+            parent=self.parent,
+            parent_phone='0555000111',
+            grade='ابتدائي رابع',
+        )
+        HalaqaMembership.objects.create(student=self.student, halaqa=self.halaqa, is_active=True)
+
+    def test_supervisor_dashboard_allows_supervisors_and_admins_only(self):
+        url = reverse('halaqas:supervisor_dashboard')
+
+        self.client.force_login(self.supervisor)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'لوحة الموجه')
+
+        self.client.force_login(self.admin_user)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        self.client.force_login(self.teacher_user)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_supervisor_records_attendance_visible_to_teacher_and_parent(self):
+        selected_date = timezone.localdate()
+        self.client.force_login(self.supervisor)
+
+        response = self.client.post(reverse('halaqas:supervisor_dashboard'), {
+            'selected_date': selected_date.isoformat(),
+            f'status_{self.student.id}': 'excused',
+            f'notes_{self.student.id}': 'عذر مقبول من ولي الأمر',
+        })
+
+        self.assertRedirects(
+            response,
+            f'{reverse("halaqas:supervisor_dashboard")}?date={selected_date.isoformat()}',
+        )
+        attendance = Attendance.objects.get(student=self.student, session__halaqa=self.halaqa)
+        self.assertEqual(attendance.status, 'excused')
+        self.assertEqual(attendance.notes, 'عذر مقبول من ولي الأمر')
+        self.assertEqual(attendance.recorded_by, self.supervisor)
+        self.assertEqual(attendance.recorded_by_role, 'supervisor')
+
+        self.client.force_login(self.teacher_user)
+        teacher_response = self.client.get(
+            reverse('halaqas:halaqa_detail', args=[self.halaqa.pk]),
+            {'date': selected_date.isoformat()},
+        )
+        self.assertEqual(teacher_response.status_code, 200)
+        self.assertEqual(teacher_response.context['dashboard_data'][0]['today_attendance_status'], 'excused')
+        self.assertEqual(teacher_response.context['dashboard_data'][0]['today_attendance_source_label'], 'المصدر: الموجه')
+        self.assertContains(teacher_response, 'عذر مقبول من ولي الأمر')
+        self.assertContains(teacher_response, 'المصدر: الموجه')
+        self.assertContains(teacher_response, 'تم تسجيل الحضور من قبل الموجّه')
+        self.assertContains(teacher_response, 'attendance-locked')
+
+        parent_response = self.client.get(reverse('students:students_data', args=[self.student.access_token]))
+        self.assertEqual(parent_response.status_code, 200)
+        self.assertEqual(parent_response.context['summary']['attendance_reference']['status_code'], 'excused')
+        self.assertEqual(parent_response.context['summary']['attendance_reference']['source_label'], 'المصدر: الموجه')
+        self.assertContains(parent_response, 'عذر مقبول من ولي الأمر')
+        self.assertContains(parent_response, 'المصدر: الموجه')
+
+    def test_supervisor_cannot_overwrite_teacher_attendance(self):
+        selected_date = timezone.localdate()
+        session = Session.objects.create(
+            halaqa=self.halaqa,
+            date=selected_date,
+            start_time=time(15, 0),
+            end_time=time(17, 0),
+        )
+        attendance = Attendance.objects.create(
+            session=session,
+            student=self.student,
+            status='present',
+            notes='تسجيل الأستاذ',
+            recorded_by=self.teacher_user,
+            recorded_by_role='teacher',
+        )
+
+        self.client.force_login(self.supervisor)
+        response = self.client.post(
+            reverse('halaqas:supervisor_dashboard'),
+            {
+                'selected_date': selected_date.isoformat(),
+                f'status_{self.student.id}': 'absent',
+                f'notes_{self.student.id}': 'محاولة تعديل',
+            },
+            follow=True,
+        )
+
+        attendance.refresh_from_db()
+        self.assertEqual(attendance.status, 'present')
+        self.assertEqual(attendance.notes, 'تسجيل الأستاذ')
+        self.assertContains(response, 'تم تسجيل الحضور من قبل الأستاذ')
+        self.assertContains(response, 'is-locked')
+
+    def test_teacher_api_cannot_overwrite_supervisor_attendance(self):
+        selected_date = timezone.localdate()
+        session = Session.objects.create(
+            halaqa=self.halaqa,
+            date=selected_date,
+            start_time=time(15, 0),
+            end_time=time(17, 0),
+        )
+        attendance = Attendance.objects.create(
+            session=session,
+            student=self.student,
+            status='excused',
+            notes='تسجيل الموجه',
+            recorded_by=self.supervisor,
+            recorded_by_role='supervisor',
+        )
+
+        self.client.force_login(self.teacher_user)
+        patch_response = self.client.patch(
+            reverse('halaqas:api:attendance-detail', args=[attendance.id]),
+            data=json.dumps({
+                'student': self.student.id,
+                'session': session.id,
+                'status': 'present',
+                'notes': 'محاولة تعديل',
+            }),
+            content_type='application/json',
+        )
+        post_response = self.client.post(reverse('halaqas:api:attendance-list'), data={
+            'student': self.student.id,
+            'session': session.id,
+            'status': 'absent',
+            'notes': 'محاولة إنشاء مكررة',
+        })
+
+        attendance.refresh_from_db()
+        self.assertEqual(patch_response.status_code, 409)
+        self.assertEqual(post_response.status_code, 409)
+        self.assertIn('الموجّه', patch_response.json()['detail'])
+        self.assertEqual(attendance.status, 'excused')
+        self.assertEqual(attendance.notes, 'تسجيل الموجه')
+
+
 class HalaqaActionEndpointTests(TestCase):
     def setUp(self):
         self.parent = User.objects.create_user(username='api_parent', password='StrongPass123!')
