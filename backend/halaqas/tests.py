@@ -250,7 +250,13 @@ class SupervisorDashboardTests(TestCase):
         )
 
         self.parent = User.objects.create_user(username='supervisor_parent', password='StrongPass123!')
-        self.halaqa = Halaqa.objects.create(name='حلقة إشرافية')
+        self.category = Category.objects.create(
+            code='A',
+            name='فئة إشرافية',
+            grade_span='اختبار',
+            display_order=1,
+        )
+        self.halaqa = Halaqa.objects.create(name='حلقة إشرافية', category=self.category)
         self.halaqa.teachers.add(self.teacher)
         self.student = Student.objects.create(
             name='طالب الموجه',
@@ -283,13 +289,18 @@ class SupervisorDashboardTests(TestCase):
 
         response = self.client.post(reverse('halaqas:supervisor_dashboard'), {
             'selected_date': selected_date.isoformat(),
+            'category': str(self.category.id),
+            'halaqa': str(self.halaqa.id),
             f'status_{self.student.id}': 'excused',
             f'notes_{self.student.id}': 'عذر مقبول من ولي الأمر',
         })
 
         self.assertRedirects(
             response,
-            f'{reverse("halaqas:supervisor_dashboard")}?date={selected_date.isoformat()}',
+            (
+                f'{reverse("halaqas:supervisor_dashboard")}?date={selected_date.isoformat()}'
+                f'&category={self.category.id}&halaqa={self.halaqa.id}'
+            ),
         )
         attendance = Attendance.objects.get(student=self.student, session__halaqa=self.halaqa)
         self.assertEqual(attendance.status, 'excused')
@@ -339,6 +350,8 @@ class SupervisorDashboardTests(TestCase):
             reverse('halaqas:supervisor_dashboard'),
             {
                 'selected_date': selected_date.isoformat(),
+                'category': str(self.category.id),
+                'halaqa': str(self.halaqa.id),
                 f'status_{self.student.id}': 'absent',
                 f'notes_{self.student.id}': 'محاولة تعديل',
             },
@@ -350,6 +363,55 @@ class SupervisorDashboardTests(TestCase):
         self.assertEqual(attendance.notes, 'تسجيل الأستاذ')
         self.assertContains(response, 'تم تسجيل الحضور من قبل الأستاذ')
         self.assertContains(response, 'is-locked')
+
+    def test_supervisor_dashboard_filters_halaqas_and_students_by_selection(self):
+        other_parent = User.objects.create_user(username='other_supervisor_parent', password='StrongPass123!')
+        other_category = Category.objects.create(
+            code='B',
+            name='فئة أخرى',
+            grade_span='اختبار',
+            display_order=2,
+        )
+        other_halaqa = Halaqa.objects.create(name='حلقة أخرى', category=other_category)
+        other_student = Student.objects.create(
+            name='طالب آخر',
+            birth_date='2014-02-02',
+            parent=other_parent,
+            parent_phone='0555000222',
+            grade='ابتدائي خامس',
+        )
+        HalaqaMembership.objects.create(student=other_student, halaqa=other_halaqa, is_active=True)
+
+        self.client.force_login(self.supervisor)
+        category_response = self.client.get(
+            reverse('halaqas:supervisor_dashboard'),
+            {
+                'date': timezone.localdate().isoformat(),
+                'category': str(self.category.id),
+            },
+        )
+
+        self.assertEqual(category_response.status_code, 200)
+        self.assertEqual(category_response.context['selected_category'], self.category)
+        self.assertEqual([row['halaqa'] for row in category_response.context['halaqa_options']], [self.halaqa])
+        self.assertContains(category_response, self.halaqa.name)
+        self.assertNotContains(category_response, other_halaqa.name)
+        self.assertEqual(category_response.context['student_rows'], [])
+
+        halaqa_response = self.client.get(
+            reverse('halaqas:supervisor_dashboard'),
+            {
+                'date': timezone.localdate().isoformat(),
+                'category': str(self.category.id),
+                'halaqa': str(self.halaqa.id),
+            },
+        )
+
+        self.assertEqual(halaqa_response.status_code, 200)
+        self.assertEqual(halaqa_response.context['selected_halaqa'], self.halaqa)
+        self.assertEqual([row['student'] for row in halaqa_response.context['student_rows']], [self.student])
+        self.assertContains(halaqa_response, self.student.name)
+        self.assertNotContains(halaqa_response, other_student.name)
 
     def test_teacher_api_cannot_overwrite_supervisor_attendance(self):
         selected_date = timezone.localdate()

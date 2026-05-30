@@ -1,5 +1,6 @@
 from collections import Counter
 from datetime import time
+from urllib.parse import urlencode
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -21,7 +22,7 @@ from students.models import MemorizationRecord, Student
 from students.serializers import StudentSerializer
 
 from .forms import HalaqaForm
-from .models import Attendance, Halaqa, HalaqaMembership, Homework, Plan, PointTransaction, Session, Teacher
+from .models import Attendance, Category, Halaqa, HalaqaMembership, Homework, Plan, PointTransaction, Session, Teacher
 from .serializers import (
     AttendanceSerializer,
     HalaqaSerializer,
@@ -563,14 +564,100 @@ def supervisor_dashboard(request):
 
     raw_date = request.POST.get('selected_date') if request.method == 'POST' else request.GET.get('date', '')
     selected_date = parse_date(raw_date or '') or timezone.localdate()
+
+    selection_source = request.POST if request.method == 'POST' else request.GET
+
+    def selected_pk(name):
+        raw_value = (selection_source.get(name, '') or '').strip()
+        return int(raw_value) if raw_value.isdigit() else None
+
+    selected_category_id = selected_pk('category')
+    selected_halaqa_id = selected_pk('halaqa')
+
+    categories = list(
+        Category.objects.annotate(
+            active_halaqa_count=Count(
+                'halaqas',
+                filter=Q(halaqas__is_active=True),
+                distinct=True,
+            ),
+            active_student_count=Count(
+                'halaqas__members',
+                filter=Q(
+                    halaqas__is_active=True,
+                    halaqas__members__is_active=True,
+                ),
+                distinct=True,
+            ),
+        ).order_by('display_order', 'code')
+    )
+    selected_category = next(
+        (category for category in categories if category.id == selected_category_id),
+        None,
+    )
+
+    if selected_category is None and selected_halaqa_id:
+        hinted_category_id = (
+            Halaqa.objects.filter(
+                pk=selected_halaqa_id,
+                is_active=True,
+                category_id__isnull=False,
+            )
+            .values_list('category_id', flat=True)
+            .first()
+        )
+        selected_category = next(
+            (category for category in categories if category.id == hinted_category_id),
+            None,
+        )
+
+    active_halaqa_queryset = (
+        Halaqa.objects.filter(is_active=True)
+        .select_related('category')
+        .prefetch_related('teachers')
+        .annotate(
+            active_student_count=Count(
+                'members',
+                filter=Q(members__is_active=True),
+                distinct=True,
+            )
+        )
+        .order_by('name')
+    )
+    category_halaqas = list(
+        active_halaqa_queryset.filter(category=selected_category)
+        if selected_category
+        else []
+    )
+    selected_halaqa = next(
+        (halaqa for halaqa in category_halaqas if halaqa.id == selected_halaqa_id),
+        None,
+    )
+
+    if selected_halaqa:
+        membership_filters = Q(halaqa=selected_halaqa)
+    elif request.method == 'POST' and not selected_category_id and not selected_halaqa_id:
+        membership_filters = Q(halaqa__is_active=True)
+    else:
+        membership_filters = Q(pk__isnull=True)
+
     active_memberships = list(
         HalaqaMembership.objects.filter(
+            membership_filters,
             halaqa__is_active=True,
             is_active=True,
         )
         .select_related('halaqa', 'student', 'student__parent')
         .order_by('halaqa__name', 'student__name')
     )
+
+    def dashboard_url(category=None, halaqa=None):
+        params = {'date': selected_date.isoformat()}
+        if category:
+            params['category'] = category.id
+        if halaqa:
+            params['halaqa'] = halaqa.id
+        return f'{reverse("halaqas:supervisor_dashboard")}?{urlencode(params)}'
 
     if request.method == 'POST':
         saved_count = 0
@@ -625,24 +712,14 @@ def supervisor_dashboard(request):
             messages.error(request, f'لم يتم تعديل {conflict_count} سجل لأن الحضور مسجل من قبل الأستاذ.')
         if not saved_count and not conflict_count:
             messages.warning(request, 'لم يتم اختيار أي حالة حضور للحفظ.')
-        return redirect(f'{reverse("halaqas:supervisor_dashboard")}?date={selected_date.isoformat()}')
+        return redirect(dashboard_url(selected_category, selected_halaqa))
 
-    active_halaqas = list(
-        Halaqa.objects.filter(is_active=True)
-        .select_related('category')
-        .prefetch_related('teachers')
-        .order_by('name')
-    )
-    memberships_by_halaqa = {}
-    student_ids = []
-    for membership in active_memberships:
-        memberships_by_halaqa.setdefault(membership.halaqa_id, []).append(membership)
-        student_ids.append(membership.student_id)
+    student_ids = [membership.student_id for membership in active_memberships]
 
     sessions_by_halaqa = {
         session.halaqa_id: session
         for session in Session.objects.filter(
-            halaqa__in=active_halaqas,
+            halaqa__in=[selected_halaqa] if selected_halaqa else [],
             date=selected_date,
         )
     }
@@ -654,13 +731,12 @@ def supervisor_dashboard(request):
         ).select_related('recorded_by', 'session'):
             attendance_map[(attendance.session.halaqa_id, attendance.student_id)] = attendance
 
-    halaqa_rows = []
+    student_rows = []
     marked_total = 0
-    for halaqa in active_halaqas:
-        student_rows = []
-        status_counts = {'present': 0, 'absent': 0, 'excused': 0}
-        for membership in memberships_by_halaqa.get(halaqa.id, []):
-            attendance = attendance_map.get((halaqa.id, membership.student_id))
+    status_counts = {'present': 0, 'absent': 0, 'excused': 0}
+    if selected_halaqa:
+        for membership in active_memberships:
+            attendance = attendance_map.get((selected_halaqa.id, membership.student_id))
             status_value = attendance.status if attendance else ''
             locked_for_supervisor = bool(attendance and attendance.recorded_by_role == 'teacher')
             if status_value in status_counts:
@@ -677,17 +753,45 @@ def supervisor_dashboard(request):
                 'lock_message': 'تم تسجيل الحضور من قبل الأستاذ' if locked_for_supervisor else '',
             })
 
-        halaqa_rows.append({
+    category_rows = [
+        {
+            'category': category,
+            'is_selected': bool(selected_category and category.id == selected_category.id),
+            'active_halaqa_count': category.active_halaqa_count,
+            'active_student_count': category.active_student_count,
+            'url': dashboard_url(category=category),
+        }
+        for category in categories
+    ]
+    halaqa_options = [
+        {
             'halaqa': halaqa,
+            'is_selected': bool(selected_halaqa and halaqa.id == selected_halaqa.id),
+            'student_count': halaqa.active_student_count,
+            'teacher_names': '، '.join(teacher.full_name for teacher in halaqa.teachers.all()) or 'لا يوجد معلم',
+            'url': dashboard_url(category=selected_category, halaqa=halaqa),
+        }
+        for halaqa in category_halaqas
+    ]
+    halaqa_rows = [
+        {
+            'halaqa': selected_halaqa,
             'students': student_rows,
             'student_count': len(student_rows),
             'marked_count': sum(status_counts.values()),
             'status_counts': status_counts,
-            'session': sessions_by_halaqa.get(halaqa.id),
-        })
+            'session': sessions_by_halaqa.get(selected_halaqa.id),
+        }
+    ] if selected_halaqa else []
 
     return render(request, 'halaqas/supervisor_dashboard.html', {
         'selected_date': selected_date,
+        'category_rows': category_rows,
+        'halaqa_options': halaqa_options,
+        'selected_category': selected_category,
+        'selected_halaqa': selected_halaqa,
+        'student_rows': student_rows,
+        'status_counts': status_counts,
         'halaqa_rows': halaqa_rows,
         'status_options': [
             {'value': 'present', 'label': 'حاضر', 'icon': 'fas fa-user-check'},
@@ -695,8 +799,8 @@ def supervisor_dashboard(request):
             {'value': 'excused', 'label': 'غياب مبرر', 'icon': 'fas fa-circle-exclamation'},
         ],
         'summary': {
-            'halaqa_count': len(active_halaqas),
-            'student_count': len(active_memberships),
+            'halaqa_count': Halaqa.objects.filter(is_active=True).count(),
+            'student_count': HalaqaMembership.objects.filter(halaqa__is_active=True, is_active=True).count(),
             'marked_count': marked_total,
         },
     })

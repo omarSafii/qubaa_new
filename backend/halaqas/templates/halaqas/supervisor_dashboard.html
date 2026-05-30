@@ -214,6 +214,145 @@
       box-shadow: var(--shadow-soft);
     }
 
+    .workflow-card {
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+
+    .workflow-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .workflow-title {
+      margin: 0 0 4px;
+      font-size: 1.12rem;
+      font-weight: 800;
+    }
+
+    .workflow-steps {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      color: #667681;
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+
+    .workflow-step {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(11, 60, 84, 0.05);
+    }
+
+    .workflow-step.is-active {
+      color: #fff;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+    }
+
+    .choice-section {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .choice-label {
+      margin: 0;
+      color: var(--color-secondary);
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .choice-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+    }
+
+    .choice-card {
+      min-height: 62px;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(11, 60, 84, 0.09);
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--color-primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, transform 0.2s ease;
+    }
+
+    .choice-card:hover {
+      color: var(--color-primary);
+      border-color: rgba(150, 137, 96, 0.38);
+      box-shadow: 0 10px 20px rgba(11, 60, 84, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .choice-card.is-active {
+      border-color: rgba(150, 137, 96, 0.58);
+      background: linear-gradient(90deg, rgba(242, 216, 161, 0.24), #fff);
+      box-shadow: inset 0 0 0 1px rgba(150, 137, 96, 0.12), var(--shadow-soft);
+    }
+
+    .choice-main {
+      min-width: 0;
+    }
+
+    .choice-title {
+      display: block;
+      font-weight: 900;
+      line-height: 1.4;
+    }
+
+    .choice-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 5px;
+      color: #697882;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .choice-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(11, 60, 84, 0.07);
+      color: var(--color-secondary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+    }
+
+    .choice-card.is-active .choice-icon {
+      color: #fff;
+      background: var(--color-primary);
+    }
+
+    .selected-halaqa-card {
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .selected-halaqa-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
     .save-bar {
       position: sticky;
       top: 82px;
@@ -456,6 +595,11 @@
       .save-bar .btn {
         width: 100%;
       }
+
+      .workflow-head,
+      .selected-halaqa-head {
+        flex-direction: column;
+      }
     }
 
     @media (max-width: 767px) {
@@ -497,6 +641,10 @@
       .student-top {
         flex-direction: column;
         align-items: stretch;
+      }
+
+      .choice-grid {
+        grid-template-columns: 1fr;
       }
 
       .date-form .btn {
@@ -553,6 +701,8 @@
           <div class="w-100">
             <label for="attendanceDate" class="form-label small mb-2">التاريخ</label>
             <input type="date" class="form-control" id="attendanceDate" name="date" value="{{ selected_date|date:'Y-m-d' }}">
+            {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category.id }}">{% endif %}
+            {% if selected_halaqa %}<input type="hidden" name="halaqa" value="{{ selected_halaqa.id }}">{% endif %}
           </div>
           <button type="submit" class="btn btn-soft"><i class="fas fa-calendar-day"></i> عرض</button>
         </form>
@@ -582,35 +732,98 @@
     </div>
     {% endif %}
 
+    <section class="dashboard-card workflow-card">
+      <div class="workflow-head">
+        <div>
+          <h2 class="workflow-title">مسار تسجيل الحضور</h2>
+          <p class="muted-text">اختيار الفئة ثم الحلقة يحدد الطلاب الظاهرين للحفظ.</p>
+        </div>
+        <div class="workflow-steps" aria-label="مسار العمل">
+          <span class="workflow-step {% if selected_category %}is-active{% endif %}"><i class="fas fa-layer-group"></i> اختيار الفئة</span>
+          <span class="workflow-step {% if selected_halaqa %}is-active{% endif %}"><i class="fas fa-mosque"></i> اختيار الحلقة</span>
+          <span class="workflow-step {% if selected_halaqa %}is-active{% endif %}"><i class="fas fa-user-check"></i> تسجيل الحضور</span>
+        </div>
+      </div>
+
+      <div class="choice-section">
+        <p class="choice-label">الفئات</p>
+        {% if category_rows %}
+        <div class="choice-grid">
+          {% for row in category_rows %}
+          <a href="{{ row.url }}" class="choice-card {% if row.is_selected %}is-active{% endif %}">
+            <span class="choice-main">
+              <span class="choice-title">{{ row.category.name }}</span>
+              <span class="choice-meta">
+                <span><i class="fas fa-mosque"></i> {{ row.active_halaqa_count }} حلقة</span>
+                <span><i class="fas fa-users"></i> {{ row.active_student_count }} طالب</span>
+              </span>
+            </span>
+            <span class="choice-icon"><i class="fas fa-chevron-left"></i></span>
+          </a>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">لا توجد فئات مسجلة حالياً.</div>
+        {% endif %}
+      </div>
+
+      <div class="choice-section">
+        <p class="choice-label">الحلقات{% if selected_category %} في {{ selected_category.name }}{% endif %}</p>
+        {% if selected_category %}
+          {% if halaqa_options %}
+          <div class="choice-grid">
+            {% for row in halaqa_options %}
+            <a href="{{ row.url }}" class="choice-card {% if row.is_selected %}is-active{% endif %}">
+              <span class="choice-main">
+                <span class="choice-title">{{ row.halaqa.name }}</span>
+                <span class="choice-meta">
+                  <span><i class="fas fa-users"></i> {{ row.student_count }} طالب</span>
+                  <span><i class="fas fa-chalkboard-user"></i> {{ row.teacher_names }}</span>
+                </span>
+              </span>
+              <span class="choice-icon"><i class="fas fa-chevron-left"></i></span>
+            </a>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="empty-state">لا توجد حلقات نشطة داخل هذه الفئة.</div>
+          {% endif %}
+        {% else %}
+        <div class="empty-state">اختر فئة أولاً لعرض حلقاتها النشطة.</div>
+        {% endif %}
+      </div>
+    </section>
+
     <form method="post">
       {% csrf_token %}
       <input type="hidden" name="selected_date" value="{{ selected_date|date:'Y-m-d' }}">
+      {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category.id }}">{% endif %}
+      {% if selected_halaqa %}<input type="hidden" name="halaqa" value="{{ selected_halaqa.id }}">{% endif %}
 
+      {% if selected_halaqa %}
       <div class="save-bar">
-        <div class="muted-text"><i class="fas fa-calendar-check"></i> {{ selected_date|date:"Y-m-d" }}</div>
+        <div class="muted-text"><i class="fas fa-calendar-check"></i> {{ selected_date|date:"Y-m-d" }} - {{ selected_halaqa.name }}</div>
         <button type="submit" class="btn btn-soft btn-primary-soft"><i class="fas fa-floppy-disk"></i> حفظ الحضور</button>
       </div>
 
-      <div class="halaqa-list">
-        {% for row in halaqa_rows %}
-        <details class="halaqa-card" {% if forloop.first %}open{% endif %}>
-          <summary>
-            <div class="halaqa-heading">
-              <h2 class="halaqa-title">{{ row.halaqa.name }}</h2>
-              <div class="halaqa-meta">
-                <span class="meta-pill"><i class="fas fa-users"></i> {{ row.student_count }} طالب</span>
-                <span class="meta-pill"><i class="fas fa-check"></i> {{ row.marked_count }} مسجل</span>
-                <span class="meta-pill"><i class="fas fa-user-check"></i> {{ row.status_counts.present }} حاضر</span>
-                <span class="meta-pill"><i class="fas fa-user-xmark"></i> {{ row.status_counts.absent }} غائب</span>
-                <span class="meta-pill"><i class="fas fa-circle-exclamation"></i> {{ row.status_counts.excused }} مبرر</span>
-              </div>
+      <section class="dashboard-card selected-halaqa-card">
+        <div class="selected-halaqa-head">
+          <div class="halaqa-heading">
+            <h2 class="halaqa-title">{{ selected_halaqa.name }}</h2>
+            <div class="halaqa-meta">
+              {% if selected_category %}<span class="meta-pill"><i class="fas fa-layer-group"></i> {{ selected_category.name }}</span>{% endif %}
+              <span class="meta-pill"><i class="fas fa-users"></i> {{ student_rows|length }} طالب</span>
+              <span class="meta-pill"><i class="fas fa-check"></i> {{ summary.marked_count }} مسجل</span>
+              <span class="meta-pill"><i class="fas fa-user-check"></i> {{ status_counts.present }} حاضر</span>
+              <span class="meta-pill"><i class="fas fa-user-xmark"></i> {{ status_counts.absent }} غائب</span>
+              <span class="meta-pill"><i class="fas fa-circle-exclamation"></i> {{ status_counts.excused }} مبرر</span>
             </div>
-            <span class="halaqa-chevron"><i class="fas fa-chevron-down"></i></span>
-          </summary>
-          <div class="halaqa-body">
-            {% if row.students %}
+          </div>
+        </div>
+
+        {% if student_rows %}
             <div class="student-list">
-              {% for student_row in row.students %}
+              {% for student_row in student_rows %}
               <article class="student-card {% if student_row.locked_for_supervisor %}is-locked{% endif %}">
                 <div class="student-top">
                   <div>
@@ -652,15 +865,13 @@
               </article>
               {% endfor %}
             </div>
-            {% else %}
-            <div class="empty-state">لا يوجد طلاب نشطون في هذه الحلقة.</div>
-            {% endif %}
-          </div>
-        </details>
-        {% empty %}
-        <div class="empty-state">لا توجد حلقات نشطة حالياً.</div>
-        {% endfor %}
-      </div>
+        {% else %}
+        <div class="empty-state">لا يوجد طلاب نشطون في هذه الحلقة.</div>
+        {% endif %}
+      </section>
+      {% else %}
+      <div class="empty-state">اختر فئة ثم حلقة لبدء تسجيل حضور الطلاب.</div>
+      {% endif %}
     </form>
 
     <div class="footer-note">معهد قباء لتحفيظ القرآن الكريم - لوحة الموجه</div>
