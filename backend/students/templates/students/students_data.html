@@ -8,153 +8,748 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    :root{--p:#0B3C54;--s:#31617F;--a:#968960;--l:#F2D8A1;--ok:#4CAF50;--warn:#FFC107;--bad:#F44336;--info:#2196F3;--soft:0 10px 28px rgba(11,60,84,.08);--nav-h:74px;--section-nav-h:66px;--stack-offset:168px}
-    html{scroll-behavior:smooth}
-    body{background:linear-gradient(135deg,#f8f9fa 0%,#f1f3f5 100%);color:var(--p);font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;min-height:100vh;padding-top:74px}
-    .navbar{background:linear-gradient(90deg,var(--p) 0%,var(--s) 100%);box-shadow:0 4px 12px rgba(0,0,0,.1);padding:10px 20px;border-bottom:0}
-    .navbar .container-fluid{max-width:none;align-items:center;gap:14px}
-    .navbar-brand{color:#fff!important;font-weight:600;font-size:1.25rem;display:flex;align-items:center;gap:15px}
-    .brand-icon{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(45deg,var(--l),var(--a));color:#fff;flex-shrink:0}
-    .navbar-context{color:#fff;display:flex;align-items:center;gap:12px;text-align:right}
-    .navbar-context .small{color:rgba(255,255,255,.75)}
-    .navbar-context-avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.18);color:#fff;flex-shrink:0}
-    .shell{padding:30px 0 44px}
-    .cardx,.hero,.chart-card,.report-card,.accordion-item,.report-disclosure{background:#fff;border:1px solid rgba(11,60,84,.08);border-radius:20px;box-shadow:var(--soft);position:relative;overflow:hidden}
-    .cardx::before,.hero::before,.chart-card::before,.report-card::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:linear-gradient(90deg,rgba(150,137,96,.82),rgba(242,216,161,.72))}
-    .hero{padding:28px;margin-bottom:20px;background:linear-gradient(180deg,rgba(255,255,255,.995),rgba(246,242,234,.6))}
-    .hero-grid,.meta-grid,.quick-read,.parent-card-grid,.progress-grid,.progress-notes,.kpi-grid,.timeline-grid,.filters-grid{display:grid;gap:16px}
-    .hero-grid{grid-template-columns:1.35fr .85fr;align-items:start}
-    .profile{display:flex;gap:18px;align-items:flex-start}
-    .avatar{width:92px;height:92px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--l),var(--a));color:var(--p);font-size:2rem;box-shadow:0 12px 28px rgba(150,137,96,.24);flex-shrink:0}
-    .eyebrow,.pill,.tag,.signal{display:inline-flex;align-items:center;gap:8px;border-radius:999px;font-weight:800}
-    .eyebrow{padding:9px 14px;margin-bottom:12px;background:linear-gradient(180deg,rgba(255,255,255,.82),rgba(242,216,161,.12));border:1px solid rgba(150,137,96,.16);color:var(--p)}
-    .title{font-size:2.15rem;font-weight:800;margin:0 0 10px}
-    .subtitle{color:#61707a;line-height:1.85;margin-bottom:16px;max-width:720px}
-    .meta-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-    .meta{padding:12px 14px;background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(242,216,161,.12));border:1px solid rgba(150,137,96,.14);border-right:4px solid rgba(150,137,96,.58);border-radius:16px}
-    .meta small{display:block;color:#6f7d87;margin-bottom:6px}
-    .meta strong{line-height:1.7}
-    .muted,.chart-sub,.section-copy{color:#70808a}
-    .side-stack{display:grid;gap:14px}
-    .mini{padding:18px;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.99),rgba(242,216,161,.08));border:1px solid rgba(11,60,84,.07);box-shadow:0 10px 24px rgba(11,60,84,.05)}
-    .mini-head{display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:800}
-    .progress-line{height:11px;border-radius:999px;background:rgba(11,60,84,.08);overflow:hidden;margin:12px 0 8px}
-    .progress-line span{display:block;height:100%;background:linear-gradient(90deg,var(--a),var(--l))}
-    .mini small,.brief,.detail{color:#5f6f79;line-height:1.8}
-    .section-nav-wrap{position:sticky;top:var(--nav-h);z-index:1021;padding-top:12px;margin-bottom:16px}
-    .section-nav{display:flex;gap:10px;overflow-x:auto;padding:10px 12px;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.97),rgba(249,246,240,.95));border:1px solid rgba(11,60,84,.07);box-shadow:0 10px 24px rgba(11,60,84,.05);scrollbar-width:none;-ms-overflow-style:none}
-    .section-nav::-webkit-scrollbar{display:none}
-    .section-link{flex:1 1 0;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;min-height:44px;padding:10px 14px;border-radius:999px;border:1px solid transparent;background:rgba(11,60,84,.05);color:var(--p);font-weight:800;transition:background .2s ease,color .2s ease,transform .2s ease,box-shadow .2s ease}
-    .section-link:hover{background:rgba(11,60,84,.09);color:var(--p);transform:translateY(-1px)}
-    .section-link.active{background:linear-gradient(90deg,rgba(49,97,127,.94),rgba(11,60,84,.88));color:#fff;box-shadow:0 8px 18px rgba(11,60,84,.14)}
-    .section-panel{animation:panelFade .24s ease}
-    .section-panel[hidden]{display:none!important}
-    @keyframes panelFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-    .section-focus{border-color:rgba(150,137,96,.34)!important;box-shadow:0 0 0 3px rgba(150,137,96,.16),var(--soft)!important}
-    .range-strip{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:18px 20px;margin-bottom:24px;background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(245,242,235,.75))}
-    .range-strip h3{font-size:1.05rem;font-weight:800;margin:0 0 4px}
-    .range-strip details{min-width:min(100%,430px)}
-    .range-strip summary{cursor:pointer;list-style:none;display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:10px 14px;background:linear-gradient(90deg,var(--p),var(--s));color:#fff;font-weight:800}
-    .range-strip summary::-webkit-details-marker{display:none}
-    .range-panel{margin-top:14px;padding:14px;border-radius:18px;background:rgba(245,242,234,.9);border:1px solid rgba(11,60,84,.08)}
-    .chip-row{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 14px}
-    .chip{padding:10px 14px;border-radius:999px;border:1px solid rgba(11,60,84,.12);text-decoration:none;color:var(--p);font-weight:800;background:rgba(255,255,255,.88);transition:background .2s ease,transform .2s ease}
-    .chip:hover{background:rgba(11,60,84,.05);color:var(--p);transform:translateY(-1px)}
-    .chip.active{background:linear-gradient(90deg,var(--p),var(--s));color:#fff;border-color:transparent;box-shadow:0 10px 20px rgba(11,60,84,.18)}
-    .filters-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-    .fbox{display:flex;gap:10px;align-items:end;padding:14px;border-radius:16px;background:rgba(255,255,255,.78);border:1px solid rgba(11,60,84,.08)}
-    .fbox .form-control{min-height:44px;border-radius:12px;box-shadow:none!important;border:1px solid rgba(11,60,84,.12);background:#fff}
-    .fbox .form-control:focus{border-color:rgba(150,137,96,.85);box-shadow:0 0 0 .18rem rgba(150,137,96,.16)!important}
-    .btn-soft{border-radius:12px;font-weight:800;border:1px solid rgba(11,60,84,.12);background:#fff;color:var(--p);box-shadow:0 6px 16px rgba(11,60,84,.08)}
-    .btn-soft:hover{background:rgba(11,60,84,.05);color:var(--p);transform:translateY(-1px)}
-    .btn-primary-soft{background:linear-gradient(90deg,var(--p),var(--s));color:#fff;border:none}
-    .quick-read{grid-template-columns:minmax(0,1.1fr) minmax(280px,.9fr);margin-bottom:24px}
-    .summary-card,.attention-card,.parent-status-card,.detail-card{padding:22px;background:linear-gradient(180deg,rgba(255,255,255,.99),rgba(242,216,161,.07))}
-    .summary-card h2,.attention-card h3,.section-head h2,.chart-card h3,.report-card h2{font-weight:800}
-    .summary-card h2,.attention-card h3{margin-bottom:8px}
-    .summary-sentence{color:#4f5f69;font-size:1.04rem;line-height:2;margin:0}
-    .signal-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
-    .signal{padding:9px 12px;background:rgba(11,60,84,.05);color:var(--p)}
-    .attention-list{display:grid;gap:10px;margin:14px 0 0;padding:0;list-style:none}
-    .attention-list li{padding:12px 14px;border-radius:15px;background:rgba(11,60,84,.04);border:1px solid rgba(11,60,84,.06);color:#53616b;line-height:1.8}
-    .attention-list li i{margin-left:8px;color:var(--a)}
-    .parent-card-grid{grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:24px}
-    .parent-status-card{min-height:190px}
-    .parent-status-card h3{font-size:1rem;font-weight:800;margin:0 0 10px;color:#52616b}
-    .parent-status-card .big{display:block;font-size:1.7rem;font-weight:900;line-height:1.45;color:var(--p)}
-    .parent-status-card .brief{display:block;margin-top:10px}
-    .pill{padding:7px 11px;font-size:.84rem;margin-top:12px}
-    .mini-head .pill,.section-head .pill,.report-head .pill,.report-disclosure summary .pill{margin-top:0}
-    .tag{padding:6px 10px;background:rgba(11,60,84,.06);font-size:.82rem}
-    .ok{background:rgba(76,175,80,.14);color:#2e7d32}
-    .warn{background:rgba(255,193,7,.18);color:#8a6700}
-    .bad{background:rgba(244,67,54,.14);color:#c62828}
-    .info{background:rgba(33,150,243,.14);color:#1565c0}
-    .mutep{background:rgba(11,60,84,.06);color:var(--p)}
-    .section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:14px;padding:0 4px}
-    .section-head h2{font-size:1.32rem;margin:0 0 6px}
-    .section-head p,.section-copy{margin:0;line-height:1.8}
-    .progress-grid{grid-template-columns:repeat(2,minmax(0,1fr));margin-bottom:24px}
-    .progress-grid .wide{grid-column:1/-1}
-    .chart-card{padding:22px;min-height:370px;background:linear-gradient(180deg,rgba(255,255,255,.985),rgba(242,216,161,.06))}
-    .chart-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
-    .canvas-wrap{position:relative;height:270px}
-    .empty{display:none;position:absolute;inset:0;align-items:center;justify-content:center;text-align:center;padding:20px;border:1px dashed rgba(11,60,84,.14);border-radius:16px;background:rgba(255,255,255,.93);color:#74818b;font-weight:700;line-height:1.8}
-    .progress-notes{grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:24px}
-    .detail-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:12px}
-    .detail-top h3{margin:0;font-size:1.06rem;font-weight:800}
-    .info-grid,.trend-grid{display:grid;gap:10px;margin-top:14px}
-    .info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-    .info-item,.trend-row,.note-box{padding:13px 14px;border-radius:15px;background:rgba(11,60,84,.04);border:1px solid rgba(11,60,84,.06)}
-    .info-item small,.trend-row small{display:block;color:#6f7d87;margin-bottom:6px}
-    .info-item strong,.trend-row strong{display:block;line-height:1.8}
-    .note-box{margin-top:14px;color:#55636d;line-height:1.9}
-    .report-card{padding:0;margin-bottom:24px;background:linear-gradient(180deg,rgba(255,255,255,.99),rgba(242,216,161,.05))}
-    .report-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;padding:18px 20px;margin-bottom:0;border-bottom:1px solid rgba(11,60,84,.08);background:linear-gradient(90deg,rgba(150,137,96,.10),rgba(249,246,239,.92))}
-    .report-copy{min-width:0}
-    .report-copy h2{margin-bottom:6px}
-    .report-actions,.report-button-group,.detail-actions{display:flex;flex-wrap:wrap;gap:10px}
-    .report-actions{flex-direction:column;align-items:flex-start}
-    .report-button-group,.detail-actions{justify-content:flex-end}
-    .report-card>.kpi-grid{padding:20px 20px 0;margin-bottom:18px}
-    .kpi-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
-    .kpi{padding:16px;border-radius:16px;background:rgba(11,60,84,.04);border:1px solid rgba(11,60,84,.04)}
-    .kpi small{display:block;color:#70808a;margin-bottom:6px}
-    .kpi strong{font-size:1.35rem}
-    .kpi span{display:block;color:#55636d;line-height:1.7;margin-top:6px}
-    .report-print-only{display:none}
-    .report-disclosure{margin-bottom:24px}
-    .report-disclosure summary{cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:17px 20px;font-weight:900;color:var(--p);background:linear-gradient(90deg,rgba(150,137,96,.10),rgba(249,246,239,.92))}
-    .report-disclosure summary::-webkit-details-marker{display:none}
-    .report-disclosure summary::after{content:"+";width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(11,60,84,.07);flex-shrink:0}
-    .report-disclosure[open] summary::after{content:"-"}
-    .report-disclosure-body{padding:18px 20px 20px}
-    .timeline-list{display:grid;gap:14px}
-    .day{padding:16px;border-radius:18px;border:1px solid rgba(11,60,84,.08);background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(242,216,161,.08));box-shadow:0 10px 24px rgba(11,60,84,.06)}
-    .day-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
-    .day-title{font-weight:800}
-    .tags{display:flex;flex-wrap:wrap;gap:8px}
-    .timeline-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
-    .block{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.85);border:1px solid rgba(11,60,84,.05)}
-    .block h5{margin:0 0 8px;font-size:.95rem;font-weight:800}
-    .block ul{margin:0;padding-right:18px;color:#516069;line-height:1.8;font-size:.9rem}
-    .empty-state{padding:22px 18px;border-radius:16px;border:1px dashed rgba(11,60,84,.14);background:rgba(11,60,84,.02);text-align:center;color:#718089;font-weight:700;line-height:1.8}
-    .accordion{padding:20px;padding-top:18px}
-    .accordion-item{border-radius:16px!important;margin-bottom:12px}
-    .accordion-button{min-height:60px;padding:15px 18px;background:#fff;font-weight:800;color:var(--p);box-shadow:none!important}
-    .accordion-button:focus{box-shadow:0 0 0 .2rem rgba(150,137,96,.14)!important}
-    .accordion-button:not(.collapsed){background:rgba(11,60,84,.05);color:var(--p)}
-    .accordion-body{padding:0 16px 16px}
-    table{margin:0}
-    .table-responsive{border:1px solid rgba(11,60,84,.08);border-radius:16px;background:#fff}
-    .tablex th,.tablex td{padding:12px 10px;text-align:right;border-bottom:1px solid rgba(11,60,84,.08);vertical-align:top;font-size:.92rem}
-    .tablex th{background:linear-gradient(90deg,rgba(11,60,84,.96),rgba(49,97,127,.92));font-weight:800;color:#fff}
-    .tablex tbody tr:last-child td{border-bottom:0}
-    .foot{text-align:center;color:#718089;font-size:.92rem;padding-top:6px}
-    @media (max-width:1199px){.parent-card-grid,.kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.progress-notes{grid-template-columns:1fr}}
-    @media (max-width:991px){.hero-grid,.quick-read,.progress-grid,.timeline-grid,.filters-grid{grid-template-columns:1fr}.report-head{flex-direction:column}.report-actions,.detail-actions{width:100%;align-items:stretch}.report-button-group,.detail-actions{justify-content:stretch}.report-button-group .btn,.detail-actions .btn{flex:1 1 180px}.range-strip{align-items:stretch;flex-direction:column}.range-strip details{min-width:0;width:100%}}
-    @media (max-width:767px){body{padding-top:102px}.navbar{padding:10px 14px}.navbar .container-fluid{align-items:flex-start;gap:10px}.navbar-brand{font-size:1rem;gap:10px}.navbar-context{width:100%;justify-content:flex-end}.navbar-context .small{display:none}.section-nav-wrap{padding-top:8px;margin-bottom:14px}.section-nav{padding:8px;border-radius:16px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.section-link{min-height:44px;padding:9px 10px;font-size:.9rem;width:100%}.shell{padding-top:18px}.hero,.chart-card,.accordion,.summary-card,.attention-card,.range-strip{padding-left:16px;padding-right:16px}.report-head,.report-card>.kpi-grid,.report-disclosure-body{padding-left:16px;padding-right:16px}.meta-grid,.parent-card-grid,.kpi-grid,.info-grid{grid-template-columns:1fr}.profile,.fbox{flex-direction:column}.fbox{align-items:stretch}.avatar{width:76px;height:76px;font-size:1.8rem}.title{font-size:1.72rem}.subtitle,.summary-sentence{font-size:.95rem;line-height:1.85}.chip{flex:1 1 120px;justify-content:center;text-align:center}.chart-card{min-height:330px}.canvas-wrap{height:240px}.parent-status-card{min-height:auto}.tablex th,.tablex td{padding:10px 8px;font-size:.86rem}.accordion-body{padding:0 12px 12px}.report-button-group .btn{min-height:46px}}
-    @media print{body{padding-top:0;background:#fff}body::before,.navbar,.section-nav-wrap,.range-strip,.details-card,.foot,.section-panel:not(#reportsPanel){display:none!important}.shell{padding:0}.hero,.report-card,.day,.block,.kpi{box-shadow:none!important}.hero,.report-card{border:1px solid #d9dfe3}.hero::before,.report-card::before,.chart-card::before{display:none}.hero{margin-bottom:16px}.report-head{background:#fff!important;padding:14px 16px}.report-actions,.report-button-group{display:none!important}.timeline-grid{grid-template-columns:1fr}.day{break-inside:avoid}.report-print-only{display:block;padding:0 16px 16px;color:#53616b}}
+    :root {
+      --p: #0B3C54;
+      --s: #31617F;
+      --a: #968960;
+      --l: #F2D8A1;
+      --ok: #4CAF50;
+      --warn: #FFC107;
+      --bad: #F44336;
+      --info: #2196F3;
+      --line: rgba(11, 60, 84, .09);
+      --muted: #657681;
+      --soft: 0 10px 26px rgba(11, 60, 84, .08);
+      --nav-h: 78px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding-top: var(--nav-h);
+      overflow-x: hidden;
+      background: linear-gradient(135deg, #f8f9fa 0%, #f1f3f5 100%);
+      color: var(--p);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .navbar {
+      min-height: var(--nav-h);
+      padding: 10px 16px;
+      background: linear-gradient(90deg, var(--p), var(--s));
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+    }
+
+    .navbar .container-fluid {
+      max-width: 1180px;
+      gap: 12px;
+    }
+
+    .navbar-brand,
+    .parent-context {
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .navbar-brand {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 800;
+    }
+
+    .brand-icon,
+    .context-icon,
+    .student-avatar {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border-radius: 50%;
+    }
+
+    .brand-icon,
+    .context-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, .16);
+    }
+
+    .brand-icon {
+      background: linear-gradient(45deg, var(--l), var(--a));
+      color: var(--p);
+    }
+
+    .parent-context {
+      text-align: right;
+      font-size: .9rem;
+    }
+
+    .parent-context small {
+      display: block;
+      color: rgba(255, 255, 255, .76);
+    }
+
+    .page-shell {
+      width: min(100%, 1120px);
+      margin: 0 auto;
+      padding: 16px 14px 34px;
+    }
+
+    .hero,
+    .range-card,
+    .metric-card,
+    .chart-card,
+    .report-card,
+    .report-group,
+    .day-card,
+    .detail-card,
+    .empty-state {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .98);
+      box-shadow: var(--soft);
+    }
+
+    .hero {
+      padding: 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,.99), rgba(242,216,161,.12));
+    }
+
+    .hero-main {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .student-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .student-avatar {
+      width: 66px;
+      height: 66px;
+      color: var(--p);
+      font-size: 1.65rem;
+      background: linear-gradient(135deg, var(--l), var(--a));
+    }
+
+    .eyebrow,
+    .pill,
+    .tab-button,
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-weight: 800;
+    }
+
+    .eyebrow {
+      margin-bottom: 8px;
+      color: var(--a);
+      font-size: .88rem;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+      font-size: clamp(1.55rem, 5.5vw, 2.3rem);
+      font-weight: 900;
+      letter-spacing: 0;
+      line-height: 1.35;
+    }
+
+    .lead {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.9;
+      font-size: .98rem;
+    }
+
+    .meta-strip {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .meta-item,
+    .quick-note,
+    .report-line {
+      padding: 12px;
+      border: 1px solid rgba(11, 60, 84, .07);
+      border-right: 4px solid rgba(150, 137, 96, .6);
+      border-radius: 8px;
+      background: rgba(242, 216, 161, .12);
+      min-width: 0;
+    }
+
+    .meta-item small,
+    .metric-label,
+    .report-label {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: .82rem;
+      font-weight: 700;
+    }
+
+    .meta-item strong,
+    .report-value {
+      display: block;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
+    }
+
+    .range-card {
+      margin-top: 14px;
+      padding: 14px;
+      background: rgba(255, 255, 255, .92);
+    }
+
+    .range-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .range-title {
+      font-weight: 900;
+    }
+
+    .range-panel {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .chip-row,
+    .action-row,
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip,
+    .btn-soft {
+      min-height: 42px;
+      border: 1px solid rgba(11, 60, 84, .13);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--p);
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .chip {
+      flex: 1 1 105px;
+      justify-content: center;
+      display: inline-flex;
+      align-items: center;
+      padding: 9px 12px;
+      text-align: center;
+    }
+
+    .chip.active,
+    .btn-primary-soft {
+      border-color: transparent;
+      background: linear-gradient(90deg, var(--p), var(--s));
+      color: #fff;
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .filter-box {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(11, 60, 84, .025);
+    }
+
+    .form-control {
+      min-height: 42px;
+      border-radius: 8px;
+      border: 1px solid rgba(11, 60, 84, .13);
+      box-shadow: none !important;
+    }
+
+    .form-control:focus {
+      border-color: rgba(150, 137, 96, .8);
+      box-shadow: 0 0 0 .16rem rgba(150, 137, 96, .15) !important;
+    }
+
+    .section-tabs {
+      position: sticky;
+      top: var(--nav-h);
+      z-index: 10;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin: 14px 0;
+      padding: 8px;
+      border: 1px solid rgba(11, 60, 84, .08);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .96);
+      box-shadow: 0 8px 18px rgba(11, 60, 84, .07);
+    }
+
+    .tab-button {
+      justify-content: center;
+      width: 100%;
+      min-height: 46px;
+      border: 0;
+      border-radius: 8px;
+      background: rgba(11, 60, 84, .06);
+      color: var(--p);
+    }
+
+    .tab-button.active {
+      background: linear-gradient(90deg, var(--p), var(--s));
+      color: #fff;
+    }
+
+    .page-panel[hidden] {
+      display: none !important;
+    }
+
+    .page-panel {
+      animation: fadeIn .22s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin: 2px 0 12px;
+    }
+
+    .section-head h2,
+    .chart-card h3,
+    .report-card h2,
+    .report-group summary {
+      font-weight: 900;
+    }
+
+    .section-head h2 {
+      margin-bottom: 5px;
+      font-size: 1.22rem;
+    }
+
+    .section-head p,
+    .subtext,
+    .metric-note,
+    .report-note {
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    .summary-grid,
+    .chart-grid,
+    .report-grid,
+    .detail-grid,
+    .timeline-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .metric-card,
+    .chart-card,
+    .report-card,
+    .report-group {
+      padding: 14px;
+      min-width: 0;
+    }
+
+    .metric-top,
+    .chart-top,
+    .day-head,
+    .detail-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .metric-value {
+      margin-top: 8px;
+      font-size: 1.55rem;
+      font-weight: 900;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+    }
+
+    .metric-note {
+      margin: 8px 0 0;
+      font-size: .92rem;
+    }
+
+    .progress-line {
+      height: 10px;
+      margin-top: 10px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(11, 60, 84, .08);
+    }
+
+    .progress-line span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--a), var(--l));
+    }
+
+    .pill,
+    .tag {
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: .8rem;
+      white-space: nowrap;
+    }
+
+    .tag {
+      background: rgba(11, 60, 84, .06);
+      color: var(--p);
+    }
+
+    .ok { background: rgba(76, 175, 80, .14); color: #2e7d32; }
+    .warn { background: rgba(255, 193, 7, .2); color: #7a5b00; }
+    .bad { background: rgba(244, 67, 54, .14); color: #b52828; }
+    .info { background: rgba(33, 150, 243, .14); color: #1565c0; }
+    .mutep { background: rgba(11, 60, 84, .07); color: var(--p); }
+
+    .chart-grid {
+      margin-top: 12px;
+    }
+
+    .chart-card {
+      min-height: 310px;
+      background: linear-gradient(180deg, #fff, rgba(242, 216, 161, .06));
+    }
+
+    .chart-card h3 {
+      margin: 0 0 4px;
+      font-size: 1rem;
+    }
+
+    .canvas-wrap {
+      position: relative;
+      height: 220px;
+      margin-top: 12px;
+    }
+
+    .empty {
+      display: none;
+      position: absolute;
+      inset: 0;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      border: 1px dashed rgba(11, 60, 84, .18);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .9);
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.7;
+      font-weight: 800;
+    }
+
+    .quick-note {
+      margin-top: 12px;
+      line-height: 1.9;
+      color: #53636d;
+    }
+
+    .report-card {
+      margin-bottom: 12px;
+      background: linear-gradient(180deg, #fff, rgba(242, 216, 161, .06));
+    }
+
+    .report-card h2 {
+      margin-bottom: 6px;
+      font-size: 1.12rem;
+    }
+
+    .report-grid {
+      margin-top: 12px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .report-line {
+      border-right-color: rgba(11, 60, 84, .18);
+      background: rgba(11, 60, 84, .025);
+    }
+
+    .report-value {
+      font-weight: 900;
+      font-size: 1.08rem;
+    }
+
+    .report-note {
+      margin: 5px 0 0;
+      font-size: .88rem;
+    }
+
+    .report-actions {
+      margin-top: 12px;
+    }
+
+    .btn-soft {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 9px 12px;
+    }
+
+    .report-group {
+      margin-bottom: 12px;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .report-group summary {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-height: 56px;
+      padding: 14px;
+      list-style: none;
+      background: rgba(150, 137, 96, .10);
+    }
+
+    .report-group summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .report-group summary::after {
+      content: "+";
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(11, 60, 84, .08);
+    }
+
+    .report-group[open] summary::after {
+      content: "-";
+    }
+
+    .group-body {
+      padding: 12px;
+    }
+
+    .day-card,
+    .detail-card {
+      padding: 12px;
+      box-shadow: none;
+      background: rgba(255, 255, 255, .92);
+    }
+
+    .day-title,
+    .detail-title {
+      font-weight: 900;
+    }
+
+    .timeline-grid {
+      margin-top: 10px;
+      gap: 10px;
+    }
+
+    .block {
+      padding: 10px;
+      border: 1px solid rgba(11, 60, 84, .07);
+      border-radius: 8px;
+      background: rgba(11, 60, 84, .025);
+    }
+
+    .block h4 {
+      margin: 0 0 7px;
+      font-size: .95rem;
+      font-weight: 900;
+    }
+
+    .clean-list {
+      display: grid;
+      gap: 6px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      color: #52636d;
+      line-height: 1.75;
+      font-size: .92rem;
+    }
+
+    .detail-grid {
+      margin-top: 10px;
+    }
+
+    .detail-card {
+      display: grid;
+      gap: 7px;
+    }
+
+    .detail-card small {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .empty-state {
+      padding: 18px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.8;
+      font-weight: 800;
+      box-shadow: none;
+    }
+
+    .foot {
+      padding: 16px 0 4px;
+      color: #77858e;
+      text-align: center;
+      font-size: .88rem;
+    }
+
+    @media (min-width: 640px) {
+      .page-shell { padding-left: 18px; padding-right: 18px; }
+      .meta-strip,
+      .summary-grid,
+      .detail-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .filter-grid {
+        grid-template-columns: 1fr 1.35fr;
+      }
+      .filter-box {
+        grid-template-columns: 1fr auto;
+        align-items: end;
+      }
+      .filter-box.custom {
+        grid-template-columns: 1fr 1fr auto;
+      }
+    }
+
+    @media (min-width: 900px) {
+      .page-shell { padding-top: 22px; }
+      .hero { padding: 24px; }
+      .hero-main {
+        grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr);
+        align-items: start;
+      }
+      .meta-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .summary-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+      .chart-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .chart-card.feature {
+        grid-row: span 2;
+      }
+      .canvas-wrap {
+        height: 260px;
+      }
+      .timeline-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .report-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 520px) {
+      body { --nav-h: 96px; }
+      .navbar .container-fluid {
+        align-items: flex-start;
+      }
+      .parent-context {
+        width: 100%;
+        justify-content: flex-end;
+      }
+      .parent-context small {
+        display: none;
+      }
+      .student-head {
+        flex-direction: column;
+      }
+      .student-avatar {
+        width: 58px;
+        height: 58px;
+      }
+      .report-grid {
+        grid-template-columns: 1fr;
+      }
+      .action-row .btn-soft {
+        width: 100%;
+      }
+    }
+
+    @media print {
+      body {
+        padding-top: 0;
+        background: #fff;
+      }
+      .navbar,
+      .section-tabs,
+      .range-card,
+      .foot,
+      #summaryPanel,
+      .report-actions {
+        display: none !important;
+      }
+      .page-shell {
+        width: 100%;
+        padding: 0;
+      }
+      .hero,
+      .report-card,
+      .report-group,
+      .day-card,
+      .detail-card {
+        box-shadow: none !important;
+      }
+      .report-group {
+        break-inside: avoid;
+      }
+      .page-panel[hidden] {
+        display: block !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -162,302 +757,418 @@
     <div class="container-fluid">
       <a class="navbar-brand" href="#">
         <span class="brand-icon"><i class="fas fa-book-quran"></i></span>
-        معهد قباء لتحفيظ القرآن الكريم
+        <span>معهد قباء لتحفيظ القرآن الكريم</span>
       </a>
-      <div class="navbar-context">
-        <div class="navbar-context-avatar"><i class="fas fa-users"></i></div>
+      <div class="parent-context">
+        <span class="context-icon"><i class="fas fa-users"></i></span>
         <div>
-          <div class="fw-semibold">متابعة ولي الأمر</div>
-          <div class="small">خلاصة مبسطة من بيانات المعلم داخل الحلقة</div>
+          <strong>متابعة ولي الأمر</strong>
+          <small>صفحة خاصة من رابط الطالب</small>
         </div>
       </div>
     </div>
   </nav>
 
-  <div class="section-nav-wrap">
-    <div class="container">
-      <nav class="section-nav" aria-label="أقسام صفحة ولي الأمر" role="tablist">
-        <button type="button" class="section-link active" id="section-tab-overview" data-panel="overviewPanel" role="tab" aria-controls="overviewPanel" aria-selected="true">نظرة سريعة</button>
-        <button type="button" class="section-link" id="section-tab-progress" data-panel="progressPanel" role="tab" aria-controls="progressPanel" aria-selected="false">التقدم</button>
-        <button type="button" class="section-link" id="section-tab-reports" data-panel="reportsPanel" role="tab" aria-controls="reportsPanel" aria-selected="false">التقرير</button>
-      </nav>
-    </div>
-  </div>
-
-  <main class="shell container">
-    <section class="hero" id="overviewSection">
-      <div class="hero-grid">
-        <div class="profile">
-          <div class="avatar"><i class="fas fa-user-graduate"></i></div>
-          <div class="w-100">
-            <div class="eyebrow"><i class="fas fa-sparkles"></i> خلاصة ولي الأمر</div>
-            <h1 class="title">{{ summary.student_name }}</h1>
-            <p class="subtitle">صفحة مختصرة تساعدك على معرفة حالة الطالب بسرعة: الحضور، الحفظ، الواجب، والخطة الحالية دون الدخول في تفاصيل المعلم اليومية.</p>
-            <div class="meta-grid">
-              <div class="meta"><small><i class="fas fa-mosque"></i> الحلقة</small><strong>{{ summary.halaqa_name }}</strong></div>
-              <div class="meta"><small><i class="fas fa-user-tie"></i> أستاذ الحلقة</small><strong>{{ summary.teacher }}</strong></div>
-              <div class="meta"><small><i class="fas fa-layer-group"></i> التصنيف</small><strong>{{ summary.category }}</strong></div>
-              <div class="meta"><small><i class="fas fa-clock"></i> آخر تحديث</small><strong>{{ summary.last_updated_display }}<br><span class="muted">المصدر: {{ summary.last_updated_source }}</span></strong></div>
+  <main class="page-shell">
+    <section class="hero">
+      <div class="hero-main">
+        <div>
+          <div class="student-head">
+            <div class="student-avatar"><i class="fas fa-user-graduate"></i></div>
+            <div>
+              <div class="eyebrow"><i class="fas fa-sparkles"></i> ملخص تقدم الطالب</div>
+              <h1>{{ summary.student_name }}</h1>
+              <p class="lead">صفحة مبسطة لولي الأمر تعرض الحضور، التسميع، الواجبات، النقاط، والخطة الحالية دون تفاصيل مرهقة.</p>
             </div>
           </div>
         </div>
-        <div class="side-stack">
-          <div class="mini">
-            <div class="mini-head"><span><i class="fas fa-calendar-check"></i> الحضور</span><span>{{ summary.attendance_percentage }}%</span></div>
-            <div class="progress-line"><span style="width: {{ summary.attendance_percentage }}%"></span></div>
-            <small>حاضر {{ summary.attendance_reference.present }} من {{ summary.attendance_reference.total }}، وآخر حالة: {{ summary.attendance_reference.status_label }}.{% if summary.attendance_reference.note %}<br>ملاحظة: {{ summary.attendance_reference.note }}{% endif %}{% if summary.attendance_reference.source_label %}<br>{{ summary.attendance_reference.source_label }}{% endif %}</small>
-          </div>
-          <div class="mini">
-            <div class="mini-head">
-              <span><i class="fas fa-route"></i> الخطة</span>
-              <span class="pill {% if summary.plan.badge_class == 'excellent' %}ok{% elif summary.plan.badge_class == 'warning' %}warn{% elif summary.plan.badge_class == 'good' %}info{% else %}mutep{% endif %}">{{ summary.plan.status_label }}</span>
-            </div>
-            <div class="progress-line"><span style="width: {{ plan_progress.actual_percent }}%"></span></div>
-            <small>المتوقع {{ plan_progress.expected_percent }}%، والفعلي {{ plan_progress.actual_percent }}%{% if summary.plan.target %}<br>{{ summary.plan.target }}{% endif %}</small>
-          </div>
+        <div class="meta-strip">
+          <div class="meta-item"><small><i class="fas fa-mosque"></i> الحلقة</small><strong>{{ summary.halaqa_name }}</strong></div>
+          <div class="meta-item"><small><i class="fas fa-user-tie"></i> أستاذ الحلقة</small><strong>{{ summary.teacher }}</strong></div>
+          <div class="meta-item"><small><i class="fas fa-layer-group"></i> التصنيف</small><strong>{{ summary.category }}</strong></div>
+          <div class="meta-item"><small><i class="fas fa-clock"></i> آخر تحديث</small><strong>{{ summary.last_updated_display }}<br><span class="subtext">المصدر: {{ summary.last_updated_source }}</span></strong></div>
         </div>
       </div>
     </section>
 
-    <section class="cardx range-strip" aria-label="الفترة المعروضة">
-      <div>
-        <h3><i class="fas fa-calendar-days"></i> الفترة المعروضة</h3>
-        <div class="muted">{{ report_range.label }}</div>
+    <section class="range-card" aria-label="الفترة المعروضة">
+      <div class="range-top">
+        <div>
+          <div class="range-title"><i class="fas fa-calendar-days"></i> الفترة المعروضة</div>
+          <div class="subtext">{{ report_range.label }}</div>
+        </div>
+        <span class="pill mutep">{{ master_report.start }} إلى {{ master_report.end }}</span>
       </div>
-      <details>
-        <summary><i class="fas fa-sliders"></i> تغيير الفترة</summary>
-        <div class="range-panel">
-          <div class="chip-row">
-            <a class="chip {% if report_range.key == 'today' %}active{% endif %}" href="?range=today">اليوم</a>
-            <a class="chip {% if report_range.key == 'week' %}active{% endif %}" href="?range=week">هذا الأسبوع</a>
-            <a class="chip {% if report_range.key == 'month' %}active{% endif %}" href="?range=month">هذا الشهر</a>
+      <div class="range-panel">
+        <div class="chip-row">
+          <a class="chip {% if report_range.key == 'today' %}active{% endif %}" href="?range=today">اليوم</a>
+          <a class="chip {% if report_range.key == 'week' %}active{% endif %}" href="?range=week">الأسبوع</a>
+          <a class="chip {% if report_range.key == 'month' %}active{% endif %}" href="?range=month">الشهر</a>
+        </div>
+        <div class="filter-grid">
+          <form method="get" class="filter-box">
+            <input type="hidden" name="range" value="selected_month">
+            <div>
+              <label class="form-label small mb-1">شهر محدد</label>
+              <input type="month" class="form-control" name="month" value="{{ report_range.selected_month }}">
+            </div>
+            <button type="submit" class="btn btn-soft btn-primary-soft">عرض</button>
+          </form>
+          <form method="get" class="filter-box custom">
+            <input type="hidden" name="range" value="custom">
+            <div>
+              <label class="form-label small mb-1">من</label>
+              <input type="date" class="form-control" name="start_date" value="{{ report_range.start_value }}">
+            </div>
+            <div>
+              <label class="form-label small mb-1">إلى</label>
+              <input type="date" class="form-control" name="end_date" value="{{ report_range.end_value }}">
+            </div>
+            <button type="submit" class="btn btn-soft">تطبيق</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <nav class="section-tabs" aria-label="أقسام صفحة ولي الأمر" role="tablist">
+      <button type="button" class="tab-button active" data-panel="summaryPanel" role="tab" aria-selected="true">
+        <i class="fas fa-chart-simple"></i> الملخص
+      </button>
+      <button type="button" class="tab-button" data-panel="reportPanel" role="tab" aria-selected="false">
+        <i class="fas fa-file-lines"></i> التقرير
+      </button>
+    </nav>
+
+    <section class="page-panel" id="summaryPanel" role="tabpanel">
+      <div class="section-head">
+        <div>
+          <h2>ملخص بصري سريع</h2>
+          <p>أهم المؤشرات في بطاقات ورسوم خفيفة تناسب شاشة الهاتف.</p>
+        </div>
+        <span class="pill info">{{ report_range.label }}</span>
+      </div>
+
+      <div class="summary-grid">
+        <article class="metric-card">
+          <div class="metric-top">
+            <span class="metric-label">الحضور</span>
+            <span class="pill {% if summary.attendance_reference.status_code == 'present' %}ok{% elif summary.attendance_reference.status_code == 'excused' %}warn{% elif summary.attendance_reference.status_code == 'absent' %}bad{% else %}mutep{% endif %}">{{ summary.attendance_reference.status_label }}</span>
           </div>
-          <div class="filters-grid">
-            <form method="get" class="fbox">
-              <input type="hidden" name="range" value="selected_month">
-              <div class="w-100"><label class="form-label small mb-2">شهر محدد</label><input type="month" class="form-control" name="month" value="{{ report_range.selected_month }}"></div>
-              <button type="submit" class="btn btn-soft btn-primary-soft">عرض</button>
-            </form>
-            <form method="get" class="fbox">
-              <input type="hidden" name="range" value="custom">
-              <div class="w-100"><label class="form-label small mb-2">من</label><input type="date" class="form-control" name="start_date" value="{{ report_range.start_value }}"></div>
-              <div class="w-100"><label class="form-label small mb-2">إلى</label><input type="date" class="form-control" name="end_date" value="{{ report_range.end_value }}"></div>
-              <button type="submit" class="btn btn-soft">تطبيق</button>
-            </form>
+          <div class="metric-value">{{ summary.attendance_percentage }}%</div>
+          <div class="progress-line"><span style="width: {{ summary.attendance_percentage }}%"></span></div>
+          <p class="metric-note">حاضر {{ summary.attendance_reference.present }} من {{ summary.attendance_reference.total }} حتى {{ summary.attendance_reference.date }}.</p>
+        </article>
+
+        <article class="metric-card">
+          <div class="metric-top">
+            <span class="metric-label">التسميع</span>
+            <span class="pill {% if summary.latest_recitation.date %}ok{% else %}mutep{% endif %}">{{ summary.latest_recitation.evaluation_label }}</span>
+          </div>
+          <div class="metric-value">{{ summary.latest_recitation.surah|default:"لا يوجد بعد" }}</div>
+          <p class="metric-note">{% if summary.latest_recitation.date %}{% if summary.latest_recitation.range %}{{ summary.latest_recitation.range }} - {% endif %}{{ summary.latest_recitation.date }}{% if summary.latest_recitation.source %}<br>{{ summary.latest_recitation.source }}{% endif %}{% else %}سيظهر آخر تسميع هنا عند إدخاله من المعلم.{% endif %}</p>
+        </article>
+
+        <article class="metric-card">
+          <div class="metric-top">
+            <span class="metric-label">النقاط</span>
+            <span class="pill {% if summary.points.monthly_total > 0 %}ok{% elif summary.points.monthly_total < 0 %}bad{% else %}mutep{% endif %}">هذا الشهر</span>
+          </div>
+          <div class="metric-value">{{ summary.points.monthly_total }}</div>
+          <p class="metric-note">الرصيد الحالي {{ summary.points.current_total }} نقطة{% if summary.points.latest_date %}<br>آخر حركة: {{ summary.points.latest_value }} في {{ summary.points.latest_date }}{% endif %}</p>
+        </article>
+
+        <article class="metric-card">
+          <div class="metric-top">
+            <span class="metric-label">الواجب</span>
+            <span class="pill {% if summary.homework.status == 'evaluated' %}ok{% elif summary.homework.status == 'pending' %}warn{% elif summary.homework.status == 'assigned' %}info{% else %}mutep{% endif %}">{{ summary.homework.status_label }}</span>
+          </div>
+          <div class="metric-value">{% if summary.homework.assignment_type_label %}{{ summary.homework.assignment_type_label }}{% else %}{{ summary.homework.title }}{% endif %}</div>
+          <p class="metric-note">{{ summary.homework.detail_text }}{% if summary.homework.teacher_note %}<br>ملاحظة: {{ summary.homework.teacher_note }}{% endif %}</p>
+        </article>
+      </div>
+
+      <div class="chart-grid">
+        <article class="chart-card feature">
+          <div class="chart-top">
+            <div>
+              <h3><i class="fas fa-calendar-check"></i> حضور الطالب</h3>
+              <div class="subtext">توزيع الحضور داخل الفترة المحددة.</div>
+            </div>
+            <span class="pill info">{{ summary.attendance_percentage }}%</span>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="attendanceSummaryChart"></canvas>
+            <div class="empty" id="attendanceSummaryEmpty">لا توجد سجلات حضور داخل هذه الفترة.</div>
+          </div>
+          <div class="quick-note">
+            {% if summary.attendance_reference.note %}ملاحظة آخر حضور: {{ summary.attendance_reference.note }}{% else %}آخر حالة حضور: {{ summary.attendance_reference.status_label }}.{% endif %}
+          </div>
+        </article>
+
+        <article class="chart-card">
+          <div class="chart-top">
+            <div>
+              <h3><i class="fas fa-route"></i> التقدم العام</h3>
+              <div class="subtext">الخطة المتوقعة مقابل التقدم الفعلي.</div>
+            </div>
+            <span class="pill {% if summary.plan.badge_class == 'excellent' %}ok{% elif summary.plan.badge_class == 'warning' %}warn{% elif summary.plan.badge_class == 'good' %}info{% else %}mutep{% endif %}">{{ summary.plan.status_label }}</span>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="progressChart"></canvas>
+            <div class="empty" id="progressEmpty">لا توجد خطة نشطة أو بيانات كافية للعرض.</div>
+          </div>
+        </article>
+
+        <article class="chart-card">
+          <div class="chart-top">
+            <div>
+              <h3><i class="fas fa-star"></i> النقاط</h3>
+              <div class="subtext">الرصيد التراكمي داخل الفترة.</div>
+            </div>
+            <span class="pill {% if summary.points.monthly_total > 0 %}ok{% elif summary.points.monthly_total < 0 %}bad{% else %}mutep{% endif %}">{{ summary.points.monthly_total }}</span>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="pointsChart"></canvas>
+            <div class="empty" id="pointsEmpty">لا توجد حركة نقاط داخل هذه الفترة.</div>
+          </div>
+        </article>
+
+        <article class="chart-card">
+          <div class="chart-top">
+            <div>
+              <h3><i class="fas fa-book-open"></i> التسميع</h3>
+              <div class="subtext">عدد الآيات المسجلة يومياً.</div>
+            </div>
+            <span class="pill info">{{ summary.monthly_memorized_verses }} آية</span>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="recitationChart"></canvas>
+            <div class="empty" id="recitationEmpty">لا توجد بيانات تسميع داخل هذه الفترة.</div>
+          </div>
+        </article>
+      </div>
+
+      <div class="quick-note">
+        <strong>الخلاصة:</strong>
+        حضور الطالب {{ summary.attendance_percentage }}%، والواجب الحالي {{ summary.homework.status_label }}، واتجاه الأداء {{ summary.performance_trend.label }}.
+      </div>
+    </section>
+
+    <section class="page-panel" id="reportPanel" role="tabpanel" hidden>
+      <div class="section-head">
+        <div>
+          <h2>تقرير ولي الأمر</h2>
+          <p>التقرير الزمني الرئيسي بنفس معلوماته المهمة، لكن في مجموعات أبسط وأسهل للمراجعة.</p>
+        </div>
+        <span class="pill mutep">{{ master_report.label }}</span>
+      </div>
+
+      <section class="report-card" id="mainReportCard">
+        <h2><i class="fas fa-file-lines"></i> ملخص الفترة</h2>
+        <p class="subtext" id="mainReportIntro">من {{ master_report.start }} إلى {{ master_report.end }}: متابعة الحضور والتسميع والنقاط والواجب والخطة.</p>
+        <div class="report-grid">
+          <div class="report-line">
+            <span class="report-label">الحضور</span>
+            <span class="report-value">{{ master_report.attendance.percentage }}%</span>
+            <p class="report-note">حاضر {{ master_report.attendance.present }}، غياب {{ master_report.attendance.absent }}، معذور {{ master_report.attendance.excused }}</p>
+          </div>
+          <div class="report-line">
+            <span class="report-label">التسميع</span>
+            <span class="report-value">{{ master_report.memorization.verses_total }} آية</span>
+            <p class="report-note">{{ master_report.memorization.records }} سجل، أحدث تقييم: {{ master_report.memorization.latest_evaluation }}</p>
+          </div>
+          <div class="report-line">
+            <span class="report-label">النقاط</span>
+            <span class="report-value">{{ master_report.points.net_total }}</span>
+            <p class="report-note">الرصيد الحالي {{ master_report.points.current_total }}</p>
+          </div>
+          <div class="report-line">
+            <span class="report-label">الواجبات</span>
+            <span class="report-value">{{ master_report.homework.pending_count }}</span>
+            <p class="report-note">بانتظار التقييم، إسناد {{ master_report.homework.assigned_count }} وتقييم {{ master_report.homework.evaluated_count }}</p>
+          </div>
+          <div class="report-line">
+            <span class="report-label">الخطة</span>
+            <span class="report-value">{{ master_report.plan.status_label }}</span>
+            <p class="report-note">المتوقع {{ master_report.plan.expected_percent }}%، الفعلي {{ master_report.plan.actual_percent }}%</p>
+          </div>
+          <div class="report-line">
+            <span class="report-label">ملاحظات المعلم</span>
+            <span class="report-value">{{ master_report.teacher_notes_count }}</span>
+            <p class="report-note">تظهر التفاصيل في المجموعات أدناه.</p>
+          </div>
+        </div>
+        <div class="action-row report-actions">
+          <button type="button" class="btn btn-soft btn-primary-soft" id="printReportBtn"><i class="fas fa-print"></i> طباعة / PDF</button>
+          <button type="button" class="btn btn-soft" id="downloadReportBtn"><i class="fas fa-file-arrow-down"></i> تنزيل النص</button>
+          <button type="button" class="btn btn-soft" id="copyReportBtn"><i class="fas fa-copy"></i> نسخ التقرير</button>
+        </div>
+      </section>
+
+      <details class="report-group" open>
+        <summary><span><i class="fas fa-clock-rotate-left"></i> أيام الفترة</span><span class="pill mutep">{{ timeline_entries|length }} يوم</span></summary>
+        <div class="group-body">
+          {% if timeline_entries %}
+          <div class="detail-grid">
+            {% for entry in timeline_entries %}
+            <article class="day-card">
+              <div class="day-head">
+                <div class="day-title">{{ entry.display_date }}</div>
+                <div class="tags">
+                  {% if entry.attendance %}<span class="tag"><i class="fas fa-user-check"></i> {{ entry.attendance }}</span>{% endif %}
+                  {% if entry.points %}<span class="tag"><i class="fas fa-star"></i> {{ entry.points_total }} نقطة</span>{% endif %}
+                  {% if entry.memorization %}<span class="tag"><i class="fas fa-book-open"></i> {{ entry.memorization_count }} تسميع</span>{% endif %}
+                  {% if entry.homework %}<span class="tag"><i class="fas fa-clipboard-list"></i> {{ entry.homework_count }} واجب</span>{% endif %}
+                </div>
+              </div>
+              <div class="timeline-grid">
+                <div class="block">
+                  <h4>الحضور</h4>
+                  <ul class="clean-list">
+                    <li>{% if entry.attendance %}{{ entry.attendance }}{% else %}لا يوجد تسجيل حضور.{% endif %}</li>
+                    {% if entry.attendance_source %}<li>{{ entry.attendance_source }}</li>{% endif %}
+                    {% if entry.attendance_note %}<li>{{ entry.attendance_note }}</li>{% endif %}
+                    {% if entry.session_note %}<li>{{ entry.session_note }}</li>{% endif %}
+                  </ul>
+                </div>
+                <div class="block">
+                  <h4>الحفظ والواجب</h4>
+                  <ul class="clean-list">
+                    {% for item in entry.memorization %}
+                    <li>{{ item.surah }}{% if item.range %} ({{ item.range }}){% endif %} - {{ item.evaluation }}{% if item.source %} - {{ item.source }}{% endif %}</li>
+                    {% empty %}
+                    <li>لا يوجد تسميع.</li>
+                    {% endfor %}
+                    {% for item in entry.homework %}
+                    <li>{{ item.title }}: {{ item.text }}{% if item.note %} - {{ item.note }}{% endif %}</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+                <div class="block">
+                  <h4>نقاط وملاحظات</h4>
+                  <ul class="clean-list">
+                    {% for item in entry.points %}
+                    <li>{{ item.value }} نقطة - {{ item.reason }}</li>
+                    {% empty %}
+                    <li>لا توجد نقاط.</li>
+                    {% endfor %}
+                    {% for note in entry.notes %}<li>{{ note.source }}: {{ note.text }}</li>{% endfor %}
+                    {% for item in entry.plans %}<li>{{ item.title }}: {{ item.target }}</li>{% endfor %}
+                  </ul>
+                </div>
+              </div>
+            </article>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="empty-state">لا توجد أحداث مسجلة داخل هذا النطاق الزمني.</div>
+          {% endif %}
+        </div>
+      </details>
+
+      <details class="report-group">
+        <summary><span><i class="fas fa-calendar-check"></i> الحضور</span><span class="pill info">{{ attendance_rows|length }} سجل</span></summary>
+        <div class="group-body">
+          {% if attendance_rows %}
+          <div class="detail-grid">
+            {% for attendance in attendance_rows %}
+            <article class="detail-card">
+              <div class="detail-top"><span class="detail-title">{{ attendance.session.date|date:"Y-m-d" }}</span><span class="pill {% if attendance.status == 'present' %}ok{% elif attendance.status == 'excused' %}warn{% elif attendance.status == 'absent' %}bad{% else %}mutep{% endif %}">{{ attendance.get_status_display }}</span></div>
+              <small>{{ attendance.source_label|default:"المصدر غير محدد" }}</small>
+              <div class="subtext">{{ attendance.notes|default:attendance.session.notes|default:"لا توجد ملاحظة." }}</div>
+            </article>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="empty-state">لا توجد بيانات حضور ضمن النطاق المحدد.</div>
+          {% endif %}
+        </div>
+      </details>
+
+      <details class="report-group">
+        <summary><span><i class="fas fa-microphone-lines"></i> التسميع</span><span class="pill info">{{ memorization_rows|length }} سجل</span></summary>
+        <div class="group-body">
+          {% if memorization_rows %}
+          <div class="detail-grid">
+            {% for record in memorization_rows %}
+            <article class="detail-card">
+              <div class="detail-top"><span class="detail-title">{{ record.recitation_title }}</span><span class="pill {% if record.evaluation %}ok{% else %}mutep{% endif %}">{% if record.evaluation %}{{ record.get_evaluation_display }}{% else %}بدون تقييم{% endif %}</span></div>
+              <small>{{ record.date|date:"Y-m-d" }}{% if record.recitation_range %} - {{ record.recitation_range }}{% endif %}{% if record.verses_count %} - {{ record.verses_count }} آية{% endif %}</small>
+              <div class="subtext">{{ record.get_recitation_type_display }}{% if record.notes %}<br>{{ record.notes }}{% endif %}</div>
+            </article>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="empty-state">لا توجد سجلات تسميع ضمن هذا النطاق.</div>
+          {% endif %}
+        </div>
+      </details>
+
+      <details class="report-group">
+        <summary><span><i class="fas fa-clipboard-list"></i> الواجبات</span><span class="pill info">{{ homework_rows|length }} واجب</span></summary>
+        <div class="group-body">
+          {% if homework_rows %}
+          <div class="detail-grid">
+            {% for homework in homework_rows %}
+            <article class="detail-card">
+              <div class="detail-top">
+                <span class="detail-title">{{ homework.get_assignment_type_display }}: {{ homework.assignment_text }}</span>
+                <span class="pill {% if homework.evaluation_date %}ok{% else %}warn{% endif %}">{% if homework.evaluation_date %}تم التقييم{% else %}بانتظار التقييم{% endif %}</span>
+              </div>
+              <small>إسناد {{ homework.assigned_date|date:"Y-m-d" }}{% if homework.expected_recitation_date %} - تسميع متوقع {{ homework.expected_recitation_date|date:"Y-m-d" }}{% endif %}{% if homework.evaluation_date %} - تقييم {{ homework.evaluation_date|date:"Y-m-d" }}{% endif %}</small>
+              <div class="subtext">{% if homework.evaluation %}{{ homework.get_evaluation_display }}{% endif %}{% if homework.evaluation_notes or homework.assignment_notes %}<br>{{ homework.evaluation_notes|default:homework.assignment_notes }}{% endif %}</div>
+            </article>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="empty-state">لا توجد واجبات مرتبطة بهذا النطاق.</div>
+          {% endif %}
+        </div>
+      </details>
+
+      <details class="report-group">
+        <summary><span><i class="fas fa-star"></i> النقاط</span><span class="pill info">{{ points_rows|length }} حركة</span></summary>
+        <div class="group-body">
+          {% if points_rows %}
+          <div class="detail-grid">
+            {% for point in points_rows %}
+            <article class="detail-card">
+              <div class="detail-top"><span class="detail-title">{{ point.reason }}</span><span class="pill {% if point.value > 0 %}ok{% elif point.value < 0 %}bad{% else %}mutep{% endif %}">{{ point.value }} نقطة</span></div>
+              <small>{{ point.date|date:"Y-m-d H:i" }}</small>
+            </article>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="empty-state">لا توجد نقاط مسجلة ضمن النطاق المحدد.</div>
+          {% endif %}
+        </div>
+      </details>
+
+      <details class="report-group">
+        <summary><span><i class="fas fa-route"></i> الخطة والملاحظات</span><span class="pill info">{{ teacher_notes|length }} ملاحظة</span></summary>
+        <div class="group-body">
+          <div class="detail-grid">
+            {% for plan in plan_rows %}
+            <article class="detail-card">
+              <div class="detail-top"><span class="detail-title">{{ plan.target }}</span><span class="pill {% if plan.is_completed %}ok{% else %}info{% endif %}">{% if plan.is_completed %}مكتملة{% else %}قيد المتابعة{% endif %}</span></div>
+              <small>{{ plan.start_date|date:"Y-m-d" }} إلى {{ plan.end_date|date:"Y-m-d" }}</small>
+              <div class="subtext">{{ plan.notes|default:"لا توجد ملاحظة للخطة." }}</div>
+            </article>
+            {% empty %}
+            <div class="empty-state">لا توجد خطط مرتبطة بالفترة الحالية.</div>
+            {% endfor %}
+            {% for note in teacher_notes %}
+            <article class="detail-card">
+              <div class="detail-top"><span class="detail-title">{{ note.source }}</span><span class="pill mutep">{{ note.date|date:"Y-m-d" }}</span></div>
+              <div class="subtext">{{ note.text }}</div>
+            </article>
+            {% empty %}
+            <div class="empty-state">لا توجد ملاحظات معلم متاحة داخل هذا النطاق.</div>
+            {% endfor %}
           </div>
         </div>
       </details>
     </section>
-
-    <div class="section-panels" id="sectionPanels">
-      <section class="section-panel" id="overviewPanel" role="tabpanel" aria-labelledby="section-tab-overview">
-        <div class="quick-read">
-          <article class="cardx summary-card">
-            <h2><i class="fas fa-compass"></i> الخلاصة الآن</h2>
-            <p class="summary-sentence">حضور الطالب {{ summary.attendance_percentage }}%، وآخر تقييم للتسميع هو {{ summary.latest_recitation.evaluation_label }}، والواجب الحالي {{ summary.homework.status_label }}، والخطة {{ summary.plan.status_label }}.</p>
-            <div class="signal-row">
-              <span class="signal"><i class="fas fa-calendar-check"></i> الحضور {{ summary.attendance_percentage }}%</span>
-              <span class="signal"><i class="fas fa-star"></i> نقاط الشهر {{ summary.points.monthly_total }}</span>
-              <span class="signal"><i class="fas fa-book-open"></i> {{ summary.monthly_memorized_verses }} آية هذا الشهر</span>
-            </div>
-          </article>
-          <article class="cardx attention-card">
-            <h3><i class="fas fa-heart"></i> ما الذي أتابعه؟</h3>
-            <div class="muted">أهم الإشارات التي تحتاج انتباه ولي الأمر.</div>
-            <ul class="attention-list">
-              {% if summary.attendance_percentage < 80 %}<li><i class="fas fa-circle-exclamation"></i> الحضور أقل من 80%، ويستحق متابعة هادئة مع الطالب.</li>{% endif %}
-              {% if summary.homework.status == 'pending' or summary.homework.status == 'assigned' %}<li><i class="fas fa-clipboard-list"></i> يوجد واجب يحتاج إنجازاً أو انتظار تقييم المعلم.</li>{% endif %}
-              {% if summary.plan.badge_class == 'warning' %}<li><i class="fas fa-route"></i> التقدم الفعلي في الخطة خلف المتوقع، ويحتاج مراجعة قصيرة ومنتظمة.</li>{% endif %}
-              {% if not summary.latest_recitation.date %}<li><i class="fas fa-book-open"></i> لا يوجد تسميع مسجل بعد، وسيظهر هنا فور إدخاله من المعلم.</li>{% endif %}
-              <li><i class="fas fa-seedling"></i> أفضل دعم يومي: مراجعة قصيرة، نوم جيد، وسؤال لطيف عن واجب اليوم.</li>
-            </ul>
-          </article>
-        </div>
-
-        <div class="parent-card-grid">
-          <article class="cardx parent-status-card">
-            <h3><i class="fas fa-calendar-check"></i> الحضور</h3>
-            <span class="big">{{ summary.attendance_percentage }}%</span>
-            <span class="pill {% if summary.attendance_reference.status_code == 'present' %}ok{% elif summary.attendance_reference.status_code == 'excused' %}warn{% elif summary.attendance_reference.status_code == 'absent' %}bad{% else %}mutep{% endif %}">{{ summary.attendance_reference.status_label }}</span>
-            <span class="brief">حاضر {{ summary.attendance_reference.present }} من {{ summary.attendance_reference.total }} حتى {{ summary.attendance_reference.date }}.{% if summary.attendance_reference.note %}<br>ملاحظة: {{ summary.attendance_reference.note }}{% endif %}{% if summary.attendance_reference.source_label %}<br>{{ summary.attendance_reference.source_label }}{% endif %}</span>
-          </article>
-          <article class="cardx parent-status-card">
-            <h3><i class="fas fa-microphone-lines"></i> التسميع</h3>
-            <span class="big">{{ summary.latest_recitation.evaluation_label }}</span>
-            <span class="pill {% if summary.latest_recitation.date %}ok{% else %}mutep{% endif %}">{{ summary.latest_recitation.surah|default:"لا يوجد بعد" }}</span>
-            <span class="brief">{% if summary.latest_recitation.date %}{% if summary.latest_recitation.range %}{{ summary.latest_recitation.range }} في {% endif %}{{ summary.latest_recitation.date }}، وعدد الآيات {{ summary.latest_recitation.verses_count }}.{% if summary.latest_recitation.source %}<br>{{ summary.latest_recitation.source }}{% endif %}{% else %}سيظهر آخر تسميع هنا عند إدخاله من المعلم.{% endif %}</span>
-          </article>
-          <article class="cardx parent-status-card">
-            <h3><i class="fas fa-clipboard-list"></i> الواجب</h3>
-            <span class="big">{{ summary.homework.status_label }}</span>
-            <span class="pill {% if summary.homework.status == 'evaluated' %}ok{% elif summary.homework.status == 'pending' %}warn{% elif summary.homework.status == 'assigned' %}info{% else %}mutep{% endif %}">{% if summary.homework.assignment_type_label %}{{ summary.homework.assignment_type_label }}{% else %}{{ summary.homework.title }}{% endif %}</span>
-            <span class="brief">{{ summary.homework.detail_text }}{% if summary.homework.teacher_note %}<br>ملاحظة: {{ summary.homework.teacher_note }}{% endif %}</span>
-          </article>
-          <article class="cardx parent-status-card">
-            <h3><i class="fas fa-route"></i> الخطة</h3>
-            <span class="big">{{ summary.plan.status_label }}</span>
-            <div class="progress-line"><span style="width: {{ summary.plan.actual_percent }}%"></span></div>
-            <span class="brief">المتوقع {{ summary.plan.expected_percent }}%، والفعلي {{ summary.plan.actual_percent }}%{% if summary.plan.target %}<br>{{ summary.plan.target }}{% endif %}</span>
-          </article>
-          <article class="cardx parent-status-card">
-            <h3><i class="fas fa-star"></i> النقاط</h3>
-            <span class="big">{{ summary.points.monthly_total }}</span>
-            <span class="pill {% if summary.points.monthly_total > 0 %}ok{% elif summary.points.monthly_total < 0 %}bad{% else %}mutep{% endif %}">هذا الشهر</span>
-            <span class="brief">الرصيد الحالي {{ summary.points.current_total }} نقطة{% if summary.points.latest_date %}<br>آخر حركة: {{ summary.points.latest_value }} في {{ summary.points.latest_date }}{% endif %}</span>
-          </article>
-          <article class="cardx parent-status-card">
-            <h3><i class="{{ summary.performance_trend.icon }}"></i> الاتجاه العام</h3>
-            <span class="big">{{ summary.performance_trend.label }}</span>
-            <span class="pill {{ summary.performance_trend.badge_class }}">{{ summary.performance_trend.recent_label }}</span>
-            <span class="brief">{{ summary.performance_trend.signal_summary }}</span>
-          </article>
-        </div>
-      </section>
-
-      <section class="section-panel" id="progressPanel" role="tabpanel" aria-labelledby="section-tab-progress" hidden>
-        <div class="section-head">
-          <div>
-            <h2><i class="fas fa-chart-line"></i> التقدم</h2>
-            <p>رسوم أكبر وأوضح لأهم ما يهم ولي الأمر داخل الفترة المحددة.</p>
-          </div>
-          <span class="pill mutep">{{ report_range.label }}</span>
-        </div>
-        <div class="progress-grid">
-          <article class="chart-card">
-            <div class="chart-top">
-              <div><h3><i class="fas fa-calendar-check"></i> الحضور</h3><div class="chart-sub">كل عمود يوضح حالة يوم مسجل في الحلقة.</div></div>
-              <span class="pill info">{{ summary.attendance_percentage }}%</span>
-            </div>
-            <div class="canvas-wrap"><canvas id="attendanceChart"></canvas><div class="empty" id="attendanceChartEmpty">لا توجد سجلات حضور داخل هذه الفترة.</div></div>
-          </article>
-          <article class="chart-card">
-            <div class="chart-top">
-              <div><h3><i class="fas fa-book-open"></i> الحفظ والتسميع</h3><div class="chart-sub">عدد الآيات المسجلة يومياً داخل الفترة.</div></div>
-              <span class="pill info">{{ summary.monthly_memorized_verses }} آية هذا الشهر</span>
-            </div>
-            <div class="canvas-wrap"><canvas id="memorizationChart"></canvas><div class="empty" id="memorizationChartEmpty">لا توجد بيانات تسميع كافية داخل هذه الفترة.</div></div>
-          </article>
-          <article class="chart-card">
-            <div class="chart-top">
-              <div><h3><i class="fas fa-star"></i> النقاط</h3><div class="chart-sub">الرصيد التراكمي للنقاط داخل الفترة المحددة.</div></div>
-              <span class="pill {% if summary.points.monthly_total > 0 %}ok{% elif summary.points.monthly_total < 0 %}bad{% else %}mutep{% endif %}">{{ summary.points.monthly_total }} هذا الشهر</span>
-            </div>
-            <div class="canvas-wrap"><canvas id="pointsChart"></canvas><div class="empty" id="pointsChartEmpty">لا توجد حركة نقاط داخل هذه الفترة.</div></div>
-          </article>
-          <article class="chart-card">
-            <div class="chart-top">
-              <div><h3><i class="fas fa-clipboard-list"></i> الواجب</h3><div class="chart-sub">الواجبات المسندة والمقيمة خلال الفترة.</div></div>
-              <span class="pill {% if summary.homework.status == 'evaluated' %}ok{% elif summary.homework.status == 'pending' %}warn{% elif summary.homework.status == 'assigned' %}info{% else %}mutep{% endif %}">{{ summary.homework.status_label }}</span>
-            </div>
-            <div class="canvas-wrap"><canvas id="homeworkChart"></canvas><div class="empty" id="homeworkChartEmpty">لا توجد أحداث واجبات داخل هذه الفترة.</div></div>
-          </article>
-          <article class="chart-card wide">
-            <div class="chart-top">
-              <div><h3><i class="fas fa-route"></i> الخطة: المتوقع مقابل الفعلي</h3><div class="chart-sub">مقارنة مبسطة لتقدم الخطة النشطة.</div></div>
-              <span class="pill {% if plan_progress.badge_class == 'excellent' %}ok{% elif plan_progress.badge_class == 'warning' %}warn{% elif plan_progress.badge_class == 'good' %}info{% else %}mutep{% endif %}">{{ plan_progress.status_label }}</span>
-            </div>
-            <div class="canvas-wrap"><canvas id="planChart"></canvas><div class="empty" id="planChartEmpty">لا توجد خطة نشطة أو لا توجد بيانات كافية للعرض.</div></div>
-          </article>
-        </div>
-        <div class="progress-notes">
-          <article class="cardx detail-card">
-            <div class="detail-top"><h3>آخر تسميع</h3><span class="pill {% if summary.latest_recitation.date %}ok{% else %}mutep{% endif %}">{{ summary.latest_recitation.evaluation_label }}</span></div>
-            <p class="section-copy">{% if summary.latest_recitation.date %}{{ summary.latest_recitation.surah }}{% if summary.latest_recitation.range %}، {{ summary.latest_recitation.range }}{% endif %} في {{ summary.latest_recitation.date }}.{% else %}لا يوجد تسميع مسجل بعد.{% endif %}</p>
-          </article>
-          <article class="cardx detail-card">
-            <div class="detail-top"><h3>اتجاه الحفظ</h3><span class="pill {{ summary.memorization_trend.badge_class }}"><i class="{{ summary.memorization_trend.icon }}"></i> {{ summary.memorization_trend.label }}</span></div>
-            <p class="section-copy">{{ summary.memorization_trend.signal_summary }}</p>
-          </article>
-          <article class="cardx detail-card">
-            <div class="detail-top"><h3>الخطة الحالية</h3><span class="pill {% if summary.plan.badge_class == 'excellent' %}ok{% elif summary.plan.badge_class == 'warning' %}warn{% elif summary.plan.badge_class == 'good' %}info{% else %}mutep{% endif %}">{{ summary.plan.status_label }}</span></div>
-            <p class="section-copy">{% if summary.plan.target %}{{ summary.plan.target }}<br>{{ summary.plan.date_range }}{% else %}لا توجد خطة نشطة حالياً.{% endif %}</p>
-          </article>
-        </div>
-      </section>
-
-      <section class="section-panel" id="reportsPanel" role="tabpanel" aria-labelledby="section-tab-reports" hidden>
-        <div class="section-head">
-          <div>
-            <h2><i class="fas fa-file-lines"></i> التقرير</h2>
-            <p>ملخص قابل للنسخ أو الطباعة، مع التفاصيل مخفية لمن يحتاج مراجعة أعمق.</p>
-          </div>
-          <span class="pill mutep">{{ master_report.label }}</span>
-        </div>
-
-        <section class="report-card" id="mainReportCard">
-          <div class="report-head">
-            <div class="report-copy">
-              <h2><i class="fas fa-file-lines"></i> ملخص الفترة</h2>
-              <div class="muted" id="mainReportIntro">من {{ master_report.start }} إلى {{ master_report.end }}: نسخة مبسطة من التقرير الزمني الرئيسي لأهم ما يخص الحضور والتسميع والنقاط والواجب والخطة.</div>
-            </div>
-            <div class="report-actions">
-              <span class="pill mutep" id="reportRangeBadge">{{ master_report.label }}</span>
-              <div class="report-button-group">
-                <button type="button" class="btn btn-soft btn-primary-soft" id="printReportBtn"><i class="fas fa-print"></i> طباعة / PDF</button>
-                <button type="button" class="btn btn-soft" id="downloadReportBtn"><i class="fas fa-file-arrow-down"></i> تنزيل النص</button>
-                <button type="button" class="btn btn-soft" id="copyReportBtn"><i class="fas fa-copy"></i> نسخ التقرير</button>
-              </div>
-            </div>
-          </div>
-          <div class="report-print-only">تم تجهيز التقرير للطباعة مع التركيز على الملخص والخط الزمني.</div>
-          <div class="kpi-grid">
-            <div class="kpi"><small>الحضور</small><strong>{{ master_report.attendance.percentage }}%</strong><span>حاضر {{ master_report.attendance.present }}، غياب {{ master_report.attendance.absent }}، معذور {{ master_report.attendance.excused }}</span></div>
-            <div class="kpi"><small>التسميع</small><strong>{{ master_report.memorization.verses_total }}</strong><span>{{ master_report.memorization.records }} سجل، وأحدث تقييم: {{ master_report.memorization.latest_evaluation }}</span></div>
-            <div class="kpi"><small>النقاط</small><strong>{{ master_report.points.net_total }}</strong><span>الرصيد الحالي {{ master_report.points.current_total }}</span></div>
-            <div class="kpi"><small>الواجبات</small><strong>{{ master_report.homework.pending_count }}</strong><span>بانتظار التقييم، إسناد {{ master_report.homework.assigned_count }} وتقييم {{ master_report.homework.evaluated_count }}</span></div>
-            <div class="kpi"><small>الخطة</small><strong>{{ master_report.plan.status_label }}</strong><span>المتوقع {{ master_report.plan.expected_percent }}%، الفعلي {{ master_report.plan.actual_percent }}%</span></div>
-            <div class="kpi"><small>ملاحظات المعلم</small><strong>{{ master_report.teacher_notes_count }}</strong><span>تظهر التفاصيل عند فتح السجلات أدناه.</span></div>
-          </div>
-        </section>
-
-        <details class="report-disclosure">
-          <summary><span><i class="fas fa-clock-rotate-left"></i> عرض أيام الفترة</span><span class="pill mutep">{{ timeline_entries|length }} يوم</span></summary>
-          <div class="report-disclosure-body">
-            {% if timeline_entries %}
-            <div class="timeline-list">
-              {% for entry in timeline_entries %}
-              <article class="day">
-                <div class="day-head">
-                  <div class="day-title">{{ entry.display_date }}</div>
-                  <div class="tags">
-                    {% if entry.attendance %}<span class="tag"><i class="fas fa-user-check"></i> {{ entry.attendance }}</span>{% endif %}
-                    {% if entry.points %}<span class="tag"><i class="fas fa-star"></i> {{ entry.points_total }} نقطة</span>{% endif %}
-                    {% if entry.memorization %}<span class="tag"><i class="fas fa-book-open"></i> {{ entry.memorization_count }} تسميع</span>{% endif %}
-                    {% if entry.homework %}<span class="tag"><i class="fas fa-clipboard-list"></i> {{ entry.homework_count }} واجب</span>{% endif %}
-                  </div>
-                </div>
-                <div class="timeline-grid">
-                  <div class="block"><h5>الحضور</h5><ul><li>{% if entry.attendance %}{{ entry.attendance }}{% else %}لا يوجد تسجيل حضور.{% endif %}</li>{% if entry.attendance_source %}<li>{{ entry.attendance_source }}</li>{% endif %}{% if entry.attendance_note %}<li>{{ entry.attendance_note }}</li>{% endif %}{% if entry.session_note %}<li>{{ entry.session_note }}</li>{% endif %}</ul></div>
-                  <div class="block"><h5>الحفظ والواجب</h5><ul>{% for item in entry.memorization %}<li>{{ item.surah }}{% if item.range %} ({{ item.range }}){% endif %} - {{ item.evaluation }}{% if item.source %} - {{ item.source }}{% endif %}</li>{% empty %}<li>لا يوجد تسميع.</li>{% endfor %}{% for item in entry.homework %}<li>{{ item.title }}: {{ item.text }}{% if item.note %} - {{ item.note }}{% endif %}</li>{% endfor %}</ul></div>
-                  <div class="block"><h5>نقاط وملاحظات</h5><ul>{% for item in entry.points %}<li>{{ item.value }} نقطة - {{ item.reason }}</li>{% empty %}<li>لا توجد نقاط.</li>{% endfor %}{% for note in entry.notes %}<li>{{ note.source }}: {{ note.text }}</li>{% endfor %}{% for item in entry.plans %}<li>{{ item.title }}: {{ item.target }}</li>{% endfor %}</ul></div>
-                </div>
-              </article>
-              {% endfor %}
-            </div>
-            {% else %}
-            <div class="empty-state">لا توجد أحداث مسجلة داخل هذا النطاق الزمني.</div>
-            {% endif %}
-          </div>
-        </details>
-
-        <section class="report-card details-card" id="detailsReportCard">
-          <div class="report-head">
-            <div class="report-copy">
-              <h2><i class="fas fa-magnifying-glass-chart"></i> تفاصيل اختيارية</h2>
-              <div class="muted">هذه السجلات مخفية افتراضياً حتى لا تزاحم الخلاصة، لكنها تبقى متاحة عند الحاجة.</div>
-            </div>
-          </div>
-          <div class="accordion" id="detailsAccordion">
-            <div class="accordion-item" id="attendanceDetailsSection"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#attBox">تفاصيل الحضور</button></h2><div id="attBox" class="accordion-collapse collapse"><div class="accordion-body">{% if attendance_rows %}<div class="table-responsive"><table class="tablex table"><thead><tr><th>التاريخ</th><th>الحالة</th><th>المصدر</th><th>ملاحظة</th></tr></thead><tbody>{% for attendance in attendance_rows %}<tr><td>{{ attendance.session.date|date:"Y-m-d" }}</td><td>{{ attendance.get_status_display }}</td><td>{{ attendance.source_label|default:"—" }}</td><td>{{ attendance.notes|default:attendance.session.notes|default:"—" }}</td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty-state">لا توجد بيانات حضور ضمن النطاق المحدد.</div>{% endif %}</div></div></div>
-            <div class="accordion-item" id="memorizationDetailsSection"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#memBox">تفاصيل التسميع</button></h2><div id="memBox" class="accordion-collapse collapse"><div class="accordion-body">{% if memorization_rows %}<div class="table-responsive"><table class="tablex table"><thead><tr><th>التاريخ</th><th>المقدار</th><th>النطاق</th><th>التقييم</th><th>النوع</th></tr></thead><tbody>{% for record in memorization_rows %}<tr><td>{{ record.date|date:"Y-m-d" }}</td><td>{{ record.recitation_title }}</td><td>{% if record.recitation_range %}{{ record.recitation_range }}{% if record.verses_count %} ({{ record.verses_count }}){% endif %}{% else %}—{% endif %}</td><td>{% if record.evaluation %}{{ record.get_evaluation_display }}{% else %}بدون تقييم{% endif %}{% if record.notes %}<br>{{ record.notes }}{% endif %}</td><td>{{ record.get_recitation_type_display }}</td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty-state">لا توجد سجلات تسميع ضمن هذا النطاق.</div>{% endif %}</div></div></div>
-            <div class="accordion-item" id="homeworkDetailsSection"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#homeBox">تفاصيل الواجب</button></h2><div id="homeBox" class="accordion-collapse collapse"><div class="accordion-body">{% if homework_rows %}<div class="table-responsive"><table class="tablex table"><thead><tr><th>الواجب</th><th>الحالة</th><th>التواريخ</th><th>ملاحظة المعلم</th></tr></thead><tbody>{% for homework in homework_rows %}<tr><td>{{ homework.get_assignment_type_display }}: {{ homework.assignment_text }}</td><td>{% if homework.evaluation_date %}تم التقييم{% elif homework.assigned_date == report_range.end %}تم الإسناد{% else %}بانتظار التقييم{% endif %}{% if homework.evaluation %}<br>{{ homework.get_evaluation_display }}{% endif %}</td><td>إسناد {{ homework.assigned_date|date:"Y-m-d" }}{% if homework.expected_recitation_date %}<br>تسميع متوقع {{ homework.expected_recitation_date|date:"Y-m-d" }}{% endif %}{% if homework.evaluation_date %}<br>تقييم {{ homework.evaluation_date|date:"Y-m-d" }}{% endif %}</td><td>{{ homework.evaluation_notes|default:homework.assignment_notes|default:"—" }}</td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty-state">لا توجد واجبات مرتبطة بهذا النطاق.</div>{% endif %}</div></div></div>
-            <div class="accordion-item" id="pointsDetailsSection"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pointsBox">تفاصيل النقاط</button></h2><div id="pointsBox" class="accordion-collapse collapse"><div class="accordion-body">{% if points_rows %}<div class="table-responsive"><table class="tablex table"><thead><tr><th>التاريخ</th><th>القيمة</th><th>السبب</th></tr></thead><tbody>{% for point in points_rows %}<tr><td>{{ point.date|date:"Y-m-d H:i" }}</td><td>{{ point.value }}</td><td>{{ point.reason }}</td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty-state">لا توجد نقاط مسجلة ضمن النطاق المحدد.</div>{% endif %}</div></div></div>
-            <div class="accordion-item" id="planDetailsSection"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#planBox">تفاصيل الخطة</button></h2><div id="planBox" class="accordion-collapse collapse"><div class="accordion-body">{% if plan_rows %}<div class="table-responsive"><table class="tablex table"><thead><tr><th>الفترة</th><th>الهدف</th><th>الحالة</th><th>ملاحظة</th></tr></thead><tbody>{% for plan in plan_rows %}<tr><td>{{ plan.start_date|date:"Y-m-d" }} إلى {{ plan.end_date|date:"Y-m-d" }}</td><td>{{ plan.target }}</td><td>{% if plan.is_completed %}مكتملة{% else %}نشطة أو قيد المتابعة{% endif %}</td><td>{{ plan.notes|default:"—" }}</td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty-state">لا توجد خطط مرتبطة بالفترة الحالية.</div>{% endif %}</div></div></div>
-            <div class="accordion-item" id="notesDetailsSection"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#notesBox">ملاحظات المعلم</button></h2><div id="notesBox" class="accordion-collapse collapse"><div class="accordion-body">{% if teacher_notes %}<div class="table-responsive"><table class="tablex table"><thead><tr><th>التاريخ</th><th>المصدر</th><th>النص</th></tr></thead><tbody>{% for note in teacher_notes %}<tr><td>{{ note.date|date:"Y-m-d" }}</td><td>{{ note.source }}</td><td>{{ note.text }}</td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty-state">لا توجد ملاحظات معلم متاحة داخل هذا النطاق.</div>{% endif %}</div></div></div>
-          </div>
-        </section>
-      </section>
-    </div>
 
     <div class="foot">معهد قباء لتحفيظ القرآن الكريم - لوحة متابعة ولي الأمر</div>
   </main>
@@ -465,60 +1176,191 @@
   {{ attendance_chart|json_script:"attendance-chart-data" }}
   {{ memorization_chart|json_script:"memorization-chart-data" }}
   {{ points_chart|json_script:"points-chart-data" }}
-  {{ homework_chart|json_script:"homework-chart-data" }}
   {{ plan_chart|json_script:"plan-chart-data" }}
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    function hasValues(values){return Array.isArray(values)&&values.some(v=>v!==null&&Number(v)!==0)}
-    function empty(canvasId,emptyId){const canvas=document.getElementById(canvasId);const emptyBox=document.getElementById(emptyId);if(canvas){canvas.style.display='none'}if(emptyBox){emptyBox.style.display='flex'}}
-    function chartContext(canvasId){const canvas=document.getElementById(canvasId);return canvas?canvas.getContext('2d'):null}
-    function lineChart(canvasId,emptyId,data,label,border,fill){const ctx=chartContext(canvasId);if(!ctx){return}if(!data.labels?.length||!hasValues(data.values)){empty(canvasId,emptyId);return}new Chart(ctx,{type:'line',data:{labels:data.labels,datasets:[{label:label,data:data.values,borderColor:border,backgroundColor:fill,fill:true,tension:.35,borderWidth:3,pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}})}
-    document.addEventListener('DOMContentLoaded',()=>{
-      const attendance=JSON.parse(document.getElementById('attendance-chart-data').textContent)
-      const memorization=JSON.parse(document.getElementById('memorization-chart-data').textContent)
-      const points=JSON.parse(document.getElementById('points-chart-data').textContent)
-      const homework=JSON.parse(document.getElementById('homework-chart-data').textContent)
-      const plan=JSON.parse(document.getElementById('plan-chart-data').textContent)
-      lineChart('memorizationChart','memorizationChartEmpty',memorization,'الآيات المسجلة','#31617F','rgba(49,97,127,.12)')
-      const attendanceCtx=chartContext('attendanceChart')
-      if(attendanceCtx){if(!attendance.labels?.length||!attendance.statuses?.some(status=>status!=='لا يوجد تسجيل')){empty('attendanceChart','attendanceChartEmpty')}else{new Chart(attendanceCtx,{type:'bar',data:{labels:attendance.labels,datasets:[{data:attendance.values,backgroundColor:attendance.colors,borderRadius:8,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(ctx)=>attendance.statuses[ctx.dataIndex]}}},scales:{y:{beginAtZero:true,max:100}}}})}}
-      lineChart('pointsChart','pointsChartEmpty',points,'الرصيد التراكمي للنقاط','#968960','rgba(150,137,96,.16)')
-      const homeworkCtx=chartContext('homeworkChart')
-      if(homeworkCtx){if(!homework.labels?.length||(!hasValues(homework.assigned)&&!hasValues(homework.evaluated))){empty('homeworkChart','homeworkChartEmpty')}else{new Chart(homeworkCtx,{type:'bar',data:{labels:homework.labels,datasets:[{label:'تم الإسناد',data:homework.assigned,backgroundColor:'rgba(33,150,243,.75)',borderRadius:8,borderSkipped:false},{label:'تم التقييم',data:homework.evaluated,backgroundColor:'rgba(76,175,80,.75)',borderRadius:8,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{stacked:true},y:{beginAtZero:true,stacked:true,ticks:{precision:0}}}}})}}
-      const planCtx=chartContext('planChart')
-      if(planCtx){if(!plan.labels?.length||(!hasValues(plan.expected)&&!hasValues(plan.actual))){empty('planChart','planChartEmpty')}else{new Chart(planCtx,{type:'line',data:{labels:plan.labels,datasets:[{label:'المتوقع',data:plan.expected,borderColor:'#968960',backgroundColor:'rgba(150,137,96,.10)',tension:.3,borderWidth:3,pointRadius:2},{label:'الفعلي',data:plan.actual,borderColor:'#0B3C54',backgroundColor:'rgba(11,60,84,.10)',tension:.3,borderWidth:3,pointRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},scales:{y:{beginAtZero:true,max:100}}}})}}
-    })
-  </script>
-  <script>
-    function cleanParentText(text){return String(text||'').replace(/\s+/g,' ').trim()}
-    async function copyParentText(text){try{await navigator.clipboard.writeText(text);return true}catch(error){window.prompt('انسخ النص يدوياً',text);return false}}
-    function setParentButtonFeedback(button,html){if(!button){return}if(!button.dataset.defaultHtml){button.dataset.defaultHtml=button.innerHTML}button.innerHTML=html;clearTimeout(button.feedbackTimer);button.feedbackTimer=setTimeout(()=>{button.innerHTML=button.dataset.defaultHtml},1800)}
-    function downloadParentTextFile(filename,text){const blob=new Blob([text],{type:'text/plain;charset=utf-8'});const url=URL.createObjectURL(blob);const link=document.createElement('a');link.href=url;link.download=filename;document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(url)}
-    function buildParentKpiText(){return Array.from(document.querySelectorAll('#mainReportCard .kpi')).map(item=>{const label=cleanParentText(item.querySelector('small')?.textContent);const value=cleanParentText(item.querySelector('strong')?.textContent);const description=cleanParentText(item.querySelector('span')?.textContent);return `${label}: ${value}${description?`\n${description}`:''}`}).join('\n\n')}
-    function buildParentTimelineText(){return Array.from(document.querySelectorAll('.report-disclosure .day')).map(day=>{const title=cleanParentText(day.querySelector('.day-title')?.textContent);const tags=Array.from(day.querySelectorAll('.tags .tag')).map(tag=>cleanParentText(tag.textContent)).join(' | ');const blocks=Array.from(day.querySelectorAll('.block')).map(block=>{const heading=cleanParentText(block.querySelector('h5')?.textContent);const items=Array.from(block.querySelectorAll('li')).map(item=>`- ${cleanParentText(item.textContent)}`).join('\n');return `${heading}\n${items}`}).join('\n\n');return `${title}${tags?`\n${tags}`:''}\n${blocks}`}).join('\n\n--------------------\n\n')}
-    function buildParentTableText(table){const headers=Array.from(table.querySelectorAll('thead th')).map(cell=>cleanParentText(cell.textContent));return Array.from(table.querySelectorAll('tbody tr')).map(row=>Array.from(row.cells).map((cell,index)=>`${headers[index]||`حقل ${index+1}`}: ${cleanParentText(cell.textContent)}`).join(' | ')).join('\n')}
-    function buildParentDetailsText(){return Array.from(document.querySelectorAll('#detailsAccordion .accordion-item')).map(section=>{const title=cleanParentText(section.querySelector('.accordion-button')?.textContent);const emptyState=section.querySelector('.empty-state');if(emptyState){return `${title}\n${cleanParentText(emptyState.textContent)}`}const table=section.querySelector('table');if(!table){return `${title}\nلا توجد بيانات إضافية.`}return `${title}\n${buildParentTableText(table)}`}).join('\n\n====================\n\n')}
-    function buildParentExportText(){const studentName=cleanParentText(document.querySelector('.title')?.textContent);const intro=cleanParentText(document.getElementById('mainReportIntro')?.textContent);const range=cleanParentText(document.getElementById('reportRangeBadge')?.textContent);const timeline=buildParentTimelineText();return [`تقرير ولي الأمر - ${studentName}`,range?`النطاق: ${range}`:'',intro,'الملخص الرئيسي',buildParentKpiText(),'أيام الفترة',timeline||'لا توجد أحداث مسجلة داخل هذا النطاق.','التفاصيل الاختيارية',buildParentDetailsText()].filter(Boolean).join('\n\n')}
-    function setFixedLayoutVariables(){const navbar=document.querySelector('.navbar');const sectionNavWrap=document.querySelector('.section-nav-wrap');const navHeight=navbar?Math.ceil(navbar.getBoundingClientRect().height):0;const sectionNavHeight=sectionNavWrap?Math.ceil(sectionNavWrap.getBoundingClientRect().height):0;document.documentElement.style.setProperty('--nav-h',`${navHeight}px`);document.documentElement.style.setProperty('--section-nav-h',`${sectionNavHeight}px`);document.documentElement.style.setProperty('--stack-offset',`${navHeight+sectionNavHeight+18}px`)}
-    function highlightSectionTarget(target){if(!target){return}target.classList.remove('section-focus');void target.offsetWidth;target.classList.add('section-focus');clearTimeout(target.sectionFocusTimer);target.sectionFocusTimer=setTimeout(()=>target.classList.remove('section-focus'),1800)}
-    function scrollPanelsIntoView(){const panelContainer=document.getElementById('sectionPanels');if(!panelContainer){return}const offset=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--stack-offset'),10)||160;const top=window.pageYOffset+panelContainer.getBoundingClientRect().top-offset;window.scrollTo({top:Math.max(top,0),behavior:'smooth'})}
-    function activateSectionPanel(panelId,{scrollIntoView=true,updateHash=true}={}){const buttons=Array.from(document.querySelectorAll('.section-link'));const panels=Array.from(document.querySelectorAll('.section-panel'));const panelAliases={overviewSection:'overviewPanel',attendanceSection:'progressPanel',attendancePanel:'progressPanel',memorizationSection:'progressPanel',memorizationPanel:'progressPanel',performanceSection:'progressPanel',performancePanel:'progressPanel',homeworkSection:'progressPanel',homeworkPanel:'progressPanel',planSection:'progressPanel',planPanel:'progressPanel',reportsSection:'reportsPanel'};const resolvedId=panelAliases[panelId]||panelId||'overviewPanel';const targetPanel=document.getElementById(resolvedId)||document.getElementById('overviewPanel');buttons.forEach(button=>{const active=button.dataset.panel===targetPanel.id;button.classList.toggle('active',active);button.setAttribute('aria-selected',active?'true':'false');if(active){button.scrollIntoView({behavior:'smooth',inline:'nearest',block:'nearest'})}});panels.forEach(panel=>{panel.hidden=panel!==targetPanel});highlightSectionTarget(targetPanel);if(scrollIntoView){scrollPanelsIntoView()}window.requestAnimationFrame(()=>window.dispatchEvent(new Event('resize')));if(updateHash&&window.history?.replaceState){const url=`${window.location.pathname}${window.location.search}#${targetPanel.id}`;window.history.replaceState(null,'',url)}}
-    document.addEventListener('DOMContentLoaded',()=>{
-      const copyReportBtn=document.getElementById('copyReportBtn')
-      const downloadReportBtn=document.getElementById('downloadReportBtn')
-      const printReportBtn=document.getElementById('printReportBtn')
-      const sectionNavButtons=Array.from(document.querySelectorAll('.section-link'))
-      const initialPanel=(window.location.hash||'').replace('#','')
-      setFixedLayoutVariables()
-      window.addEventListener('resize',setFixedLayoutVariables)
-      window.addEventListener('load',setFixedLayoutVariables)
-      sectionNavButtons.forEach(button=>button.addEventListener('click',()=>activateSectionPanel(button.dataset.panel)))
-      activateSectionPanel(initialPanel||'overviewPanel',{scrollIntoView:false,updateHash:Boolean(initialPanel)})
-      copyReportBtn?.addEventListener('click',async()=>{await copyParentText(buildParentExportText());setParentButtonFeedback(copyReportBtn,'<i class="fas fa-check"></i> تم النسخ')})
-      downloadReportBtn?.addEventListener('click',()=>{downloadParentTextFile('student-report.txt',buildParentExportText());setParentButtonFeedback(downloadReportBtn,'<i class="fas fa-check"></i> تم التنزيل')})
-      printReportBtn?.addEventListener('click',()=>{window.print()})
-    })
+    function valuesHaveData(values) {
+      return Array.isArray(values) && values.some((value) => Number(value) !== 0);
+    }
+
+    function showEmpty(canvasId, emptyId) {
+      const canvas = document.getElementById(canvasId);
+      const empty = document.getElementById(emptyId);
+      if (canvas) canvas.style.display = 'none';
+      if (empty) empty.style.display = 'flex';
+    }
+
+    function lineChart(canvasId, emptyId, data, label, color, fill) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      if (!data.labels?.length || !valuesHaveData(data.values)) {
+        showEmpty(canvasId, emptyId);
+        return;
+      }
+      new Chart(canvas.getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: data.labels,
+          datasets: [{
+            label,
+            data: data.values,
+            borderColor: color,
+            backgroundColor: fill,
+            fill: true,
+            tension: .35,
+            borderWidth: 3,
+            pointRadius: 3,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
+        }
+      });
+    }
+
+    function buildExportText() {
+      const lines = [];
+      lines.push(`تقرير ولي الأمر - {{ summary.student_name|escapejs }}`);
+      lines.push(`الفترة: {{ master_report.start|escapejs }} إلى {{ master_report.end|escapejs }}`);
+      lines.push('');
+      lines.push('ملخص الفترة');
+      document.querySelectorAll('#mainReportCard .report-line').forEach((line) => {
+        const label = line.querySelector('.report-label')?.textContent.trim() || '';
+        const value = line.querySelector('.report-value')?.textContent.trim() || '';
+        const note = line.querySelector('.report-note')?.textContent.trim() || '';
+        lines.push(`${label}: ${value}${note ? ' - ' + note : ''}`);
+      });
+      lines.push('');
+      lines.push('أيام الفترة');
+      document.querySelectorAll('.day-card').forEach((day) => {
+        lines.push(day.innerText.replace(/\s+\n/g, '\n').trim());
+        lines.push('---');
+      });
+      return lines.join('\n');
+    }
+
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (error) {
+        window.prompt('انسخ النص يدوياً', text);
+      }
+    }
+
+    function downloadText(filename, text) {
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function feedback(button, html) {
+      if (!button) return;
+      if (!button.dataset.defaultHtml) button.dataset.defaultHtml = button.innerHTML;
+      button.innerHTML = html;
+      clearTimeout(button.feedbackTimer);
+      button.feedbackTimer = setTimeout(() => {
+        button.innerHTML = button.dataset.defaultHtml;
+      }, 1600);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const attendanceChart = JSON.parse(document.getElementById('attendance-chart-data').textContent);
+      const memorizationChart = JSON.parse(document.getElementById('memorization-chart-data').textContent);
+      const pointsChart = JSON.parse(document.getElementById('points-chart-data').textContent);
+      const planChart = JSON.parse(document.getElementById('plan-chart-data').textContent);
+
+      const attendanceValues = [
+        Number('{{ summary.attendance_reference.present|default:0 }}'),
+        Number('{{ summary.attendance_reference.absent|default:0 }}'),
+        Number('{{ summary.attendance_reference.excused|default:0 }}')
+      ];
+      const attendanceCanvas = document.getElementById('attendanceSummaryChart');
+      if (!valuesHaveData(attendanceValues)) {
+        showEmpty('attendanceSummaryChart', 'attendanceSummaryEmpty');
+      } else {
+        new Chart(attendanceCanvas.getContext('2d'), {
+          type: 'doughnut',
+          data: {
+            labels: ['حاضر', 'غائب', 'معذور'],
+            datasets: [{
+              data: attendanceValues,
+              backgroundColor: ['rgba(76,175,80,.82)', 'rgba(244,67,54,.78)', 'rgba(255,193,7,.82)'],
+              borderColor: '#fff',
+              borderWidth: 3,
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom' } },
+            cutout: '62%',
+          }
+        });
+      }
+
+      const progressCanvas = document.getElementById('progressChart');
+      if (!planChart.labels?.length || (!valuesHaveData(planChart.expected) && !valuesHaveData(planChart.actual))) {
+        showEmpty('progressChart', 'progressEmpty');
+      } else {
+        new Chart(progressCanvas.getContext('2d'), {
+          type: 'line',
+          data: {
+            labels: planChart.labels,
+            datasets: [
+              { label: 'المتوقع', data: planChart.expected, borderColor: '#968960', backgroundColor: 'rgba(150,137,96,.08)', tension: .32, borderWidth: 3, pointRadius: 2 },
+              { label: 'الفعلي', data: planChart.actual, borderColor: '#0B3C54', backgroundColor: 'rgba(11,60,84,.08)', tension: .32, borderWidth: 3, pointRadius: 2 },
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom' } },
+            scales: { y: { beginAtZero: true, max: 100, ticks: { callback: (value) => `${value}%` } } },
+          }
+        });
+      }
+
+      lineChart('pointsChart', 'pointsEmpty', pointsChart, 'النقاط', '#968960', 'rgba(150,137,96,.14)');
+      lineChart('recitationChart', 'recitationEmpty', memorizationChart, 'الآيات', '#31617F', 'rgba(49,97,127,.12)');
+
+      document.querySelectorAll('.tab-button').forEach((button) => {
+        button.addEventListener('click', () => {
+          const targetId = button.dataset.panel;
+          document.querySelectorAll('.tab-button').forEach((item) => {
+            const active = item === button;
+            item.classList.toggle('active', active);
+            item.setAttribute('aria-selected', active ? 'true' : 'false');
+          });
+          document.querySelectorAll('.page-panel').forEach((panel) => {
+            panel.hidden = panel.id !== targetId;
+          });
+          window.requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
+        });
+      });
+
+      const copyButton = document.getElementById('copyReportBtn');
+      const downloadButton = document.getElementById('downloadReportBtn');
+      const printButton = document.getElementById('printReportBtn');
+      copyButton?.addEventListener('click', async () => {
+        await copyText(buildExportText());
+        feedback(copyButton, '<i class="fas fa-check"></i> تم النسخ');
+      });
+      downloadButton?.addEventListener('click', () => {
+        downloadText('student-report.txt', buildExportText());
+        feedback(downloadButton, '<i class="fas fa-check"></i> تم التنزيل');
+      });
+      printButton?.addEventListener('click', () => window.print());
+    });
   </script>
 </body>
 </html>
