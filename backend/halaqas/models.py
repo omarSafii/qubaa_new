@@ -359,6 +359,12 @@ class Session(models.Model):
 
 
 class Attendance(models.Model):
+    RECORDED_BY_ROLE_CHOICES = (
+        ("teacher", "أستاذ"),
+        ("supervisor", "موجه"),
+        ("admin", "أدمن"),
+    )
+
     session = models.ForeignKey(
         Session,
         on_delete=models.CASCADE,
@@ -378,6 +384,19 @@ class Attendance(models.Model):
         ),
     )
     notes = models.TextField(blank=True)
+    recorded_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="recorded_attendances",
+    )
+    recorded_by_role = models.CharField(
+        max_length=20,
+        choices=RECORDED_BY_ROLE_CHOICES,
+        blank=True,
+        default="",
+    )
 
     class Meta:
         unique_together = ("session", "student")

@@ -80,6 +80,14 @@ def _status_label(status):
     }.get(status, 'غير مسجل')
 
 
+def _attendance_source_label(attendance):
+    return {
+        'teacher': 'المصدر: الأستاذ',
+        'supervisor': 'المصدر: الموجه',
+        'admin': 'المصدر: الإدارة',
+    }.get(getattr(attendance, 'recorded_by_role', ''), '')
+
+
 def _homework_status(homework, reference_date):
     if not homework:
         return 'none'
@@ -543,6 +551,7 @@ def _build_timeline(start_date, end_date, attendance_records, point_transactions
         'display_date': '',
         'attendance': None,
         'attendance_note': '',
+        'attendance_source': '',
         'session_note': '',
         'points': [],
         'memorization': [],
@@ -567,6 +576,7 @@ def _build_timeline(start_date, end_date, attendance_records, point_transactions
         entry = ensure_entry(attendance.session.date)
         entry['attendance'] = _status_label(attendance.status)
         entry['attendance_note'] = attendance.notes
+        entry['attendance_source'] = _attendance_source_label(attendance)
         if attendance.notes:
             entry['notes'].append({'source': 'ملاحظة الحضور', 'text': attendance.notes})
 
@@ -643,7 +653,7 @@ def _build_teacher_notes(attendance_records, homeworks, plans, sessions, start_d
         if attendance.notes:
             notes.append({
                 'date': attendance.session.date,
-                'source': 'الحضور',
+                'source': _attendance_source_label(attendance) or 'الحضور',
                 'text': attendance.notes,
             })
     for homework in homeworks:
@@ -721,7 +731,7 @@ class StudentViewSet(
             attendance_qs = Attendance.objects.filter(
                 student=student,
                 session__halaqa=halaqa,
-            ).select_related('session').order_by('-session__date', '-id')
+            ).select_related('session', 'recorded_by').order_by('-session__date', '-id')
             points_qs = PointTransaction.objects.filter(
                 student=student,
                 halaqa=halaqa,
@@ -748,6 +758,8 @@ class StudentViewSet(
         all_plans = list(plans_qs)
         all_homeworks = list(homeworks_qs)
         all_sessions = list(sessions_qs)
+        for attendance in all_attendance:
+            attendance.source_label = _attendance_source_label(attendance)
 
         teacher_names = []
         if halaqa:
@@ -1018,6 +1030,7 @@ class StudentViewSet(
                 'status_label': attendance_on_reference.get_status_display() if attendance_on_reference else 'لا يوجد تسجيل',
                 'status_code': attendance_on_reference.status if attendance_on_reference else '',
                 'note': attendance_on_reference.notes if attendance_on_reference and attendance_on_reference.notes else '',
+                'source_label': _attendance_source_label(attendance_on_reference),
                 'session_note': current_session.notes if current_session and current_session.notes else '',
                 'present': overall_attendance['present'],
                 'absent': overall_attendance['absent'],

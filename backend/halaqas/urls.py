@@ -8,6 +8,7 @@ from .views import (
     TeacherPointViewSet,
     TeacherPlanViewSet,
     teacher_dashboard,
+    supervisor_dashboard,
     halaqa_detail,
     halaqa_share_view,
     halaqa_edit,
@@ -29,6 +30,7 @@ urlpatterns = [
     # واجهات HTML التقليدية
     path('admin-dashboard/',            master_admin_dashboard,   name='master_admin_dashboard'),
     path('admin-dashboard/export/',     master_admin_dashboard_export, name='master_admin_dashboard_export'),
+    path('supervisor/',                 supervisor_dashboard,     name='supervisor_dashboard'),
     path('dashboard/',                  teacher_dashboard,        name='teacher_dashboard'),
     path('halaqa/<int:pk>/',            halaqa_detail,            name='halaqa_detail'),
     path('halaqa/by-code/<str:join_code>/', halaqa_detail,       name='halaqa_by_code'),

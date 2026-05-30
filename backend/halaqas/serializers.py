@@ -91,10 +91,12 @@ class SessionSerializer(serializers.ModelSerializer):
 class AttendanceSerializer(serializers.ModelSerializer):
     session = serializers.PrimaryKeyRelatedField(queryset=Session.objects.all())
     student = serializers.PrimaryKeyRelatedField(queryset=Student.objects.all())
+    recorded_by = serializers.PrimaryKeyRelatedField(read_only=True)
+    recorded_by_role = serializers.CharField(read_only=True)
     
     class Meta:
         model = Attendance
-        fields = ['id', 'session', 'student', 'status', 'notes']
+        fields = ['id', 'session', 'student', 'status', 'notes', 'recorded_by', 'recorded_by_role']
 
 class PointTransactionSerializer(serializers.ModelSerializer):
     student = serializers.PrimaryKeyRelatedField(queryset=Student.objects.all())

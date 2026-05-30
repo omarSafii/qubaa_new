@@ -5,6 +5,7 @@ class Profile(models.Model):
     ROLE_CHOICES = (
         ('parent', 'ولي أمر'),
         ('teacher', 'أستاذ'),
+        ('supervisor', 'موجه'),
         ('admin', 'أدمن'),
     )
     user = models.OneToOneField(User, on_delete=models.CASCADE)

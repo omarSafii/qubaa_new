@@ -68,10 +68,10 @@ class SessionAdmin(admin.ModelAdmin):
 
 @admin.register(Attendance)
 class AttendanceAdmin(admin.ModelAdmin):
-    list_display = ['student', 'session', 'status']
-    list_filter = ['status', 'session__halaqa']
+    list_display = ['student', 'session', 'status', 'recorded_by_role', 'recorded_by']
+    list_filter = ['status', 'recorded_by_role', 'session__halaqa']
     search_fields = ['student__name']
-    raw_id_fields = ['student', 'session']
+    raw_id_fields = ['student', 'session', 'recorded_by']
 
 @admin.register(PointTransaction)
 class PointTransactionAdmin(admin.ModelAdmin):
