@@ -478,10 +478,13 @@ class HalaqaActionEndpointTests(TestCase):
     def test_create_endpoints_used_by_halaqa_detail_page(self):
         memorization_response = self.client.post(reverse('students:memorizationrecord-list'), data={
             'student': self.student.id,
+            'halaqa': self.halaqa.id,
+            'recitation_type': 'extra',
             'surah': 'البقرة',
             'from_verse': 1,
             'to_verse': 3,
             'evaluation': 'good',
+            'notes': 'تسميع إضافي',
             'is_approved': True,
         })
         attendance_response = self.client.post(reverse('halaqas:api:attendance-list'), data={
@@ -503,6 +506,11 @@ class HalaqaActionEndpointTests(TestCase):
         self.assertEqual(attendance_response.status_code, 201)
         self.assertEqual(plan_response.status_code, 201)
         self.assertEqual(MemorizationRecord.objects.filter(student=self.student).count(), 1)
+        memorization_record = MemorizationRecord.objects.get(student=self.student)
+        self.assertEqual(memorization_record.halaqa, self.halaqa)
+        self.assertEqual(memorization_record.recitation_type, 'extra')
+        self.assertIsNone(memorization_record.homework)
+        self.assertEqual(memorization_record.notes, 'تسميع إضافي')
         self.assertEqual(Attendance.objects.filter(student=self.student, session=self.session).count(), 1)
         self.assertEqual(Plan.objects.filter(student=self.student, halaqa=self.halaqa).count(), 1)
 
@@ -582,6 +590,24 @@ class HalaqaActionEndpointTests(TestCase):
         self.assertEqual(PointTransaction.objects.latest('id').date.date(), selected_date)
         self.assertEqual(MemorizationRecord.objects.latest('id').date, selected_date)
 
+    def test_extra_memorization_endpoint_accepts_page_only_recitation(self):
+        response = self.client.post(reverse('students:memorizationrecord-list'), data={
+            'student': self.student.id,
+            'halaqa': self.halaqa.id,
+            'recitation_type': 'extra',
+            'pages': '12-14',
+            'evaluation': 'excellent',
+            'notes': 'قرأ صفحات إضافية',
+            'is_approved': True,
+        })
+
+        self.assertEqual(response.status_code, 201)
+        record = MemorizationRecord.objects.get(student=self.student, pages='12-14')
+        self.assertEqual(record.recitation_type, 'extra')
+        self.assertEqual(record.halaqa, self.halaqa)
+        self.assertEqual(record.verses_count, 0)
+        self.assertEqual(record.notes, 'قرأ صفحات إضافية')
+
     def test_homework_create_and_evaluate_endpoints_support_detail_page_flow(self):
         assigned_date = timezone.localdate() - timedelta(days=1)
 
@@ -589,15 +615,33 @@ class HalaqaActionEndpointTests(TestCase):
             'student': self.student.id,
             'halaqa': self.halaqa.id,
             'assigned_date': assigned_date.isoformat(),
+            'expected_recitation_date': (assigned_date + timedelta(days=3)).isoformat(),
             'assignment_type': 'surah',
             'assignment_text': 'سورة الملك',
+            'surah': 'الملك',
+            'from_verse': 1,
+            'to_verse': 5,
             'assignment_notes': 'مراجعة مع الإتقان',
         })
 
         self.assertEqual(create_response.status_code, 201)
         homework = Homework.objects.get(student=self.student, halaqa=self.halaqa)
         self.assertEqual(homework.assigned_date, assigned_date)
+        self.assertEqual(homework.expected_recitation_date, assigned_date + timedelta(days=3))
         self.assertEqual(homework.assignment_text, 'سورة الملك')
+        self.assertEqual(homework.surah, 'الملك')
+
+        blocked_response = self.client.post(reverse('halaqas:api:homeworks-list'), data={
+            'student': self.student.id,
+            'halaqa': self.halaqa.id,
+            'assigned_date': timezone.localdate().isoformat(),
+            'assignment_type': 'pages',
+            'assignment_text': 'الصفحات 8-9',
+            'pages': '8-9',
+        })
+
+        self.assertEqual(blocked_response.status_code, 400)
+        self.assertIn('على الطالب واجب غير منجز', str(blocked_response.json()))
 
         evaluate_response = self.client.patch(
             reverse('halaqas:api:homeworks-detail', args=[homework.id]),
@@ -607,6 +651,12 @@ class HalaqaActionEndpointTests(TestCase):
                 'evaluation_date': timezone.localdate().isoformat(),
                 'evaluation': 'completed',
                 'evaluation_notes': 'تم الإنجاز',
+                'create_recitation_record': True,
+                'recitation_surah': 'الملك',
+                'recitation_from_verse': 1,
+                'recitation_to_verse': 5,
+                'recitation_evaluation': 'very_good',
+                'recitation_notes': 'تسميع الواجب',
             }),
             content_type='application/json',
         )
@@ -615,6 +665,16 @@ class HalaqaActionEndpointTests(TestCase):
         homework.refresh_from_db()
         self.assertEqual(homework.evaluation, 'completed')
         self.assertEqual(homework.evaluation_notes, 'تم الإنجاز')
+
+        linked_record = MemorizationRecord.objects.get(homework=homework)
+        self.assertEqual(linked_record.student, self.student)
+        self.assertEqual(linked_record.halaqa, self.halaqa)
+        self.assertEqual(linked_record.recitation_type, 'homework')
+        self.assertEqual(linked_record.surah, 'الملك')
+        self.assertEqual(linked_record.from_verse, 1)
+        self.assertEqual(linked_record.to_verse, 5)
+        self.assertEqual(linked_record.evaluation, 'very_good')
+        self.assertEqual(linked_record.notes, 'تسميع الواجب')
 
 
 class MasterAdminDashboardTests(TestCase):

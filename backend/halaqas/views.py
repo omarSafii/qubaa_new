@@ -175,6 +175,8 @@ def _build_homework_snapshot(homework, reference_date):
         detail_text = f'{homework.get_evaluation_display()} - {homework.evaluation_date.isoformat()}'
     else:
         detail_text = f'أُسند في {homework.assigned_date.isoformat()}'
+        if homework.expected_recitation_date:
+            detail_text = f'{detail_text}، التسميع المتوقع {homework.expected_recitation_date.isoformat()}'
 
     return {
         'id': homework.id,
@@ -183,9 +185,17 @@ def _build_homework_snapshot(homework, reference_date):
         'assignment_type': homework.assignment_type,
         'assignment_type_label': homework.get_assignment_type_display(),
         'assignment_text': homework.assignment_text,
+        'pages': homework.pages,
+        'surah': homework.surah,
+        'from_verse': homework.from_verse,
+        'to_verse': homework.to_verse,
         'assignment_notes': homework.assignment_notes,
         'assigned_date': homework.assigned_date,
         'assigned_date_iso': homework.assigned_date.isoformat(),
+        'expected_recitation_date': homework.expected_recitation_date,
+        'expected_recitation_date_iso': (
+            homework.expected_recitation_date.isoformat() if homework.expected_recitation_date else ''
+        ),
         'evaluation': homework.evaluation,
         'evaluation_label': homework.get_evaluation_display() if homework.evaluation else '',
         'evaluation_date': homework.evaluation_date,
@@ -268,7 +278,7 @@ def _build_daily_history(*, halaqa, student_ids, selected_date):
 
     for record in memorization_records:
         entry = ensure_entry(record.date)
-        label = f'{record.student.name}: تسميع {record.surah} {record.from_verse}-{record.to_verse}'
+        label = f'{record.student.name}: تسميع {record.recitation_title} {record.recitation_range}'.strip()
         if record.evaluation:
             label = f'{label} ({record.get_evaluation_display()})'
         entry['highlights'].append(label)
@@ -893,7 +903,14 @@ def prepare_halaqa_view(request, halaqa, template_name, ensure_current_session=F
         student_id__in=student_ids,
         halaqa=halaqa,
         assigned_date__lte=today,
+        evaluation_date__isnull=True,
     ).order_by('student_id', '-assigned_date', '-id'):
+        current_homeworks.setdefault(homework.student_id, homework)
+    for homework in Homework.objects.filter(
+        student_id__in=student_ids,
+        halaqa=halaqa,
+        assigned_date__lte=today,
+    ).exclude(student_id__in=list(current_homeworks.keys())).order_by('student_id', '-assigned_date', '-id'):
         current_homeworks.setdefault(homework.student_id, homework)
 
     current_session = Session.objects.filter(
@@ -1140,8 +1157,13 @@ def prepare_halaqa_view(request, halaqa, template_name, ensure_current_session=F
             'homework_assignment_type': homework['assignment_type'] if homework else '',
             'homework_assignment_type_label': homework['assignment_type_label'] if homework else '',
             'homework_assignment_text': homework['assignment_text'] if homework else '',
+            'homework_pages': homework['pages'] if homework else '',
+            'homework_surah': homework['surah'] if homework else '',
+            'homework_from_verse': homework['from_verse'] if homework else '',
+            'homework_to_verse': homework['to_verse'] if homework else '',
             'homework_assignment_notes': homework['assignment_notes'] if homework else '',
             'homework_assigned_date': homework['assigned_date_iso'] if homework else '',
+            'homework_expected_recitation_date': homework['expected_recitation_date_iso'] if homework else '',
             'homework_evaluation': homework['evaluation'] if homework else '',
             'homework_evaluation_label': homework['evaluation_label'] if homework else '',
             'homework_evaluation_date': homework['evaluation_date_iso'] if homework else '',
@@ -1149,8 +1171,12 @@ def prepare_halaqa_view(request, halaqa, template_name, ensure_current_session=F
             'last_memorization': (
                 {
                     'surah': last_memorization.surah,
+                    'pages': last_memorization.pages,
                     'from_verse': last_memorization.from_verse,
                     'to_verse': last_memorization.to_verse,
+                    'recitation_title': last_memorization.recitation_title,
+                    'recitation_range': last_memorization.recitation_range,
+                    'recitation_type': last_memorization.recitation_type,
                     'evaluation': last_memorization.evaluation,
                     'evaluation_label': last_memorization.get_evaluation_display() if last_memorization.evaluation else '',
                     'date': last_memorization.date.isoformat(),

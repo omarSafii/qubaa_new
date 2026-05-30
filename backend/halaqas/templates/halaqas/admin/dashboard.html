@@ -2365,8 +2365,8 @@
                                     {% for record in pending_approvals %}
                                     <tr>
                                         <td><span class="cell-title">{{ record.student.name }}</span></td>
-                                        <td>{{ record.surah }}</td>
-                                        <td>{{ record.from_verse }} - {{ record.to_verse }}</td>
+                                        <td>{{ record.recitation_title }}</td>
+                                        <td>{{ record.recitation_range }}</td>
                                         <td>
                                             <span class="status-pill status-pill--warning">بانتظار الاعتماد</span>
                                             <span class="cell-meta">{{ record.date|date:"Y-m-d" }}</span>

@@ -467,7 +467,12 @@ class Homework(models.Model):
     assigned_date = models.DateField(default=timezone.localdate)
     assignment_type = models.CharField(max_length=20, choices=ASSIGNMENT_TYPE_CHOICES)
     assignment_text = models.CharField(max_length=120)
+    pages = models.CharField(max_length=80, blank=True)
+    surah = models.CharField(max_length=100, blank=True)
+    from_verse = models.PositiveIntegerField(null=True, blank=True)
+    to_verse = models.PositiveIntegerField(null=True, blank=True)
     assignment_notes = models.CharField(max_length=255, blank=True)
+    expected_recitation_date = models.DateField(null=True, blank=True)
     evaluation_date = models.DateField(null=True, blank=True)
     evaluation = models.CharField(max_length=20, choices=EVALUATION_CHOICES, blank=True)
     evaluation_notes = models.CharField(max_length=255, blank=True)
@@ -492,6 +497,10 @@ class Homework(models.Model):
         ordering = ["-assigned_date", "-id"]
 
     def clean(self):
+        if self.expected_recitation_date and self.expected_recitation_date < self.assigned_date:
+            raise ValidationError("تاريخ التسميع المتوقع يجب أن يكون بعد تاريخ إسناد الواجب")
+        if self.from_verse is not None and self.to_verse is not None and self.to_verse < self.from_verse:
+            raise ValidationError("رقم الآية الأخيرة يجب أن يكون أكبر من أو يساوي الآية الأولى")
         if self.evaluation and not self.evaluation_date:
             raise ValidationError("تاريخ التقييم مطلوب عند تسجيل تقييم الواجب")
         if self.evaluation_date and not self.evaluation:

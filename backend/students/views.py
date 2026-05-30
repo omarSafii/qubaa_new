@@ -220,6 +220,7 @@ def _build_homework_snapshot(homework, reference_date):
             'teacher_note': '',
             'assignment_type_label': '',
             'assignment_text': '',
+            'expected_recitation_date': '',
         }
 
     status = _homework_status(homework, reference_date)
@@ -229,6 +230,8 @@ def _build_homework_snapshot(homework, reference_date):
         detail_text = f'{homework.get_evaluation_display()} - {homework.evaluation_date.isoformat()}'
     else:
         detail_text = f'أُسند في {homework.assigned_date.isoformat()}'
+        if homework.expected_recitation_date:
+            detail_text = f'{detail_text}، التسميع المتوقع {homework.expected_recitation_date.isoformat()}'
     return {
         'exists': True,
         'status': status,
@@ -242,6 +245,9 @@ def _build_homework_snapshot(homework, reference_date):
         'teacher_note': teacher_note,
         'assignment_type_label': homework.get_assignment_type_display(),
         'assignment_text': homework.assignment_text,
+        'expected_recitation_date': (
+            homework.expected_recitation_date.isoformat() if homework.expected_recitation_date else ''
+        ),
     }
 
 
@@ -591,10 +597,12 @@ def _build_timeline(start_date, end_date, attendance_records, point_transactions
     for record in memorization_records:
         entry = ensure_entry(record.date)
         entry['memorization'].append({
-            'surah': record.surah,
-            'range': f'{record.from_verse} - {record.to_verse}',
+            'surah': record.recitation_title,
+            'range': record.recitation_range,
             'evaluation': record.get_evaluation_display() if record.evaluation else 'بدون تقييم',
             'pages': _estimate_pages(record.verses_count),
+            'source': record.get_recitation_type_display(),
+            'note': record.notes,
         })
 
     for homework in homeworks:
@@ -828,7 +836,10 @@ class StudentViewSet(
             (record for record in memorization_as_of_reference if record.evaluation),
             None,
         )
-        latest_homework = homeworks_as_of_reference[0] if homeworks_as_of_reference else None
+        latest_homework = next(
+            (homework for homework in homeworks_as_of_reference if not homework.evaluation_date),
+            homeworks_as_of_reference[0] if homeworks_as_of_reference else None,
+        )
         latest_point_transaction = points_as_of_reference[0] if points_as_of_reference else None
         attendance_on_reference = next(
             (attendance for attendance in all_attendance if attendance.session.date == reference_date),
@@ -1050,10 +1061,11 @@ class StudentViewSet(
             'monthly_memorized_verses': monthly_verses_total,
             'latest_recitation': (
                 {
-                    'surah': latest_memorization.surah,
-                    'range': f'{latest_memorization.from_verse} - {latest_memorization.to_verse}',
+                    'surah': latest_memorization.recitation_title,
+                    'range': latest_memorization.recitation_range,
                     'date': latest_memorization.date.isoformat(),
                     'verses_count': latest_memorization.verses_count,
+                    'source': latest_memorization.get_recitation_type_display(),
                     'evaluation_label': (
                         latest_memorization.get_evaluation_display()
                         if latest_memorization.evaluation else 'بدون تقييم'
@@ -1157,8 +1169,14 @@ class MemorizationRecordViewSet(
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        memorization_record = serializer.save()
+        user = request.user if getattr(request.user, 'is_authenticated', False) else None
+        save_kwargs = {'created_by': user}
+        if serializer.validated_data.get('is_approved') and user and not serializer.validated_data.get('approved_by'):
+            save_kwargs['approved_by'] = user
+        memorization_record = serializer.save(**save_kwargs)
         return Response({
             "msg": "تم إنشاء سجل الحفظ بنجاح",
-            "record_id": memorization_record.id
+            "record_id": memorization_record.id,
+            "id": memorization_record.id,
+            "verses_count": memorization_record.verses_count,
         }, status=status.HTTP_201_CREATED)

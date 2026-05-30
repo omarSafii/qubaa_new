@@ -109,6 +109,11 @@ class Student(models.Model):
 
 
 class MemorizationRecord(models.Model):
+    RECITATION_TYPE_CHOICES = (
+        ('homework', 'واجب'),
+        ('extra', 'تسميع إضافي'),
+    )
+
     EVALUATION_CHOICES = (
         ('excellent', 'ممتاز'),
         ('very_good', 'جيد جدًا'),
@@ -122,9 +127,32 @@ class MemorizationRecord(models.Model):
         related_name='memorization_records',
         verbose_name="الطالب",
     )
-    surah = models.CharField(max_length=100, verbose_name="السورة")
-    from_verse = models.PositiveIntegerField(verbose_name="من آية")
-    to_verse = models.PositiveIntegerField(verbose_name="إلى آية")
+    halaqa = models.ForeignKey(
+        'halaqas.Halaqa',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='memorization_records',
+        verbose_name="الحلقة",
+    )
+    homework = models.ForeignKey(
+        'halaqas.Homework',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='memorization_records',
+        verbose_name="الواجب المرتبط",
+    )
+    recitation_type = models.CharField(
+        max_length=20,
+        choices=RECITATION_TYPE_CHOICES,
+        default='extra',
+        verbose_name="نوع التسميع",
+    )
+    pages = models.CharField(max_length=80, blank=True, verbose_name="الصفحات")
+    surah = models.CharField(max_length=100, blank=True, verbose_name="السورة")
+    from_verse = models.PositiveIntegerField(null=True, blank=True, verbose_name="من آية")
+    to_verse = models.PositiveIntegerField(null=True, blank=True, verbose_name="إلى آية")
     date = models.DateField(default=timezone.localdate, verbose_name="تاريخ التسجيل")
     evaluation = models.CharField(
         max_length=20,
@@ -132,6 +160,7 @@ class MemorizationRecord(models.Model):
         blank=True,
         verbose_name="تقييم التسميع",
     )
+    notes = models.TextField(blank=True, verbose_name="ملاحظات")
     is_approved = models.BooleanField(default=False, verbose_name="موافق عليه")
     approved_by = models.ForeignKey(
         User,
@@ -139,6 +168,15 @@ class MemorizationRecord(models.Model):
         null=True,
         blank=True,
         verbose_name="وافق عليه",
+        related_name="approved_memorization_records",
+    )
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="أُنشئ بواسطة",
+        related_name="created_memorization_records",
     )
 
     class Meta:
@@ -147,8 +185,36 @@ class MemorizationRecord(models.Model):
         ordering = ['-date', '-id']
 
     def __str__(self):
-        return f"{self.surah} ({self.from_verse}-{self.to_verse})"
+        if self.surah and self.from_verse and self.to_verse:
+            return f"{self.surah} ({self.from_verse}-{self.to_verse})"
+        if self.pages:
+            return f"صفحات {self.pages}"
+        return "تسميع غير محدد"
 
     @property
     def verses_count(self):
+        if self.from_verse is None or self.to_verse is None:
+            return 0
         return (self.to_verse - self.from_verse) + 1
+
+    @property
+    def recitation_title(self):
+        if self.surah:
+            return self.surah
+        if self.pages:
+            return f"صفحات {self.pages}"
+        return "تسميع"
+
+    @property
+    def recitation_range(self):
+        if self.from_verse is not None and self.to_verse is not None:
+            return f"{self.from_verse} - {self.to_verse}"
+        return ""
+
+    def clean(self):
+        if self.to_verse is not None and self.from_verse is not None and self.to_verse < self.from_verse:
+            raise ValidationError("رقم الآية الأخيرة يجب أن يكون أكبر من أو يساوي الآية الأولى")
+        if self.surah and (self.from_verse is None or self.to_verse is None):
+            raise ValidationError("يرجى تحديد نطاق الآيات عند تسجيل سورة")
+        if not self.pages and not self.surah:
+            raise ValidationError("يرجى تحديد الصفحات أو السورة والآيات")

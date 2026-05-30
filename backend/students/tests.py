@@ -128,6 +128,8 @@ class StudentReadOnlyViewTests(TestCase):
         )
         MemorizationRecord.objects.create(
             student=self.student,
+            halaqa=self.halaqa,
+            recitation_type='extra',
             surah='الملك',
             from_verse=1,
             to_verse=10,
@@ -139,8 +141,12 @@ class StudentReadOnlyViewTests(TestCase):
             student=self.student,
             halaqa=self.halaqa,
             assigned_date=report_day,
+            expected_recitation_date=today,
             assignment_type='surah',
             assignment_text='سورة الملك',
+            surah='الملك',
+            from_verse=1,
+            to_verse=10,
             assignment_notes='مراجعة مع الإتقان',
             evaluation_date=today,
             evaluation='completed',
@@ -165,6 +171,8 @@ class StudentReadOnlyViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['summary']['teacher'], self.teacher.full_name)
         self.assertEqual(response.context['summary']['homework']['status'], 'evaluated')
+        self.assertEqual(response.context['summary']['homework']['expected_recitation_date'], today.isoformat())
+        self.assertEqual(response.context['summary']['latest_recitation']['source'], 'تسميع إضافي')
         self.assertEqual(response.context['master_report']['points']['net_total'], 8)
         self.assertEqual(response.context['master_report']['attendance']['present'], 1)
         self.assertEqual(len(response.context['timeline_entries']), 2)

@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from django.utils.crypto import get_random_string
 from halaqas.models import Halaqa, HalaqaMembership # أضفنا استيراد HalaqaMembership
-from students.models import Student,MemorizationRecord
+from students.models import Student, MemorizationRecord
 
 User = get_user_model()
 
@@ -93,17 +93,77 @@ class StudentSerializer(serializers.ModelSerializer):
     
     
 class MemorizationRecordSerializer(serializers.ModelSerializer):
-        student_name = serializers.CharField(source='student.name', read_only=True)
-        approved_by_name = serializers.CharField(source='approved_by.get_full_name', read_only=True)
-        verses_count = serializers.ReadOnlyField()
+    student_name = serializers.CharField(source='student.name', read_only=True)
+    approved_by_name = serializers.CharField(source='approved_by.get_full_name', read_only=True)
+    created_by_name = serializers.CharField(source='created_by.get_full_name', read_only=True)
+    verses_count = serializers.ReadOnlyField()
 
-        class Meta:
-            model = MemorizationRecord
-            fields = [
-                'id', 'student', 'student_name', 'surah', 'from_verse', 'to_verse',
-                'verses_count', 'date', 'evaluation', 'is_approved', 'approved_by', 'approved_by_name'
-            ]
-            read_only_fields = ['verses_count', 'student_name', 'approved_by_name']
-            extra_kwargs = {
-                'date': {'required': False},
-            }
+    class Meta:
+        model = MemorizationRecord
+        fields = [
+            'id',
+            'student',
+            'student_name',
+            'halaqa',
+            'homework',
+            'recitation_type',
+            'pages',
+            'surah',
+            'from_verse',
+            'to_verse',
+            'verses_count',
+            'date',
+            'evaluation',
+            'notes',
+            'is_approved',
+            'approved_by',
+            'approved_by_name',
+            'created_by',
+            'created_by_name',
+        ]
+        read_only_fields = ['verses_count', 'student_name', 'approved_by_name', 'created_by', 'created_by_name']
+        extra_kwargs = {
+            'date': {'required': False},
+            'halaqa': {'required': False, 'allow_null': True},
+            'homework': {'required': False, 'allow_null': True},
+            'pages': {'required': False, 'allow_blank': True},
+            'surah': {'required': False, 'allow_blank': True},
+            'from_verse': {'required': False, 'allow_null': True},
+            'to_verse': {'required': False, 'allow_null': True},
+            'notes': {'required': False, 'allow_blank': True},
+        }
+
+    def validate(self, attrs):
+        instance = getattr(self, 'instance', None)
+        student = attrs.get('student') or getattr(instance, 'student', None)
+        homework = attrs.get('homework') or getattr(instance, 'homework', None)
+        halaqa = attrs.get('halaqa') or getattr(instance, 'halaqa', None)
+        pages = (attrs.get('pages', getattr(instance, 'pages', '')) or '').strip()
+        surah = (attrs.get('surah', getattr(instance, 'surah', '')) or '').strip()
+        from_verse = attrs.get('from_verse', getattr(instance, 'from_verse', None))
+        to_verse = attrs.get('to_verse', getattr(instance, 'to_verse', None))
+
+        if homework:
+            if student and homework.student_id != student.id:
+                raise serializers.ValidationError({'homework': 'الواجب لا يخص هذا الطالب.'})
+            if halaqa and homework.halaqa_id != halaqa.id:
+                raise serializers.ValidationError({'homework': 'الواجب لا يتبع هذه الحلقة.'})
+            attrs['halaqa'] = homework.halaqa
+            attrs['recitation_type'] = 'homework'
+        elif not attrs.get('recitation_type'):
+            attrs['recitation_type'] = getattr(instance, 'recitation_type', 'extra') if instance else 'extra'
+
+        if not attrs.get('halaqa') and student:
+            attrs['halaqa'] = student.get_current_halaqa()
+        if pages:
+            attrs['pages'] = pages
+        if surah:
+            attrs['surah'] = surah
+        if not pages and not surah:
+            raise serializers.ValidationError({'surah': 'يرجى تحديد الصفحات أو السورة والآيات.'})
+        if surah and (from_verse is None or to_verse is None):
+            raise serializers.ValidationError({'from_verse': 'يرجى تحديد نطاق الآيات.'})
+        if from_verse is not None and to_verse is not None and to_verse < from_verse:
+            raise serializers.ValidationError({'to_verse': 'رقم الآية الأخيرة يجب أن يكون أكبر من أو يساوي الآية الأولى.'})
+
+        return attrs

@@ -90,8 +90,8 @@ class PlanAdmin(admin.ModelAdmin):
 
 @admin.register(Homework)
 class HomeworkAdmin(admin.ModelAdmin):
-    list_display = ['student', 'halaqa', 'assigned_date', 'evaluation_date', 'evaluation']
-    list_filter = ['halaqa', 'assigned_date', 'evaluation']
+    list_display = ['student', 'halaqa', 'assigned_date', 'expected_recitation_date', 'evaluation_date', 'evaluation']
+    list_filter = ['halaqa', 'assigned_date', 'expected_recitation_date', 'evaluation']
     search_fields = ['student__name', 'assignment_text']
     raw_id_fields = ['student', 'halaqa']
 

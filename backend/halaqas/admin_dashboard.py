@@ -1691,7 +1691,7 @@ def _build_master_admin_dashboard_context(request):
                 "memorization_records_total": cumulative_memorization_count_map.get(student_id, 0),
                 "last_memorization": latest_memorization,
                 "last_memorization_text": (
-                    f"{latest_memorization.surah} {latest_memorization.from_verse}-{latest_memorization.to_verse}"
+                    f"{latest_memorization.recitation_title} {latest_memorization.recitation_range}".strip()
                     if latest_memorization
                     else "لا يوجد تسميع مسجل"
                 ),
@@ -2340,7 +2340,7 @@ def _build_master_admin_dashboard_context(request):
             {
                 "title": "تسجيل حفظ",
                 "subject": entry.student.name,
-                "detail": f"{entry.surah} من {entry.from_verse} إلى {entry.to_verse}",
+                "detail": f"{entry.recitation_title} {entry.recitation_range}".strip(),
                 "timestamp": _as_local_midnight(entry.date),
                 "tone": "info",
             }
