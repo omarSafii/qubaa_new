@@ -1,6 +1,7 @@
 from datetime import datetime, time, timedelta
 
 from django.contrib.auth import get_user_model
+from django.db import IntegrityError, transaction
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -98,6 +99,28 @@ class StudentReadOnlyViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Session.objects.count(), 0)
 
+    def test_attendance_is_historical_per_session_and_unique_per_student_session(self):
+        first_session = Session.objects.create(
+            halaqa=self.halaqa,
+            date=timezone.localdate() - timedelta(days=2),
+            start_time=time(16, 0),
+            end_time=time(18, 0),
+        )
+        second_session = Session.objects.create(
+            halaqa=self.halaqa,
+            date=timezone.localdate() - timedelta(days=1),
+            start_time=time(16, 0),
+            end_time=time(18, 0),
+        )
+
+        Attendance.objects.create(session=first_session, student=self.student, status='present')
+        Attendance.objects.create(session=second_session, student=self.student, status='absent')
+
+        self.assertEqual(Attendance.objects.filter(student=self.student).count(), 2)
+        with self.assertRaises(IntegrityError):
+            with transaction.atomic():
+                Attendance.objects.create(session=first_session, student=self.student, status='excused')
+
     def test_parent_dashboard_context_uses_teacher_entered_data_and_range_filters(self):
         today = timezone.localdate()
         report_day = today - timedelta(days=1)
@@ -113,7 +136,24 @@ class StudentReadOnlyViewTests(TestCase):
             session=session,
             student=self.student,
             status='present',
+            recorded_by=self.teacher_user,
+            recorded_by_role='teacher',
             notes='حضر مبكراً',
+        )
+        today_session = Session.objects.create(
+            halaqa=self.halaqa,
+            date=today,
+            start_time=time(16, 0),
+            end_time=time(18, 0),
+            notes='جلسة اليوم',
+        )
+        Attendance.objects.create(
+            session=today_session,
+            student=self.student,
+            status='excused',
+            recorded_by=self.teacher_user,
+            recorded_by_role='teacher',
+            notes='عذر مقبول',
         )
         PointTransaction.objects.create(
             student=self.student,
@@ -175,7 +215,12 @@ class StudentReadOnlyViewTests(TestCase):
         self.assertEqual(response.context['summary']['latest_recitation']['source'], 'تسميع إضافي')
         self.assertEqual(response.context['master_report']['points']['net_total'], 8)
         self.assertEqual(response.context['master_report']['attendance']['present'], 1)
+        self.assertEqual(response.context['master_report']['attendance']['excused'], 1)
+        self.assertEqual(response.context['master_report']['attendance']['total'], 2)
+        self.assertEqual(response.context['master_report']['attendance']['percentage'], 50)
+        self.assertEqual(len(response.context['attendance_rows']), 2)
         self.assertEqual(len(response.context['timeline_entries']), 2)
         self.assertContains(response, 'التقرير الزمني الرئيسي')
+        self.assertContains(response, 'عرض سجل الحضور')
         self.assertContains(response, 'سورة الملك')
         self.assertContains(response, 'أستاذ الحلقة')

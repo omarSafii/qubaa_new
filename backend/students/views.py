@@ -739,7 +739,7 @@ class StudentViewSet(
             attendance_qs = Attendance.objects.filter(
                 student=student,
                 session__halaqa=halaqa,
-            ).select_related('session', 'recorded_by').order_by('-session__date', '-id')
+            ).select_related('session__halaqa', 'recorded_by').order_by('-session__date', '-id')
             points_qs = PointTransaction.objects.filter(
                 student=student,
                 halaqa=halaqa,
@@ -906,6 +906,53 @@ class StudentViewSet(
             homework for homework in homeworks_as_of_reference
             if not homework.evaluation_date or homework.evaluation_date > report_range['end']
         ]
+        completed_homeworks_in_report = [
+            homework for homework in homework_rows
+            if homework.evaluation_date and homework.evaluation_date <= report_range['end']
+        ]
+        partial_homeworks_in_report = [
+            homework for homework in completed_homeworks_in_report
+            if homework.evaluation == 'partial'
+        ]
+        not_completed_homeworks_in_report = [
+            homework for homework in completed_homeworks_in_report
+            if homework.evaluation == 'not_completed'
+        ]
+        fully_completed_homeworks_in_report = [
+            homework for homework in completed_homeworks_in_report
+            if homework.evaluation in {'excellent', 'completed'}
+        ]
+        homework_total_in_report = len(completed_homeworks_in_report) + len(pending_homeworks_as_of_end)
+        homework_completion_percentage = (
+            round((len(fully_completed_homeworks_in_report) / homework_total_in_report) * 100)
+            if homework_total_in_report else 0
+        )
+        recitation_quality_counts = {
+            'excellent': 0,
+            'very_good': 0,
+            'good': 0,
+            'needs_followup': 0,
+            'unrated': 0,
+        }
+        for record in memorization_records:
+            if record.evaluation in recitation_quality_counts:
+                recitation_quality_counts[record.evaluation] += 1
+            else:
+                recitation_quality_counts['unrated'] += 1
+        recitation_average_score = _average_choice_score(
+            memorization_records,
+            value_getter=lambda item: item.evaluation,
+            score_map=MEMORIZATION_EVALUATION_SCORE_MAP,
+        )
+        recitation_quality_label = 'لا يوجد تقييم'
+        if recitation_average_score >= 3.5:
+            recitation_quality_label = 'ممتاز'
+        elif recitation_average_score >= 2.5:
+            recitation_quality_label = 'جيد جداً'
+        elif recitation_average_score >= 1.5:
+            recitation_quality_label = 'جيد'
+        elif recitation_average_score:
+            recitation_quality_label = 'يحتاج متابعة'
 
         teacher_notes = _build_teacher_notes(
             attendance_records,
@@ -995,6 +1042,30 @@ class StudentViewSet(
             if last_updated_at else 'لا توجد تحديثات حتى الآن'
         )
 
+        needs_followup = (
+            len(pending_homeworks_as_of_end) > 0
+            or (attendance_report['total'] and attendance_report['percentage'] < 70)
+            or (latest_evaluation_in_range and latest_evaluation_in_range.evaluation == 'needs_followup')
+        )
+        status_badge = 'يحتاج متابعة' if needs_followup else 'جيد'
+        if not attendance_report['total'] and not homework_rows and not memorization_records and not point_transactions:
+            status_badge = 'لا توجد بيانات كافية'
+
+        insight_parts = []
+        if attendance_report['total']:
+            insight_parts.append(
+                f'حضر الطالب {attendance_report["present"]} من {attendance_report["total"]} حصص'
+            )
+        if pending_homeworks_as_of_end:
+            insight_parts.append(f'وهناك {len(pending_homeworks_as_of_end)} واجب يحتاج متابعة')
+        elif homework_rows:
+            insight_parts.append('ولا توجد واجبات معلقة')
+        if latest_evaluation_in_range:
+            insight_parts.append(f'وآخر تسميع تقييمه {latest_evaluation_in_range.get_evaluation_display()}')
+        period_insight = '، '.join(insight_parts) + '.'
+        if not insight_parts:
+            period_insight = 'لا توجد بيانات كافية داخل هذه الفترة، وستظهر المؤشرات عند إدخال السجلات.'
+
         master_report = {
             'label': report_range['label'],
             'start': report_range['start'].isoformat(),
@@ -1005,6 +1076,8 @@ class StudentViewSet(
                 'verses_total': memorization_verses_total,
                 'latest_record_date': latest_memorization_in_range.date.isoformat() if latest_memorization_in_range else '',
                 'latest_evaluation': latest_evaluation_in_range.get_evaluation_display() if latest_evaluation_in_range else 'لا يوجد تقييم',
+                'quality_label': recitation_quality_label,
+                'average_score': recitation_average_score,
             },
             'points': {
                 'net_total': point_total,
@@ -1015,8 +1088,13 @@ class StudentViewSet(
             },
             'homework': {
                 'assigned_count': sum(1 for item in homework_rows if report_range['start'] <= item.assigned_date <= report_range['end']),
-                'evaluated_count': sum(1 for item in homework_rows if item.evaluation_date and report_range['start'] <= item.evaluation_date <= report_range['end']),
+                'evaluated_count': len(completed_homeworks_in_report),
+                'completed_count': len(fully_completed_homeworks_in_report),
+                'partial_count': len(partial_homeworks_in_report),
+                'not_completed_count': len(not_completed_homeworks_in_report),
                 'pending_count': len(pending_homeworks_as_of_end),
+                'total_count': homework_total_in_report,
+                'completion_percentage': homework_completion_percentage,
             },
             'plan': {
                 'status_label': current_plan_progress['status_label'],
@@ -1035,6 +1113,8 @@ class StudentViewSet(
             'last_updated_display': last_updated_display,
             'last_updated_source': last_updated_source or 'النظام',
             'reference_date': reference_date.isoformat(),
+            'status_badge': status_badge,
+            'period_insight': period_insight,
             'attendance_percentage': overall_attendance['percentage'],
             'attendance_reference': {
                 'date': reference_date.isoformat(),
@@ -1137,6 +1217,25 @@ class StudentViewSet(
                 'actual': current_plan_progress['actual_values'],
             },
             'plan_progress': current_plan_progress,
+            'homework_status_chart': {
+                'labels': ['منجز', 'جزئي', 'غير منجز', 'بانتظار التقييم'],
+                'values': [
+                    len(fully_completed_homeworks_in_report),
+                    len(partial_homeworks_in_report),
+                    len(not_completed_homeworks_in_report),
+                    len(pending_homeworks_as_of_end),
+                ],
+            },
+            'recitation_quality_chart': {
+                'labels': ['ممتاز', 'جيد جداً', 'جيد', 'يحتاج متابعة', 'بدون تقييم'],
+                'values': [
+                    recitation_quality_counts['excellent'],
+                    recitation_quality_counts['very_good'],
+                    recitation_quality_counts['good'],
+                    recitation_quality_counts['needs_followup'],
+                    recitation_quality_counts['unrated'],
+                ],
+            },
         })
 
     @action(detail=False, methods=['get'], url_path='dashboard', permission_classes=[AllowAny])

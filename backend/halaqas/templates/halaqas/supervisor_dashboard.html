@@ -73,7 +73,7 @@
     }
 
     .dashboard-shell {
-      padding: 24px 0 44px;
+      padding: 12px 0 28px;
     }
 
     .dashboard-card,
@@ -82,13 +82,13 @@
     .student-card {
       background: #fff;
       border: 1px solid rgba(11, 60, 84, 0.06);
-      border-radius: 16px;
+      border-radius: 8px;
       box-shadow: var(--shadow-soft);
     }
 
     .hero-card {
-      padding: 20px;
-      margin-bottom: 20px;
+      padding: 12px;
+      margin-bottom: 10px;
       background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(242, 216, 161, 0.08));
     }
 
@@ -99,13 +99,13 @@
     }
 
     .hero-grid {
-      grid-template-columns: minmax(0, 1fr) minmax(280px, 390px);
-      align-items: end;
+      grid-template-columns: minmax(0, 1fr) minmax(250px, 360px);
+      align-items: center;
     }
 
     .hero-title {
-      margin: 0 0 8px;
-      font-size: 1.7rem;
+      margin: 0 0 4px;
+      font-size: 1.25rem;
       font-weight: 800;
     }
 
@@ -119,15 +119,15 @@
       display: flex;
       gap: 10px;
       align-items: end;
-      padding: 14px;
-      border-radius: 14px;
+      padding: 8px;
+      border-radius: 8px;
       background: rgba(255, 255, 255, 0.82);
       border: 1px solid rgba(11, 60, 84, 0.08);
     }
 
     .form-control {
-      min-height: 44px;
-      border-radius: 12px;
+      min-height: 38px;
+      border-radius: 8px;
       border-color: rgba(11, 60, 84, 0.12);
       box-shadow: none !important;
     }
@@ -138,8 +138,8 @@
     }
 
     .btn-soft {
-      min-height: 44px;
-      border-radius: 12px;
+      min-height: 38px;
+      border-radius: 8px;
       border: 1px solid rgba(11, 60, 84, 0.12);
       background: #fff;
       color: var(--color-primary);
@@ -168,20 +168,21 @@
 
     .stats-grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      margin-bottom: 20px;
+      margin-bottom: 10px;
+      gap: 8px;
     }
 
     .stat-card {
-      padding: 16px;
+      padding: 10px;
       display: flex;
       align-items: center;
-      gap: 12px;
-      border-top: 4px solid var(--color-accent);
+      gap: 8px;
+      border-top: 3px solid var(--color-accent);
     }
 
     .stat-icon {
-      width: 44px;
-      height: 44px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
       display: inline-flex;
       align-items: center;
@@ -198,7 +199,7 @@
     }
 
     .stat-card strong {
-      font-size: 1.3rem;
+      font-size: 1.05rem;
       line-height: 1.3;
     }
 
@@ -215,8 +216,9 @@
     }
 
     .workflow-card {
-      padding: 18px;
-      margin-bottom: 18px;
+      padding: 12px;
+      margin-bottom: 10px;
+      background: rgba(255,255,255,.97);
     }
 
     .workflow-head {
@@ -224,12 +226,12 @@
       align-items: flex-start;
       justify-content: space-between;
       gap: 14px;
-      margin-bottom: 14px;
+      margin-bottom: 8px;
     }
 
     .workflow-title {
       margin: 0 0 4px;
-      font-size: 1.12rem;
+      font-size: 1rem;
       font-weight: 800;
     }
 
@@ -239,14 +241,14 @@
       gap: 7px;
       color: #667681;
       font-weight: 800;
-      font-size: 0.9rem;
+      font-size: 0.82rem;
     }
 
     .workflow-step {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 6px 10px;
+      padding: 5px 8px;
       border-radius: 999px;
       background: rgba(11, 60, 84, 0.05);
     }
@@ -258,8 +260,8 @@
 
     .choice-section {
       display: grid;
-      gap: 10px;
-      margin-top: 14px;
+      gap: 7px;
+      margin-top: 8px;
     }
 
     .choice-label {
@@ -271,14 +273,14 @@
 
     .choice-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 7px;
     }
 
     .choice-card {
-      min-height: 62px;
-      padding: 12px;
-      border-radius: 14px;
+      min-height: 46px;
+      padding: 8px 10px;
+      border-radius: 8px;
       border: 1px solid rgba(11, 60, 84, 0.09);
       background: rgba(255, 255, 255, 0.9);
       color: var(--color-primary);
@@ -287,14 +289,13 @@
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, transform 0.2s ease;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
     }
 
     .choice-card:hover {
       color: var(--color-primary);
       border-color: rgba(150, 137, 96, 0.38);
       box-shadow: 0 10px 20px rgba(11, 60, 84, 0.08);
-      transform: translateY(-1px);
     }
 
     .choice-card.is-active {
@@ -324,8 +325,8 @@
     }
 
     .choice-icon {
-      width: 34px;
-      height: 34px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
       background: rgba(11, 60, 84, 0.07);
       color: var(--color-secondary);
@@ -341,8 +342,8 @@
     }
 
     .selected-halaqa-card {
-      padding: 16px;
-      margin-bottom: 16px;
+      padding: 10px;
+      margin-bottom: 10px;
     }
 
     .selected-halaqa-head {
@@ -350,16 +351,13 @@
       align-items: flex-start;
       justify-content: space-between;
       gap: 12px;
-      margin-bottom: 14px;
+      margin-bottom: 8px;
     }
 
     .save-bar {
-      position: sticky;
-      top: 82px;
-      z-index: 20;
-      margin-bottom: 16px;
-      padding: 12px;
-      border-radius: 16px;
+      margin-bottom: 8px;
+      padding: 8px 10px;
+      border-radius: 8px;
       background: rgba(255, 255, 255, 0.94);
       border: 1px solid rgba(11, 60, 84, 0.08);
       box-shadow: 0 10px 24px rgba(11, 60, 84, 0.08);
@@ -447,11 +445,11 @@
 
     .student-list {
       display: grid;
-      gap: 12px;
+      gap: 8px;
     }
 
     .student-card {
-      padding: 14px;
+      padding: 10px;
       box-shadow: none;
     }
 
@@ -463,15 +461,15 @@
 
     .student-top {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 12px;
+      gap: 10px;
+      margin-bottom: 8px;
     }
 
     .student-name {
-      margin: 0 0 5px;
-      font-size: 1rem;
+      margin: 0 0 3px;
+      font-size: .98rem;
       font-weight: 800;
       color: var(--color-primary);
     }
@@ -486,9 +484,9 @@
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      margin-top: 8px;
-      padding: 7px 10px;
-      border-radius: 10px;
+      margin-top: 6px;
+      padding: 6px 8px;
+      border-radius: 8px;
       background: rgba(11, 60, 84, 0.1);
       color: #33424c;
       font-weight: 800;
@@ -497,8 +495,8 @@
     .status-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
-      margin-bottom: 10px;
+      gap: 6px;
+      margin-bottom: 6px;
     }
 
     .status-option {
@@ -513,8 +511,8 @@
     }
 
     .status-option span {
-      min-height: 44px;
-      border-radius: 12px;
+      min-height: 38px;
+      border-radius: 8px;
       border: 1px solid rgba(11, 60, 84, 0.1);
       background: rgba(11, 60, 84, 0.03);
       color: var(--color-primary);
@@ -525,6 +523,26 @@
       font-weight: 800;
       text-align: center;
       transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .note-toggle {
+      margin-top: 4px;
+    }
+
+    .note-toggle summary {
+      cursor: pointer;
+      color: var(--color-secondary);
+      font-size: .86rem;
+      font-weight: 800;
+      list-style: none;
+    }
+
+    .note-toggle summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .note-toggle .form-control {
+      margin-top: 6px;
     }
 
     .status-present input:checked + span {
@@ -582,9 +600,12 @@
     }
 
     @media (max-width: 991px) {
-      .hero-grid,
-      .stats-grid {
+      .hero-grid {
         grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
 
       .save-bar {
@@ -630,33 +651,32 @@
       }
 
       .dashboard-shell {
-        padding-top: 18px;
+        padding-top: 10px;
       }
 
       .hero-title {
-        font-size: 1.42rem;
+        font-size: 1.08rem;
       }
 
-      .date-form,
       .student-top {
         flex-direction: column;
         align-items: stretch;
       }
 
+      .date-form {
+        align-items: end;
+      }
+
       .choice-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       .date-form .btn {
-        width: 100%;
-      }
-
-      .save-bar {
-        top: 112px;
+        width: auto;
       }
 
       .status-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
 
       .halaqa-card summary,
@@ -667,8 +687,77 @@
       }
 
       .meta-pill {
-        flex: 1 1 auto;
+        flex: 0 1 auto;
         justify-content: center;
+      }
+    }
+
+    .scroll-progress-btn {
+      position: fixed;
+      left: 18px;
+      bottom: 18px;
+      z-index: 50;
+      width: 54px;
+      height: 54px;
+      border: 0;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      background: conic-gradient(var(--color-accent) var(--scroll-progress, 0deg), rgba(11, 60, 84, .16) 0deg);
+      box-shadow: 0 10px 24px rgba(11, 60, 84, .2);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: opacity .2s ease, transform .2s ease;
+    }
+
+    .scroll-progress-btn::before {
+      content: "";
+      position: absolute;
+      inset: 5px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    }
+
+    .scroll-progress-btn i {
+      position: relative;
+      z-index: 1;
+    }
+
+    .scroll-progress-btn.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .scroll-progress-btn:focus-visible {
+      outline: 3px solid rgba(242, 216, 161, .9);
+      outline-offset: 3px;
+    }
+
+    @media (max-width: 430px) {
+      .choice-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .stat-card {
+        display: block;
+        text-align: center;
+      }
+
+      .stat-icon {
+        margin-bottom: 4px;
+      }
+
+      .status-option span {
+        gap: 4px;
+        font-size: .82rem;
       }
     }
   </style>
@@ -695,7 +784,7 @@
       <div class="hero-grid">
         <div>
           <h1 class="hero-title"><i class="fas fa-clipboard-check"></i> تسجيل حضور الطلاب</h1>
-          <p class="muted-text">اليوم المحدد: {{ selected_date|date:"Y-m-d" }}</p>
+          <p class="muted-text">{{ selected_date|date:"Y-m-d" }}{% if selected_category %} - {{ selected_category.name }}{% endif %}{% if selected_halaqa %} - {{ selected_halaqa.name }}{% endif %}</p>
         </div>
         <form method="get" class="date-form">
           <div class="w-100">
@@ -736,7 +825,7 @@
       <div class="workflow-head">
         <div>
           <h2 class="workflow-title">مسار تسجيل الحضور</h2>
-          <p class="muted-text">اختيار الفئة ثم الحلقة يحدد الطلاب الظاهرين للحفظ.</p>
+          <p class="muted-text">اختر الفئة ثم الحلقة، وستظهر قائمة الطلاب المطلوبة فقط.</p>
         </div>
         <div class="workflow-steps" aria-label="مسار العمل">
           <span class="workflow-step {% if selected_category %}is-active{% endif %}"><i class="fas fa-layer-group"></i> اختيار الفئة</span>
@@ -851,17 +940,19 @@
                   {% endfor %}
                 </div>
 
-                <label class="form-label small mb-2" for="notes_{{ student_row.student.id }}">ملاحظة قصيرة</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="notes_{{ student_row.student.id }}"
-                  name="notes_{{ student_row.student.id }}"
-                  value="{{ student_row.notes }}"
-                  maxlength="255"
-                  placeholder="اختياري"
-                  {% if student_row.locked_for_supervisor %}disabled{% endif %}
-                >
+                <details class="note-toggle" {% if student_row.notes %}open{% endif %}>
+                  <summary><i class="fas fa-note-sticky"></i> ملاحظة</summary>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="notes_{{ student_row.student.id }}"
+                    name="notes_{{ student_row.student.id }}"
+                    value="{{ student_row.notes }}"
+                    maxlength="255"
+                    placeholder="اختياري"
+                    {% if student_row.locked_for_supervisor %}disabled{% endif %}
+                  >
+                </details>
               </article>
               {% endfor %}
             </div>
@@ -876,5 +967,28 @@
 
     <div class="footer-note">معهد قباء لتحفيظ القرآن الكريم - لوحة الموجه</div>
   </main>
+
+  <button type="button" class="scroll-progress-btn" id="scrollProgressBtn" aria-label="العودة إلى أعلى الصفحة">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+
+  <script>
+    const scrollProgressBtn = document.getElementById('scrollProgressBtn');
+
+    function updateScrollProgress() {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const maxScroll = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const ratio = maxScroll > 0 ? Math.min(scrollTop / maxScroll, 1) : 0;
+      scrollProgressBtn.style.setProperty('--scroll-progress', `${ratio * 360}deg`);
+      scrollProgressBtn.classList.toggle('is-visible', scrollTop > 180);
+    }
+
+    scrollProgressBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    window.addEventListener('scroll', updateScrollProgress, { passive: true });
+    window.addEventListener('resize', updateScrollProgress);
+    updateScrollProgress();
+  </script>
 </body>
 </html>

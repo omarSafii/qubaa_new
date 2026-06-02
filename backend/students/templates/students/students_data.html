@@ -214,9 +214,10 @@
     }
 
     .range-card {
-      margin-top: 14px;
-      padding: 14px;
+      margin-top: 10px;
+      padding: 0;
       background: rgba(255, 255, 255, .92);
+      box-shadow: 0 6px 16px rgba(11, 60, 84, .05);
     }
 
     .range-top {
@@ -225,6 +226,7 @@
       justify-content: space-between;
       gap: 12px;
       flex-wrap: wrap;
+      padding: 10px 12px;
     }
 
     .range-title {
@@ -232,9 +234,29 @@
     }
 
     .range-panel {
-      margin-top: 12px;
-      padding-top: 12px;
+      padding: 0 12px 12px;
       border-top: 1px solid var(--line);
+    }
+
+    details.range-card summary {
+      cursor: pointer;
+      list-style: none;
+    }
+
+    details.range-card summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .range-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 38px;
+      border-radius: 8px;
+      padding: 8px 11px;
+      background: rgba(11, 60, 84, .07);
+      color: var(--p);
+      font-weight: 900;
     }
 
     .chip-row,
@@ -257,11 +279,11 @@
     }
 
     .chip {
-      flex: 1 1 105px;
+      flex: 1 1 92px;
       justify-content: center;
       display: inline-flex;
       align-items: center;
-      padding: 9px 12px;
+      padding: 8px 10px;
       text-align: center;
     }
 
@@ -413,6 +435,43 @@
       font-size: .92rem;
     }
 
+    .summary-card {
+      display: grid;
+      gap: 10px;
+      min-height: 190px;
+    }
+
+    .summary-card .metric-value {
+      font-size: 1.35rem;
+    }
+
+    .summary-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(150, 137, 96, .16);
+      color: var(--p);
+      flex-shrink: 0;
+    }
+
+    .mini-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .mini-stat {
+      border-radius: 999px;
+      padding: 6px 9px;
+      background: rgba(11, 60, 84, .055);
+      color: #52636d;
+      font-size: .82rem;
+      font-weight: 800;
+    }
+
     .progress-line {
       height: 10px;
       margin-top: 10px;
@@ -455,6 +514,12 @@
       background: linear-gradient(180deg, #fff, rgba(242, 216, 161, .06));
     }
 
+    .parent-chart-card {
+      min-height: 0;
+      display: grid;
+      gap: 10px;
+    }
+
     .chart-card h3 {
       margin: 0 0 4px;
       font-size: 1rem;
@@ -464,6 +529,27 @@
       position: relative;
       height: 220px;
       margin-top: 12px;
+    }
+
+    .parent-chart-card .canvas-wrap {
+      height: 160px;
+      margin-top: 4px;
+    }
+
+    .chart-summary {
+      display: grid;
+      gap: 7px;
+      color: #52636d;
+      line-height: 1.7;
+      font-size: .92rem;
+      font-weight: 700;
+    }
+
+    .chart-action {
+      justify-self: start;
+      min-height: 36px;
+      padding: 7px 10px;
+      font-size: .86rem;
     }
 
     .empty {
@@ -486,6 +572,52 @@
       margin-top: 12px;
       line-height: 1.9;
       color: #53636d;
+    }
+
+    .insight-box {
+      margin-top: 12px;
+      padding: 12px;
+      border: 1px solid rgba(150, 137, 96, .22);
+      border-right: 4px solid var(--a);
+      border-radius: 8px;
+      background: rgba(242, 216, 161, .14);
+      color: #53636d;
+      line-height: 1.9;
+      font-weight: 700;
+    }
+
+    .parent-plan-card {
+      margin-top: 12px;
+      padding: 14px;
+      border: 1px solid rgba(11, 60, 84, .08);
+      border-radius: 8px;
+      background: linear-gradient(180deg, #fff, rgba(242, 216, 161, .12));
+      box-shadow: var(--soft);
+    }
+
+    .modal-content {
+      border: 0;
+      border-radius: 8px;
+    }
+
+    .history-table {
+      min-width: 0;
+      width: 100%;
+      color: var(--p);
+      font-size: .9rem;
+    }
+
+    .history-table th,
+    .history-table td {
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    .history-table th {
+      color: var(--muted);
+      font-weight: 900;
+      white-space: nowrap;
     }
 
     .report-card {
@@ -778,32 +910,36 @@
             <div>
               <div class="eyebrow"><i class="fas fa-sparkles"></i> ملخص تقدم الطالب</div>
               <h1>{{ summary.student_name }}</h1>
-              <p class="lead">صفحة مبسطة لولي الأمر تعرض الحضور، التسميع، الواجبات، النقاط، والخطة الحالية دون تفاصيل مرهقة.</p>
+              <p class="lead">صفحة مبسطة لولي الأمر تعرض أهم ما يحتاجه بسرعة: الحضور، الواجب، التسميع، والنقاط.</p>
+              <div class="tags mt-2">
+                <span class="pill {% if summary.status_badge == 'جيد' %}ok{% elif summary.status_badge == 'يحتاج متابعة' %}warn{% else %}mutep{% endif %}">{{ summary.status_badge }}</span>
+                <span class="pill mutep">{{ report_range.label }}</span>
+              </div>
             </div>
           </div>
         </div>
         <div class="meta-strip">
           <div class="meta-item"><small><i class="fas fa-mosque"></i> الحلقة</small><strong>{{ summary.halaqa_name }}</strong></div>
           <div class="meta-item"><small><i class="fas fa-user-tie"></i> أستاذ الحلقة</small><strong>{{ summary.teacher }}</strong></div>
-          <div class="meta-item"><small><i class="fas fa-layer-group"></i> التصنيف</small><strong>{{ summary.category }}</strong></div>
+          <div class="meta-item"><small><i class="fas fa-calendar-days"></i> الفترة</small><strong>{{ master_report.start }} إلى {{ master_report.end }}</strong></div>
           <div class="meta-item"><small><i class="fas fa-clock"></i> آخر تحديث</small><strong>{{ summary.last_updated_display }}<br><span class="subtext">المصدر: {{ summary.last_updated_source }}</span></strong></div>
         </div>
       </div>
     </section>
 
-    <section class="range-card" aria-label="الفترة المعروضة">
-      <div class="range-top">
+    <details class="range-card" aria-label="الفترة المعروضة">
+      <summary class="range-top">
         <div>
-          <div class="range-title"><i class="fas fa-calendar-days"></i> الفترة المعروضة</div>
-          <div class="subtext">{{ report_range.label }}</div>
+          <div class="range-title"><i class="fas fa-calendar-days"></i> {{ report_range.label }}</div>
+          <div class="subtext">{{ master_report.start }} إلى {{ master_report.end }}</div>
         </div>
-        <span class="pill mutep">{{ master_report.start }} إلى {{ master_report.end }}</span>
-      </div>
+        <span class="range-toggle"><i class="fas fa-sliders"></i> تغيير الفترة</span>
+      </summary>
       <div class="range-panel">
         <div class="chip-row">
+          <a class="chip {% if report_range.key == 'week' %}active{% endif %}" href="?range=week">آخر أسبوع</a>
+          <a class="chip {% if report_range.key == 'month' %}active{% endif %}" href="?range=month">آخر شهر</a>
           <a class="chip {% if report_range.key == 'today' %}active{% endif %}" href="?range=today">اليوم</a>
-          <a class="chip {% if report_range.key == 'week' %}active{% endif %}" href="?range=week">الأسبوع</a>
-          <a class="chip {% if report_range.key == 'month' %}active{% endif %}" href="?range=month">الشهر</a>
         </div>
         <div class="filter-grid">
           <form method="get" class="filter-box">
@@ -828,7 +964,7 @@
           </form>
         </div>
       </div>
-    </section>
+    </details>
 
     <nav class="section-tabs" aria-label="أقسام صفحة ولي الأمر" role="tablist">
       <button type="button" class="tab-button active" data-panel="summaryPanel" role="tab" aria-selected="true">
@@ -842,115 +978,106 @@
     <section class="page-panel" id="summaryPanel" role="tabpanel">
       <div class="section-head">
         <div>
-          <h2>ملخص بصري سريع</h2>
-          <p>أهم المؤشرات في بطاقات ورسوم خفيفة تناسب شاشة الهاتف.</p>
+          <h2>نظرة ولي الأمر</h2>
+          <p>أربع إشارات كافية لفهم وضع الطالب في هذه الفترة.</p>
         </div>
         <span class="pill info">{{ report_range.label }}</span>
       </div>
 
-      <div class="summary-grid">
-        <article class="metric-card">
-          <div class="metric-top">
-            <span class="metric-label">الحضور</span>
-            <span class="pill {% if summary.attendance_reference.status_code == 'present' %}ok{% elif summary.attendance_reference.status_code == 'excused' %}warn{% elif summary.attendance_reference.status_code == 'absent' %}bad{% else %}mutep{% endif %}">{{ summary.attendance_reference.status_label }}</span>
-          </div>
-          <div class="metric-value">{{ summary.attendance_percentage }}%</div>
-          <div class="progress-line"><span style="width: {{ summary.attendance_percentage }}%"></span></div>
-          <p class="metric-note">حاضر {{ summary.attendance_reference.present }} من {{ summary.attendance_reference.total }} حتى {{ summary.attendance_reference.date }}.</p>
-        </article>
-
-        <article class="metric-card">
-          <div class="metric-top">
-            <span class="metric-label">التسميع</span>
-            <span class="pill {% if summary.latest_recitation.date %}ok{% else %}mutep{% endif %}">{{ summary.latest_recitation.evaluation_label }}</span>
-          </div>
-          <div class="metric-value">{{ summary.latest_recitation.surah|default:"لا يوجد بعد" }}</div>
-          <p class="metric-note">{% if summary.latest_recitation.date %}{% if summary.latest_recitation.range %}{{ summary.latest_recitation.range }} - {% endif %}{{ summary.latest_recitation.date }}{% if summary.latest_recitation.source %}<br>{{ summary.latest_recitation.source }}{% endif %}{% else %}سيظهر آخر تسميع هنا عند إدخاله من المعلم.{% endif %}</p>
-        </article>
-
-        <article class="metric-card">
-          <div class="metric-top">
-            <span class="metric-label">النقاط</span>
-            <span class="pill {% if summary.points.monthly_total > 0 %}ok{% elif summary.points.monthly_total < 0 %}bad{% else %}mutep{% endif %}">هذا الشهر</span>
-          </div>
-          <div class="metric-value">{{ summary.points.monthly_total }}</div>
-          <p class="metric-note">الرصيد الحالي {{ summary.points.current_total }} نقطة{% if summary.points.latest_date %}<br>آخر حركة: {{ summary.points.latest_value }} في {{ summary.points.latest_date }}{% endif %}</p>
-        </article>
-
-        <article class="metric-card">
-          <div class="metric-top">
-            <span class="metric-label">الواجب</span>
-            <span class="pill {% if summary.homework.status == 'evaluated' %}ok{% elif summary.homework.status == 'pending' %}warn{% elif summary.homework.status == 'assigned' %}info{% else %}mutep{% endif %}">{{ summary.homework.status_label }}</span>
-          </div>
-          <div class="metric-value">{% if summary.homework.assignment_type_label %}{{ summary.homework.assignment_type_label }}{% else %}{{ summary.homework.title }}{% endif %}</div>
-          <p class="metric-note">{{ summary.homework.detail_text }}{% if summary.homework.teacher_note %}<br>ملاحظة: {{ summary.homework.teacher_note }}{% endif %}</p>
-        </article>
-      </div>
-
       <div class="chart-grid">
-        <article class="chart-card feature">
-          <div class="chart-top">
-            <div>
-              <h3><i class="fas fa-calendar-check"></i> حضور الطالب</h3>
-              <div class="subtext">توزيع الحضور داخل الفترة المحددة.</div>
-            </div>
-            <span class="pill info">{{ summary.attendance_percentage }}%</span>
-          </div>
-          <div class="canvas-wrap">
-            <canvas id="attendanceSummaryChart"></canvas>
-            <div class="empty" id="attendanceSummaryEmpty">لا توجد سجلات حضور داخل هذه الفترة.</div>
-          </div>
-          <div class="quick-note">
-            {% if summary.attendance_reference.note %}ملاحظة آخر حضور: {{ summary.attendance_reference.note }}{% else %}آخر حالة حضور: {{ summary.attendance_reference.status_label }}.{% endif %}
-          </div>
-        </article>
-
-        <article class="chart-card">
-          <div class="chart-top">
-            <div>
-              <h3><i class="fas fa-route"></i> التقدم العام</h3>
-              <div class="subtext">الخطة المتوقعة مقابل التقدم الفعلي.</div>
-            </div>
-            <span class="pill {% if summary.plan.badge_class == 'excellent' %}ok{% elif summary.plan.badge_class == 'warning' %}warn{% elif summary.plan.badge_class == 'good' %}info{% else %}mutep{% endif %}">{{ summary.plan.status_label }}</span>
-          </div>
-          <div class="canvas-wrap">
-            <canvas id="progressChart"></canvas>
-            <div class="empty" id="progressEmpty">لا توجد خطة نشطة أو بيانات كافية للعرض.</div>
-          </div>
-        </article>
-
-        <article class="chart-card">
+        <article class="chart-card parent-chart-card">
           <div class="chart-top">
             <div>
               <h3><i class="fas fa-star"></i> النقاط</h3>
-              <div class="subtext">الرصيد التراكمي داخل الفترة.</div>
+              <div class="subtext">تغير النقاط خلال الفترة.</div>
             </div>
-            <span class="pill {% if summary.points.monthly_total > 0 %}ok{% elif summary.points.monthly_total < 0 %}bad{% else %}mutep{% endif %}">{{ summary.points.monthly_total }}</span>
+            <span class="pill {% if master_report.points.net_total > 0 %}ok{% elif master_report.points.net_total < 0 %}bad{% else %}mutep{% endif %}">{{ master_report.points.net_total }}</span>
           </div>
           <div class="canvas-wrap">
-            <canvas id="pointsChart"></canvas>
-            <div class="empty" id="pointsEmpty">لا توجد حركة نقاط داخل هذه الفترة.</div>
+            <canvas id="pointsTrendChart"></canvas>
+            <div class="empty" id="pointsTrendEmpty">لا توجد حركة نقاط داخل هذه الفترة.</div>
+          </div>
+          <div class="chart-summary">
+            <span>النقاط الحالية: {{ master_report.points.current_total }}</span>
+            <span>{% if summary.points.latest_date %}آخر إضافة: {{ summary.points.latest_value }} - {{ summary.points.latest_reason }}{% else %}لا توجد إضافة حديثة.{% endif %}</span>
+          </div>
+          <button type="button" class="btn btn-soft chart-action" data-bs-toggle="modal" data-bs-target="#pointsHistoryModal"><i class="fas fa-list"></i> عرض سجل النقاط</button>
+        </article>
+
+        <article class="chart-card parent-chart-card">
+          <div class="chart-top">
+            <div>
+              <h3><i class="fas fa-calendar-check"></i> الحضور</h3>
+              <div class="subtext">حاضر، غائب، وغياب مبرر.</div>
+            </div>
+            <span class="pill {% if master_report.attendance.percentage >= 80 %}ok{% elif master_report.attendance.percentage >= 60 %}warn{% elif master_report.attendance.total %}bad{% else %}mutep{% endif %}">{{ master_report.attendance.percentage }}%</span>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="attendanceBreakdownChart"></canvas>
+            <div class="empty" id="attendanceBreakdownEmpty">لا توجد سجلات حضور داخل هذه الفترة.</div>
+          </div>
+          <div class="chart-summary">
+            <span>نسبة الحضور: {{ master_report.attendance.percentage }}%</span>
+            <span>حضر {{ master_report.attendance.present }} من {{ master_report.attendance.total }}</span>
+            <span>غياب: {{ master_report.attendance.absent }}، مبرر: {{ master_report.attendance.excused }}</span>
+          </div>
+          <button type="button" class="btn btn-soft chart-action" data-bs-toggle="modal" data-bs-target="#attendanceHistoryModal"><i class="fas fa-list"></i> عرض سجل الحضور</button>
+        </article>
+
+        <article class="chart-card parent-chart-card">
+          <div class="chart-top">
+            <div>
+              <h3><i class="fas fa-clipboard-list"></i> الواجبات</h3>
+              <div class="subtext">هل ينجز الطالب ما أُسند إليه؟</div>
+            </div>
+            <span class="pill {% if master_report.homework.pending_count or master_report.homework.not_completed_count %}warn{% elif master_report.homework.total_count %}ok{% else %}mutep{% endif %}">{{ master_report.homework.completion_percentage }}%</span>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="homeworkCompletionChart"></canvas>
+            <div class="empty" id="homeworkCompletionEmpty">لا توجد واجبات مرتبطة بهذه الفترة.</div>
+          </div>
+          <div class="chart-summary">
+            <span>أنجز {{ master_report.homework.completed_count }} من {{ master_report.homework.total_count }} واجبات</span>
+            <span>غير منجز: {{ master_report.homework.not_completed_count }}، جزئي: {{ master_report.homework.partial_count }}، بانتظار التقييم: {{ master_report.homework.pending_count }}</span>
           </div>
         </article>
 
-        <article class="chart-card">
+        <article class="chart-card parent-chart-card">
           <div class="chart-top">
             <div>
-              <h3><i class="fas fa-book-open"></i> التسميع</h3>
-              <div class="subtext">عدد الآيات المسجلة يومياً.</div>
+              <h3><i class="fas fa-microphone-lines"></i> جودة التسميع</h3>
+              <div class="subtext">ملخص تقييمات التسميع والحفظ.</div>
             </div>
-            <span class="pill info">{{ summary.monthly_memorized_verses }} آية</span>
+            <span class="pill {% if master_report.memorization.average_score >= 2.5 %}ok{% elif master_report.memorization.average_score %}warn{% else %}mutep{% endif %}">{{ master_report.memorization.quality_label }}</span>
           </div>
           <div class="canvas-wrap">
-            <canvas id="recitationChart"></canvas>
-            <div class="empty" id="recitationEmpty">لا توجد بيانات تسميع داخل هذه الفترة.</div>
+            <canvas id="recitationQualityChart"></canvas>
+            <div class="empty" id="recitationQualityEmpty">لا توجد تقييمات تسميع داخل هذه الفترة.</div>
           </div>
+          <div class="chart-summary">
+            <span>{% if summary.latest_recitation.date %}آخر تسميع: {{ summary.latest_recitation.surah }} - {{ summary.latest_recitation.evaluation_label }}{% else %}لا يوجد تسميع مسجل.{% endif %}</span>
+            <span>{{ master_report.memorization.records }} سجل، {{ master_report.memorization.verses_total }} آية</span>
+          </div>
+          <button type="button" class="btn btn-soft chart-action" data-bs-toggle="modal" data-bs-target="#recitationHistoryModal"><i class="fas fa-list"></i> عرض سجل التسميع</button>
         </article>
       </div>
 
-      <div class="quick-note">
+      <article class="parent-plan-card">
+        <div class="detail-top">
+          <div>
+            <span class="metric-label">الخطة الحالية</span>
+            <h3 class="detail-title mb-1">{{ master_report.plan.target }}</h3>
+            <div class="subtext">{{ summary.plan.date_range|default:"لا توجد فترة خطة محددة" }}</div>
+          </div>
+          <span class="pill {% if summary.plan.badge_class == 'excellent' %}ok{% elif summary.plan.badge_class == 'warning' %}warn{% elif summary.plan.badge_class == 'good' %}info{% else %}mutep{% endif %}">{{ summary.plan.status_label }}</span>
+        </div>
+        <div class="progress-line"><span style="width: {{ summary.plan.actual_percent }}%"></span></div>
+        <p class="metric-note">التقدم الفعلي {{ summary.plan.actual_percent }}%{% if summary.plan.expected_percent %}، والمتوقع {{ summary.plan.expected_percent }}%{% endif %}.{% if summary.plan.notes %}<br>{{ summary.plan.notes }}{% endif %}</p>
+      </article>
+
+      <div class="insight-box">
         <strong>الخلاصة:</strong>
-        حضور الطالب {{ summary.attendance_percentage }}%، والواجب الحالي {{ summary.homework.status_label }}، واتجاه الأداء {{ summary.performance_trend.label }}.
+        {{ summary.period_insight }}
       </div>
     </section>
 
@@ -964,107 +1091,14 @@
       </div>
 
       <section class="report-card" id="mainReportCard">
-        <h2><i class="fas fa-file-lines"></i> ملخص الفترة</h2>
-        <p class="subtext" id="mainReportIntro">من {{ master_report.start }} إلى {{ master_report.end }}: متابعة الحضور والتسميع والنقاط والواجب والخطة.</p>
-        <div class="report-grid">
-          <div class="report-line">
-            <span class="report-label">الحضور</span>
-            <span class="report-value">{{ master_report.attendance.percentage }}%</span>
-            <p class="report-note">حاضر {{ master_report.attendance.present }}، غياب {{ master_report.attendance.absent }}، معذور {{ master_report.attendance.excused }}</p>
-          </div>
-          <div class="report-line">
-            <span class="report-label">التسميع</span>
-            <span class="report-value">{{ master_report.memorization.verses_total }} آية</span>
-            <p class="report-note">{{ master_report.memorization.records }} سجل، أحدث تقييم: {{ master_report.memorization.latest_evaluation }}</p>
-          </div>
-          <div class="report-line">
-            <span class="report-label">النقاط</span>
-            <span class="report-value">{{ master_report.points.net_total }}</span>
-            <p class="report-note">الرصيد الحالي {{ master_report.points.current_total }}</p>
-          </div>
-          <div class="report-line">
-            <span class="report-label">الواجبات</span>
-            <span class="report-value">{{ master_report.homework.pending_count }}</span>
-            <p class="report-note">بانتظار التقييم، إسناد {{ master_report.homework.assigned_count }} وتقييم {{ master_report.homework.evaluated_count }}</p>
-          </div>
-          <div class="report-line">
-            <span class="report-label">الخطة</span>
-            <span class="report-value">{{ master_report.plan.status_label }}</span>
-            <p class="report-note">المتوقع {{ master_report.plan.expected_percent }}%، الفعلي {{ master_report.plan.actual_percent }}%</p>
-          </div>
-          <div class="report-line">
-            <span class="report-label">ملاحظات المعلم</span>
-            <span class="report-value">{{ master_report.teacher_notes_count }}</span>
-            <p class="report-note">تظهر التفاصيل في المجموعات أدناه.</p>
-          </div>
-        </div>
+        <h2><i class="fas fa-file-lines"></i> التقرير</h2>
+        <p class="subtext" id="mainReportIntro">{{ summary.period_insight }}</p>
         <div class="action-row report-actions">
           <button type="button" class="btn btn-soft btn-primary-soft" id="printReportBtn"><i class="fas fa-print"></i> طباعة / PDF</button>
           <button type="button" class="btn btn-soft" id="downloadReportBtn"><i class="fas fa-file-arrow-down"></i> تنزيل النص</button>
           <button type="button" class="btn btn-soft" id="copyReportBtn"><i class="fas fa-copy"></i> نسخ التقرير</button>
         </div>
       </section>
-
-      <details class="report-group" open>
-        <summary><span><i class="fas fa-clock-rotate-left"></i> أيام الفترة</span><span class="pill mutep">{{ timeline_entries|length }} يوم</span></summary>
-        <div class="group-body">
-          {% if timeline_entries %}
-          <div class="detail-grid">
-            {% for entry in timeline_entries %}
-            <article class="day-card">
-              <div class="day-head">
-                <div class="day-title">{{ entry.display_date }}</div>
-                <div class="tags">
-                  {% if entry.attendance %}<span class="tag"><i class="fas fa-user-check"></i> {{ entry.attendance }}</span>{% endif %}
-                  {% if entry.points %}<span class="tag"><i class="fas fa-star"></i> {{ entry.points_total }} نقطة</span>{% endif %}
-                  {% if entry.memorization %}<span class="tag"><i class="fas fa-book-open"></i> {{ entry.memorization_count }} تسميع</span>{% endif %}
-                  {% if entry.homework %}<span class="tag"><i class="fas fa-clipboard-list"></i> {{ entry.homework_count }} واجب</span>{% endif %}
-                </div>
-              </div>
-              <div class="timeline-grid">
-                <div class="block">
-                  <h4>الحضور</h4>
-                  <ul class="clean-list">
-                    <li>{% if entry.attendance %}{{ entry.attendance }}{% else %}لا يوجد تسجيل حضور.{% endif %}</li>
-                    {% if entry.attendance_source %}<li>{{ entry.attendance_source }}</li>{% endif %}
-                    {% if entry.attendance_note %}<li>{{ entry.attendance_note }}</li>{% endif %}
-                    {% if entry.session_note %}<li>{{ entry.session_note }}</li>{% endif %}
-                  </ul>
-                </div>
-                <div class="block">
-                  <h4>الحفظ والواجب</h4>
-                  <ul class="clean-list">
-                    {% for item in entry.memorization %}
-                    <li>{{ item.surah }}{% if item.range %} ({{ item.range }}){% endif %} - {{ item.evaluation }}{% if item.source %} - {{ item.source }}{% endif %}</li>
-                    {% empty %}
-                    <li>لا يوجد تسميع.</li>
-                    {% endfor %}
-                    {% for item in entry.homework %}
-                    <li>{{ item.title }}: {{ item.text }}{% if item.note %} - {{ item.note }}{% endif %}</li>
-                    {% endfor %}
-                  </ul>
-                </div>
-                <div class="block">
-                  <h4>نقاط وملاحظات</h4>
-                  <ul class="clean-list">
-                    {% for item in entry.points %}
-                    <li>{{ item.value }} نقطة - {{ item.reason }}</li>
-                    {% empty %}
-                    <li>لا توجد نقاط.</li>
-                    {% endfor %}
-                    {% for note in entry.notes %}<li>{{ note.source }}: {{ note.text }}</li>{% endfor %}
-                    {% for item in entry.plans %}<li>{{ item.title }}: {{ item.target }}</li>{% endfor %}
-                  </ul>
-                </div>
-              </div>
-            </article>
-            {% endfor %}
-          </div>
-          {% else %}
-          <div class="empty-state">لا توجد أحداث مسجلة داخل هذا النطاق الزمني.</div>
-          {% endif %}
-        </div>
-      </details>
 
       <details class="report-group">
         <summary><span><i class="fas fa-calendar-check"></i> الحضور</span><span class="pill info">{{ attendance_rows|length }} سجل</span></summary>
@@ -1086,7 +1120,7 @@
       </details>
 
       <details class="report-group">
-        <summary><span><i class="fas fa-microphone-lines"></i> التسميع</span><span class="pill info">{{ memorization_rows|length }} سجل</span></summary>
+        <summary><span><i class="fas fa-microphone-lines"></i> التسميع والحفظ</span><span class="pill info">{{ memorization_rows|length }} سجل</span></summary>
         <div class="group-body">
           {% if memorization_rows %}
           <div class="detail-grid">
@@ -1145,7 +1179,7 @@
       </details>
 
       <details class="report-group">
-        <summary><span><i class="fas fa-route"></i> الخطة والملاحظات</span><span class="pill info">{{ teacher_notes|length }} ملاحظة</span></summary>
+        <summary><span><i class="fas fa-route"></i> الخطط</span><span class="pill info">{{ plan_rows|length }} خطة</span></summary>
         <div class="group-body">
           <div class="detail-grid">
             {% for plan in plan_rows %}
@@ -1157,6 +1191,14 @@
             {% empty %}
             <div class="empty-state">لا توجد خطط مرتبطة بالفترة الحالية.</div>
             {% endfor %}
+          </div>
+        </div>
+      </details>
+
+      <details class="report-group">
+        <summary><span><i class="fas fa-message"></i> ملاحظات المعلم</span><span class="pill info">{{ teacher_notes|length }} ملاحظة</span></summary>
+        <div class="group-body">
+          <div class="detail-grid">
             {% for note in teacher_notes %}
             <article class="detail-card">
               <div class="detail-top"><span class="detail-title">{{ note.source }}</span><span class="pill mutep">{{ note.date|date:"Y-m-d" }}</span></div>
@@ -1173,10 +1215,130 @@
     <div class="foot">معهد قباء لتحفيظ القرآن الكريم - لوحة متابعة ولي الأمر</div>
   </main>
 
-  {{ attendance_chart|json_script:"attendance-chart-data" }}
-  {{ memorization_chart|json_script:"memorization-chart-data" }}
+  <div class="modal fade" id="pointsHistoryModal" tabindex="-1" aria-labelledby="pointsHistoryTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title fs-5" id="pointsHistoryTitle">سجل النقاط</h2>
+          <button type="button" class="btn-close ms-0" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+        </div>
+        <div class="modal-body">
+          {% if points_rows %}
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>التاريخ</th>
+                <th>النقاط</th>
+                <th>السبب</th>
+                <th>أضيف بواسطة</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for point in points_rows %}
+              <tr>
+                <td>{{ point.date|date:"Y-m-d H:i" }}</td>
+                <td>{{ point.value }}</td>
+                <td>{{ point.reason }}</td>
+                <td>{% if point.created_by %}{{ point.created_by.get_full_name|default:point.created_by.username }}{% else %}غير محدد{% endif %}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% else %}
+          <div class="empty-state">لا توجد نقاط مسجلة ضمن النطاق المحدد.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="attendanceHistoryModal" tabindex="-1" aria-labelledby="attendanceHistoryTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title fs-5" id="attendanceHistoryTitle">سجل الحضور</h2>
+          <button type="button" class="btn-close ms-0" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+        </div>
+        <div class="modal-body">
+          {% if attendance_rows %}
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>التاريخ</th>
+                <th>الحلقة/الجلسة</th>
+                <th>الحالة</th>
+                <th>الملاحظة</th>
+                <th>المصدر</th>
+                <th>المسجل</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for attendance in attendance_rows %}
+              <tr>
+                <td>{{ attendance.session.date|date:"Y-m-d" }}</td>
+                <td>{{ attendance.session.halaqa.name|default:summary.halaqa_name }}</td>
+                <td>{{ attendance.get_status_display }}</td>
+                <td>{{ attendance.notes|default:attendance.session.notes|default:"لا توجد ملاحظة" }}</td>
+                <td>{% if attendance.recorded_by_role %}{{ attendance.get_recorded_by_role_display }}{% else %}غير محدد{% endif %}</td>
+                <td>{% if attendance.recorded_by %}{{ attendance.recorded_by.get_full_name|default:attendance.recorded_by.username }}{% else %}غير محدد{% endif %}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% else %}
+          <div class="empty-state">لا توجد سجلات حضور ضمن النطاق المحدد.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="recitationHistoryModal" tabindex="-1" aria-labelledby="recitationHistoryTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title fs-5" id="recitationHistoryTitle">سجل التسميع</h2>
+          <button type="button" class="btn-close ms-0" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+        </div>
+        <div class="modal-body">
+          {% if memorization_rows %}
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>التاريخ</th>
+                <th>الواجب المرتبط</th>
+                <th>ما سمعه الطالب</th>
+                <th>الصفحات/الآيات</th>
+                <th>التقييم</th>
+                <th>النوع</th>
+                <th>ملاحظات</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for record in memorization_rows %}
+              <tr>
+                <td>{{ record.date|date:"Y-m-d" }}</td>
+                <td>{% if record.homework %}{{ record.homework.assignment_text }}{% else %}لا يوجد{% endif %}</td>
+                <td>{{ record.recitation_title }}</td>
+                <td>{% if record.pages %}{{ record.pages }}{% elif record.recitation_range %}{{ record.recitation_range }}{% else %}غير محدد{% endif %}{% if record.verses_count %}<br>{{ record.verses_count }} آية{% endif %}</td>
+                <td>{% if record.evaluation %}{{ record.get_evaluation_display }}{% else %}بدون تقييم{% endif %}</td>
+                <td>{{ record.get_recitation_type_display }}</td>
+                <td>{{ record.notes|default:"لا توجد ملاحظات" }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% else %}
+          <div class="empty-state">لا توجد سجلات تسميع ضمن النطاق المحدد.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
   {{ points_chart|json_script:"points-chart-data" }}
-  {{ plan_chart|json_script:"plan-chart-data" }}
+  {{ homework_status_chart|json_script:"homework-status-chart-data" }}
+  {{ recitation_quality_chart|json_script:"recitation-quality-chart-data" }}
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
@@ -1191,10 +1353,37 @@
       if (empty) empty.style.display = 'flex';
     }
 
-    function lineChart(canvasId, emptyId, data, label, color, fill) {
+    function readChartData(id) {
+      const node = document.getElementById(id);
+      return node ? JSON.parse(node.textContent) : {};
+    }
+
+    function makeDoughnut(canvasId, emptyId, labels, values, colors) {
       const canvas = document.getElementById(canvasId);
       if (!canvas) return;
-      if (!data.labels?.length || !valuesHaveData(data.values)) {
+      if (typeof Chart === 'undefined' || !valuesHaveData(values)) {
+        showEmpty(canvasId, emptyId);
+        return;
+      }
+      new Chart(canvas.getContext('2d'), {
+        type: 'doughnut',
+        data: {
+          labels,
+          datasets: [{ data: values, backgroundColor: colors, borderColor: '#fff', borderWidth: 3 }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '64%',
+          plugins: { legend: { position: 'bottom', labels: { boxWidth: 10 } } },
+        }
+      });
+    }
+
+    function makeLine(canvasId, emptyId, data) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      if (typeof Chart === 'undefined' || !data.labels?.length || !valuesHaveData(data.values)) {
         showEmpty(canvasId, emptyId);
         return;
       }
@@ -1203,10 +1392,9 @@
         data: {
           labels: data.labels,
           datasets: [{
-            label,
             data: data.values,
-            borderColor: color,
-            backgroundColor: fill,
+            borderColor: '#968960',
+            backgroundColor: 'rgba(150, 137, 96, .14)',
             fill: true,
             tension: .35,
             borderWidth: 3,
@@ -1227,17 +1415,13 @@
       lines.push(`تقرير ولي الأمر - {{ summary.student_name|escapejs }}`);
       lines.push(`الفترة: {{ master_report.start|escapejs }} إلى {{ master_report.end|escapejs }}`);
       lines.push('');
-      lines.push('ملخص الفترة');
-      document.querySelectorAll('#mainReportCard .report-line').forEach((line) => {
-        const label = line.querySelector('.report-label')?.textContent.trim() || '';
-        const value = line.querySelector('.report-value')?.textContent.trim() || '';
-        const note = line.querySelector('.report-note')?.textContent.trim() || '';
-        lines.push(`${label}: ${value}${note ? ' - ' + note : ''}`);
-      });
+      lines.push(document.getElementById('mainReportIntro')?.textContent.trim() || '');
       lines.push('');
-      lines.push('أيام الفترة');
-      document.querySelectorAll('.day-card').forEach((day) => {
-        lines.push(day.innerText.replace(/\s+\n/g, '\n').trim());
+      document.querySelectorAll('.report-group').forEach((group) => {
+        lines.push(group.querySelector('summary')?.innerText.trim() || '');
+        group.querySelectorAll('.detail-card').forEach((card) => {
+          lines.push(card.innerText.replace(/\s+\n/g, '\n').trim());
+        });
         lines.push('---');
       });
       return lines.join('\n');
@@ -1273,65 +1457,52 @@
       }, 1600);
     }
 
+    function showPlainModal(target) {
+      const modal = document.querySelector(target);
+      if (!modal) return;
+      modal.style.display = 'block';
+      modal.removeAttribute('aria-hidden');
+      modal.classList.add('show');
+      document.body.classList.add('modal-open');
+    }
+
+    function hidePlainModal(modal) {
+      if (!modal) return;
+      modal.classList.remove('show');
+      modal.setAttribute('aria-hidden', 'true');
+      modal.style.display = 'none';
+      document.body.classList.remove('modal-open');
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
-      const attendanceChart = JSON.parse(document.getElementById('attendance-chart-data').textContent);
-      const memorizationChart = JSON.parse(document.getElementById('memorization-chart-data').textContent);
-      const pointsChart = JSON.parse(document.getElementById('points-chart-data').textContent);
-      const planChart = JSON.parse(document.getElementById('plan-chart-data').textContent);
-
-      const attendanceValues = [
-        Number('{{ summary.attendance_reference.present|default:0 }}'),
-        Number('{{ summary.attendance_reference.absent|default:0 }}'),
-        Number('{{ summary.attendance_reference.excused|default:0 }}')
-      ];
-      const attendanceCanvas = document.getElementById('attendanceSummaryChart');
-      if (!valuesHaveData(attendanceValues)) {
-        showEmpty('attendanceSummaryChart', 'attendanceSummaryEmpty');
-      } else {
-        new Chart(attendanceCanvas.getContext('2d'), {
-          type: 'doughnut',
-          data: {
-            labels: ['حاضر', 'غائب', 'معذور'],
-            datasets: [{
-              data: attendanceValues,
-              backgroundColor: ['rgba(76,175,80,.82)', 'rgba(244,67,54,.78)', 'rgba(255,193,7,.82)'],
-              borderColor: '#fff',
-              borderWidth: 3,
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { position: 'bottom' } },
-            cutout: '62%',
-          }
-        });
-      }
-
-      const progressCanvas = document.getElementById('progressChart');
-      if (!planChart.labels?.length || (!valuesHaveData(planChart.expected) && !valuesHaveData(planChart.actual))) {
-        showEmpty('progressChart', 'progressEmpty');
-      } else {
-        new Chart(progressCanvas.getContext('2d'), {
-          type: 'line',
-          data: {
-            labels: planChart.labels,
-            datasets: [
-              { label: 'المتوقع', data: planChart.expected, borderColor: '#968960', backgroundColor: 'rgba(150,137,96,.08)', tension: .32, borderWidth: 3, pointRadius: 2 },
-              { label: 'الفعلي', data: planChart.actual, borderColor: '#0B3C54', backgroundColor: 'rgba(11,60,84,.08)', tension: .32, borderWidth: 3, pointRadius: 2 },
-            ]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { position: 'bottom' } },
-            scales: { y: { beginAtZero: true, max: 100, ticks: { callback: (value) => `${value}%` } } },
-          }
-        });
-      }
-
-      lineChart('pointsChart', 'pointsEmpty', pointsChart, 'النقاط', '#968960', 'rgba(150,137,96,.14)');
-      lineChart('recitationChart', 'recitationEmpty', memorizationChart, 'الآيات', '#31617F', 'rgba(49,97,127,.12)');
+      makeLine('pointsTrendChart', 'pointsTrendEmpty', readChartData('points-chart-data'));
+      makeDoughnut(
+        'attendanceBreakdownChart',
+        'attendanceBreakdownEmpty',
+        ['حاضر', 'غائب', 'مبرر'],
+        [
+          Number('{{ master_report.attendance.present|default:0 }}'),
+          Number('{{ master_report.attendance.absent|default:0 }}'),
+          Number('{{ master_report.attendance.excused|default:0 }}')
+        ],
+        ['rgba(76,175,80,.82)', 'rgba(244,67,54,.78)', 'rgba(255,193,7,.82)']
+      );
+      const homeworkStatus = readChartData('homework-status-chart-data');
+      makeDoughnut(
+        'homeworkCompletionChart',
+        'homeworkCompletionEmpty',
+        homeworkStatus.labels || [],
+        homeworkStatus.values || [],
+        ['rgba(76,175,80,.78)', 'rgba(255,193,7,.82)', 'rgba(244,67,54,.72)', 'rgba(49,97,127,.55)']
+      );
+      const recitationQuality = readChartData('recitation-quality-chart-data');
+      makeDoughnut(
+        'recitationQualityChart',
+        'recitationQualityEmpty',
+        recitationQuality.labels || [],
+        recitationQuality.values || [],
+        ['rgba(76,175,80,.82)', 'rgba(49,97,127,.74)', 'rgba(150,137,96,.72)', 'rgba(255,193,7,.8)', 'rgba(11,60,84,.22)']
+      );
 
       document.querySelectorAll('.tab-button').forEach((button) => {
         button.addEventListener('click', () => {
@@ -1347,6 +1518,20 @@
           window.requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
         });
       });
+
+      if (typeof bootstrap === 'undefined') {
+        document.querySelectorAll('[data-bs-toggle="modal"]').forEach((button) => {
+          button.addEventListener('click', () => showPlainModal(button.dataset.bsTarget));
+        });
+        document.querySelectorAll('.modal [data-bs-dismiss="modal"]').forEach((button) => {
+          button.addEventListener('click', () => hidePlainModal(button.closest('.modal')));
+        });
+        document.querySelectorAll('.modal').forEach((modal) => {
+          modal.addEventListener('click', (event) => {
+            if (event.target === modal) hidePlainModal(modal);
+          });
+        });
+      }
 
       const copyButton = document.getElementById('copyReportBtn');
       const downloadButton = document.getElementById('downloadReportBtn');

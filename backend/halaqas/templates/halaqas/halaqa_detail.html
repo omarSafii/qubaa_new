@@ -664,6 +664,10 @@
       opacity: 0.72;
     }
 
+    .btn-attendance.attendance-locked {
+      cursor: pointer;
+    }
+
     .btn-plan {
       background: var(--color-primary);
     }
@@ -676,6 +680,31 @@
       opacity: 0.45;
       box-shadow: none;
       cursor: not-allowed;
+    }
+
+    .conflict-toast {
+      position: fixed;
+      top: 88px;
+      right: 16px;
+      left: 16px;
+      z-index: 1200;
+      max-width: 680px;
+      margin-inline: auto;
+      padding: 12px 14px;
+      border-radius: 8px;
+      background: #fff3cd;
+      color: #684d00;
+      border: 1px solid rgba(255, 193, 7, .45);
+      box-shadow: 0 12px 28px rgba(11, 60, 84, .16);
+      display: none;
+      align-items: flex-start;
+      gap: 10px;
+      font-weight: 800;
+      line-height: 1.8;
+    }
+
+    .conflict-toast.is-visible {
+      display: flex;
     }
 
     .report-card {
@@ -1402,6 +1431,11 @@
   </style>
 </head>
 <body>
+  <div class="conflict-toast" id="attendanceConflictToast" role="status" aria-live="polite">
+    <i class="fas fa-triangle-exclamation"></i>
+    <span id="attendanceConflictToastText">لا يمكنك تعديل حضور هذا الطالب لأن الموجّه سجّل حضوره مسبقًا.</span>
+  </div>
+
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">
@@ -1679,6 +1713,8 @@
                           data-attendance-id="{{ entry.today_attendance_id|default:'' }}"
                           data-attendance-status="{{ entry.today_attendance_status|default:'' }}"
                           data-attendance-notes="{{ entry.today_attendance_notes|default:'' }}"
+                          data-attendance-locked="{% if entry.attendance_locked_for_teacher %}true{% else %}false{% endif %}"
+                          data-attendance-lock-message="{{ entry.attendance_lock_message|default:'تم تسجيل حضور هذا الطالب من قبل الموجّه، ولا يمكن تعديله من صفحة الأستاذ.' }}"
                           data-plan-id="{{ entry.plan_id|default:'' }}"
                           data-plan-target="{% if entry.plan %}{{ entry.plan.target }}{% endif %}"
                           data-plan-start="{% if entry.plan %}{{ entry.plan.start_date|date:'Y-m-d' }}{% endif %}"
@@ -1717,7 +1753,8 @@
                             class="btn-action btn-attendance {% if entry.attendance_locked_for_teacher %}attendance-locked{% endif %}"
                             title="{% if entry.attendance_locked_for_teacher %}تم تسجيل الحضور من قبل الموجّه{% else %}تسجيل حضور{% endif %}"
                             data-action="attendance"
-                            {% if not entry.current_session_id or entry.attendance_locked_for_teacher %}disabled{% endif %}
+                            data-lock-message="{{ entry.attendance_lock_message|default:'تم تسجيل حضور هذا الطالب من قبل الموجّه، ولا يمكن تعديله من صفحة الأستاذ.' }}"
+                            {% if not entry.current_session_id %}disabled{% endif %}
                           >
                             <i class="fas fa-user-check"></i>
                           </button>
@@ -2033,40 +2070,24 @@
                 <span class="field-note">الواجب يرتبط غالباً بتاريخ الصفحة الحالي ويمكن تعديله عند الحاجة.</span>
               </div>
 
-              <div class="mb-3">
-                <label class="form-label">نوع الواجب</label>
-                <select class="form-select" id="homeworkAssignmentType" name="assignment_type">
-                  {% for option in homework_type_options %}
-                  <option value="{{ option.value }}">{{ option.label }}</option>
-                  {% endfor %}
-                </select>
-              </div>
+              <input type="hidden" id="homeworkAssignmentType" name="assignment_type" value="pages">
 
               <div class="mb-3 recitation-fields" data-assignment-fields="pages">
-                <label class="form-label">الصفحات</label>
-                <input type="text" class="form-control" id="homeworkPages" name="pages" maxlength="80" placeholder="مثل: 12-14">
+                <label class="form-label">رقم الصفحة أو نطاق الصفحات</label>
+                <input type="text" class="form-control" id="homeworkPages" name="pages" maxlength="80" placeholder="مثل: 12 أو 12-14">
+                <span class="field-note">هذا هو الحقل الأساسي لإسناد الواجب. يمكن كتابة صفحة واحدة أو نطاق صفحات.</span>
               </div>
 
-              <div class="recitation-fields" data-assignment-fields="surah">
-                <div class="mb-3">
-                  <label class="form-label">السورة</label>
-                  <select class="form-select surah-select" id="homeworkSurah" name="surah"></select>
-                </div>
-                <div class="modal-field-grid mb-3">
-                  <div>
-                    <label class="form-label">من آية</label>
-                    <input type="number" class="form-control" id="homeworkFromVerse" name="from_verse" min="1">
-                  </div>
-                  <div>
-                    <label class="form-label">إلى آية</label>
-                    <input type="number" class="form-control" id="homeworkToVerse" name="to_verse" min="1">
-                  </div>
-                </div>
+              <div class="mb-3">
+                <label class="form-label">السورة <span class="field-note">اختياري</span></label>
+                <select class="form-select surah-select" id="homeworkSurah" name="surah"></select>
+                <input type="hidden" id="homeworkFromVerse" name="from_verse">
+                <input type="hidden" id="homeworkToVerse" name="to_verse">
               </div>
 
-              <div class="mb-3 recitation-fields" data-assignment-fields="text">
-                <label class="form-label">تفاصيل الواجب</label>
-                <input type="text" class="form-control" id="homeworkAssignmentText" name="assignment_text" maxlength="120" placeholder="مثل: مراجعة محفوظ الأسبوع">
+              <div class="mb-3">
+                <label class="form-label">عنوان مختصر <span class="field-note">اختياري</span></label>
+                <input type="text" class="form-control" id="homeworkAssignmentText" name="assignment_text" maxlength="120" placeholder="اتركه فارغاً ليُنشأ من الصفحات">
               </div>
 
               <div class="mb-3">
@@ -2534,6 +2555,32 @@
       alertBox.textContent = '';
     }
 
+    let attendanceConflictToastTimer;
+
+    function showAttendanceConflictNotice(message) {
+      const finalMessage = message || 'لا يمكنك تعديل حضور هذا الطالب لأن الموجّه سجّل حضوره مسبقًا.';
+      const toast = document.getElementById('attendanceConflictToast');
+      const toastText = document.getElementById('attendanceConflictToastText');
+      if (toastText) {
+        toastText.textContent = finalMessage;
+      }
+      if (toast) {
+        toast.classList.add('is-visible');
+        clearTimeout(attendanceConflictToastTimer);
+        attendanceConflictToastTimer = setTimeout(() => {
+          toast.classList.remove('is-visible');
+        }, 4200);
+      }
+      const modalAlert = document.getElementById('attendanceAlert');
+      if (modalAlert) {
+        showInlineAlert('attendanceAlert', finalMessage);
+      }
+    }
+
+    function isAttendanceConflictMessage(message) {
+      return String(message || '').includes('الموج');
+    }
+
     function parseResponseError(errorPayload) {
       if (!errorPayload) {
         return 'تعذر حفظ البيانات، حاول مرة أخرى.';
@@ -2687,6 +2734,8 @@
         attendanceId: container.dataset.attendanceId,
         attendanceStatus: container.dataset.attendanceStatus,
         attendanceNotes: container.dataset.attendanceNotes,
+        attendanceLocked: button.classList.contains('attendance-locked') || container.dataset.attendanceLocked === 'true',
+        attendanceLockMessage: button.dataset.lockMessage || container.dataset.attendanceLockMessage || '',
         planId: container.dataset.planId,
         planTarget: container.dataset.planTarget,
         planStart: container.dataset.planStart,
@@ -2846,12 +2895,12 @@
         ? (student.homework_assigned_date || reportState.selected_date)
         : reportState.selected_date;
       document.getElementById('homeworkAssignmentType').value = hasOpenHomework
-        ? (student.homework_assignment_type || homeworkTypeOptions[0]?.value || 'surah')
-        : (homeworkTypeOptions[0]?.value || 'surah');
+        ? (student.homework_assignment_type || 'pages')
+        : 'pages';
       document.getElementById('homeworkPages').value = hasOpenHomework ? (student.homework_pages || '') : '';
       document.getElementById('homeworkSurah').value = hasOpenHomework ? (student.homework_surah || 'البقرة') : 'البقرة';
-      document.getElementById('homeworkFromVerse').value = hasOpenHomework ? (student.homework_from_verse || '') : 1;
-      document.getElementById('homeworkToVerse').value = hasOpenHomework ? (student.homework_to_verse || '') : 1;
+      document.getElementById('homeworkFromVerse').value = hasOpenHomework ? (student.homework_from_verse || '') : '';
+      document.getElementById('homeworkToVerse').value = hasOpenHomework ? (student.homework_to_verse || '') : '';
       document.getElementById('homeworkAssignmentText').value = hasOpenHomework ? (student.homework_assignment_text || '') : '';
       document.getElementById('homeworkAssignmentNotes').value = hasOpenHomework ? (student.homework_assignment_notes || '') : '';
       document.getElementById('homeworkExpectedRecitationDate').value = hasOpenHomework
@@ -3196,6 +3245,10 @@
           } else if (action === 'memorization') {
             openMemorizationModal(meta);
           } else if (action === 'attendance') {
+            if (meta.attendanceLocked) {
+              showAttendanceConflictNotice(meta.attendanceLockMessage);
+              return;
+            }
             openAttendanceModal(meta);
           } else if (action === 'plan') {
             openPlanModal(meta);
@@ -3375,7 +3428,12 @@
         });
         attendanceModal.hide();
       } catch (error) {
-        showInlineAlert('attendanceAlert', parseResponseError(error));
+        const message = parseResponseError(error);
+        if (isAttendanceConflictMessage(message)) {
+          showAttendanceConflictNotice(message);
+        } else {
+          showInlineAlert('attendanceAlert', message);
+        }
       } finally {
         setButtonLoading(button, false, 'حفظ');
       }
@@ -3508,6 +3566,26 @@
       }
     }
 
+    function clearActiveHomeworkState(student) {
+      student.homework_id = '';
+      student.homework_status = '';
+      student.homework_status_label = 'لا يوجد واجب';
+      student.homework_assignment_type = '';
+      student.homework_assignment_type_label = '';
+      student.homework_assignment_text = '';
+      student.homework_pages = '';
+      student.homework_surah = '';
+      student.homework_from_verse = '';
+      student.homework_to_verse = '';
+      student.homework_assignment_notes = '';
+      student.homework_assigned_date = '';
+      student.homework_expected_recitation_date = '';
+      student.homework_evaluation = '';
+      student.homework_evaluation_label = '';
+      student.homework_evaluation_date = '';
+      student.homework_evaluation_notes = '';
+    }
+
     async function handleHomeworkSubmit() {
       hideInlineAlert('homeworkAlert');
       const button = document.getElementById('submitHomeworkBtn');
@@ -3554,7 +3632,7 @@
           assignment_type: assignmentType,
           assignment_text: assignmentText,
           pages: assignmentType === 'pages' ? pages : '',
-          surah: assignmentType === 'surah' ? surah : '',
+          surah: surah || '',
           from_verse: assignmentType === 'surah' ? fromVerse : null,
           to_verse: assignmentType === 'surah' ? toVerse : null,
           expected_recitation_date: document.getElementById('homeworkExpectedRecitationDate').value,
@@ -3679,6 +3757,8 @@
         return;
       }
       const wasEvaluated = student.homework_status === 'evaluated';
+      const evaluatedHomeworkId = student.homework_id;
+      const evaluatedHomeworkLabel = homeworkMetaText(student);
       const payload = {
         student: studentId,
         halaqa: document.getElementById('homeworkHalaqaId').value,
@@ -3697,7 +3777,7 @@
 
       setButtonLoading(button, true, defaultLabel);
       try {
-        await submitJson(detailUrl(homeworksListUrl, student.homework_id), 'PATCH', payload);
+        await submitJson(detailUrl(homeworksListUrl, evaluatedHomeworkId), 'PATCH', payload);
 
         student.homework_status = 'evaluated';
         student.homework_status_label = homeworkStatusLabel('evaluated');
@@ -3724,27 +3804,29 @@
           pushUnique(selectedHistoryEntry().notes, `تقييم ${student.name}: ${evaluationNotes}`);
         }
 
+        const evaluationLabel = student.homework_evaluation_label;
+        clearActiveHomeworkState(student);
         renderMemorizationCell(studentId);
         renderHomeworkCell(studentId);
         updateSummaryCards();
         refreshCharts();
         setActionMeta(studentId, {
-          homeworkId: student.homework_id,
-          homeworkStatus: student.homework_status,
-          homeworkAssignmentType: student.homework_assignment_type,
-          homeworkAssignmentText: student.homework_assignment_text,
-          homeworkPages: student.homework_pages,
-          homeworkSurah: student.homework_surah,
-          homeworkFromVerse: student.homework_from_verse,
-          homeworkToVerse: student.homework_to_verse,
-          homeworkAssignmentNotes: student.homework_assignment_notes,
-          homeworkAssignedDate: student.homework_assigned_date,
-          homeworkExpectedRecitationDate: student.homework_expected_recitation_date,
-          homeworkEvaluation: student.homework_evaluation,
-          homeworkEvaluationNotes: student.homework_evaluation_notes,
-          homeworkEvaluationDate: student.homework_evaluation_date,
+          homeworkId: '',
+          homeworkStatus: '',
+          homeworkAssignmentType: '',
+          homeworkAssignmentText: '',
+          homeworkPages: '',
+          homeworkSurah: '',
+          homeworkFromVerse: '',
+          homeworkToVerse: '',
+          homeworkAssignmentNotes: '',
+          homeworkAssignedDate: '',
+          homeworkExpectedRecitationDate: '',
+          homeworkEvaluation: '',
+          homeworkEvaluationNotes: '',
+          homeworkEvaluationDate: '',
         });
-        addRecentAction(`${student.name}: تقييم واجب (${student.homework_evaluation_label})`);
+        addRecentAction(`${student.name}: تقييم واجب ${evaluatedHomeworkLabel ? `- ${evaluatedHomeworkLabel}` : ''} (${evaluationLabel})`);
         refreshReportPreview();
         homeworkModal.hide();
       } catch (error) {

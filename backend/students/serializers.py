@@ -161,7 +161,7 @@ class MemorizationRecordSerializer(serializers.ModelSerializer):
             attrs['surah'] = surah
         if not pages and not surah:
             raise serializers.ValidationError({'surah': 'يرجى تحديد الصفحات أو السورة والآيات.'})
-        if surah and (from_verse is None or to_verse is None):
+        if surah and not pages and (from_verse is None or to_verse is None):
             raise serializers.ValidationError({'from_verse': 'يرجى تحديد نطاق الآيات.'})
         if from_verse is not None and to_verse is not None and to_verse < from_verse:
             raise serializers.ValidationError({'to_verse': 'رقم الآية الأخيرة يجب أن يكون أكبر من أو يساوي الآية الأولى.'})

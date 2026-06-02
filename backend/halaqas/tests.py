@@ -616,11 +616,10 @@ class HalaqaActionEndpointTests(TestCase):
             'halaqa': self.halaqa.id,
             'assigned_date': assigned_date.isoformat(),
             'expected_recitation_date': (assigned_date + timedelta(days=3)).isoformat(),
-            'assignment_type': 'surah',
-            'assignment_text': 'سورة الملك',
+            'assignment_type': 'pages',
+            'assignment_text': '',
+            'pages': '12-14',
             'surah': 'الملك',
-            'from_verse': 1,
-            'to_verse': 5,
             'assignment_notes': 'مراجعة مع الإتقان',
         })
 
@@ -628,7 +627,9 @@ class HalaqaActionEndpointTests(TestCase):
         homework = Homework.objects.get(student=self.student, halaqa=self.halaqa)
         self.assertEqual(homework.assigned_date, assigned_date)
         self.assertEqual(homework.expected_recitation_date, assigned_date + timedelta(days=3))
-        self.assertEqual(homework.assignment_text, 'سورة الملك')
+        self.assertEqual(homework.assignment_type, 'pages')
+        self.assertEqual(homework.pages, '12-14')
+        self.assertEqual(homework.assignment_text, 'الصفحات 12-14')
         self.assertEqual(homework.surah, 'الملك')
 
         blocked_response = self.client.post(reverse('halaqas:api:homeworks-list'), data={
@@ -652,9 +653,8 @@ class HalaqaActionEndpointTests(TestCase):
                 'evaluation': 'completed',
                 'evaluation_notes': 'تم الإنجاز',
                 'create_recitation_record': True,
+                'recitation_pages': '12-14',
                 'recitation_surah': 'الملك',
-                'recitation_from_verse': 1,
-                'recitation_to_verse': 5,
                 'recitation_evaluation': 'very_good',
                 'recitation_notes': 'تسميع الواجب',
             }),
@@ -670,11 +670,28 @@ class HalaqaActionEndpointTests(TestCase):
         self.assertEqual(linked_record.student, self.student)
         self.assertEqual(linked_record.halaqa, self.halaqa)
         self.assertEqual(linked_record.recitation_type, 'homework')
+        self.assertEqual(linked_record.pages, '12-14')
         self.assertEqual(linked_record.surah, 'الملك')
-        self.assertEqual(linked_record.from_verse, 1)
-        self.assertEqual(linked_record.to_verse, 5)
+        self.assertIsNone(linked_record.from_verse)
+        self.assertIsNone(linked_record.to_verse)
         self.assertEqual(linked_record.evaluation, 'very_good')
         self.assertEqual(linked_record.notes, 'تسميع الواجب')
+
+        next_response = self.client.post(reverse('halaqas:api:homeworks-list'), data={
+            'student': self.student.id,
+            'halaqa': self.halaqa.id,
+            'assigned_date': timezone.localdate().isoformat(),
+            'assignment_type': 'pages',
+            'assignment_text': '',
+            'pages': '20',
+            'surah': 'القلم',
+        })
+
+        self.assertEqual(next_response.status_code, 201)
+        self.assertEqual(
+            Homework.objects.filter(student=self.student, halaqa=self.halaqa, evaluation_date__isnull=True).count(),
+            1,
+        )
 
 
 class MasterAdminDashboardTests(TestCase):

@@ -192,6 +192,13 @@ class HomeworkSerializer(serializers.ModelSerializer):
             'created_at',
             'updated_at',
         ]
+        extra_kwargs = {
+            'assignment_text': {'required': False, 'allow_blank': True},
+            'pages': {'required': False, 'allow_blank': True},
+            'surah': {'required': False, 'allow_blank': True},
+            'from_verse': {'required': False, 'allow_null': True},
+            'to_verse': {'required': False, 'allow_null': True},
+        }
 
     def get_linked_recitation_id(self, obj):
         linked_record = obj.memorization_records.order_by('-date', '-id').first()
@@ -334,7 +341,7 @@ class HomeworkSerializer(serializers.ModelSerializer):
             )
             if not recitation_pages and not recitation_surah:
                 raise serializers.ValidationError({'recitation_surah': 'يرجى تحديد ما تم تسميعه فعلياً.'})
-            if recitation_surah and (recitation_from is None or recitation_to is None):
+            if recitation_surah and not recitation_pages and (recitation_from is None or recitation_to is None):
                 raise serializers.ValidationError({'recitation_from_verse': 'يرجى تحديد نطاق الآيات في التسميع.'})
             if recitation_from is not None and recitation_to is not None and recitation_to < recitation_from:
                 raise serializers.ValidationError({'recitation_to_verse': 'رقم الآية الأخيرة يجب أن يكون أكبر من أو يساوي الآية الأولى.'})
