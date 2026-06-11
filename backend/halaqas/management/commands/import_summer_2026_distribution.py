@@ -171,6 +171,7 @@ class ImportBlock:
     row_number: int
     left_col: int
     right_col: int
+    start_key: tuple[int, int, int | None]
     grades: list[int]
     grade_label: str
     category_code: str | None
@@ -438,26 +439,56 @@ def truncate_with_suffix(base: str, suffix: str, max_length: int) -> str:
 
 
 class SheetParser:
-    def __init__(self, grid: list[list[str]]):
+    def __init__(self, grid: list[list[str]], allow_empty_blocks: bool = False):
         self.grid = grid
         self.max_col = max((len(row) for row in grid), default=0)
+        self.allow_empty_blocks = allow_empty_blocks
         self.issues: list[Issue] = []
+        self.candidate_count = 0
+        self.rejected_count = 0
 
     def parse(self) -> list[ImportBlock]:
         starts = self._find_block_starts()
+        self.candidate_count = len(starts)
         blocks = self._build_blocks(starts)
-        usable_blocks = []
+        valid_start_keys = {block.start_key for block in blocks if self._block_is_importable(block)}
+        self.rejected_count = len(starts) - len(valid_start_keys)
+
+        # Rebuild after dropping weak candidates so rejected rows do not shorten
+        # the student range of the valid block above them.
+        if len(valid_start_keys) != len(starts):
+            starts = [start for start in starts if self._start_key(start) in valid_start_keys]
+            blocks = self._build_blocks(starts)
+
+        importable_blocks = []
         for block in blocks:
             if not block.category_code:
-                block.issues.append(
-                    Issue("unclear_grade", block.row_number, block.grade_label, "تعذر تحديد الفئة من الصف.")
+                self.rejected_count += 1
+                self.issues.append(
+                    Issue("skipped_unclear_grade", block.row_number, block.grade_label, "تم تجاهل الصف لأن الصف لا يطابق فئة واضحة.")
                 )
+                continue
             if not block.teacher_names:
-                block.issues.append(
-                    Issue("missing_teacher", block.row_number, block.raw_header, "تعذر تحديد اسم المعلم من صف الحلقة.")
+                self.rejected_count += 1
+                self.issues.append(
+                    Issue("skipped_missing_teacher", block.row_number, block.raw_header, "تم تجاهل الصف لأنه لا يحتوي اسم معلم واضحا.")
                 )
-            usable_blocks.append(block)
-        return usable_blocks
+                continue
+            if not block.students and not self.allow_empty_blocks:
+                self.rejected_count += 1
+                self.issues.append(
+                    Issue("skipped_no_students", block.row_number, block.halaqa_name, "تم تجاهل الحلقة لأنه لا يوجد طلاب تحتها.")
+                )
+                continue
+            importable_blocks.append(block)
+        return importable_blocks
+
+    def _block_is_importable(self, block: ImportBlock) -> bool:
+        if not block.category_code or not block.teacher_names:
+            return False
+        if not block.students and not self.allow_empty_blocks:
+            return False
+        return True
 
     def _find_block_starts(self) -> list[BlockStart]:
         starts = []
@@ -480,7 +511,13 @@ class SheetParser:
                 grade_candidates.append((col_index, grades, category_code))
 
             for col_index, grades, category_code in grade_candidates:
-                if self._score_header_row(row_index, col_index, grades) < 2:
+                if not category_code:
+                    continue
+                if not self._has_valid_teacher_evidence(row, col_index):
+                    continue
+                if not self.allow_empty_blocks and not self._next_row_has_probable_names(row_index):
+                    continue
+                if self._score_header_row(row_index, col_index, grades) < 3:
                     continue
                 starts.append(
                     BlockStart(
@@ -496,29 +533,11 @@ class SheetParser:
             if grade_candidates:
                 continue
 
-            if context_category and self._looks_like_teacher_header_without_grade(row):
-                anchor_col = self._first_non_empty_col(row)
-                if anchor_col is not None:
-                    starts.append(
-                        BlockStart(
-                            row_index=row_index,
-                            anchor_col=anchor_col,
-                            grade_col=None,
-                            grades=[],
-                            category_code=context_category,
-                            category_source="context",
-                        )
-                    )
-
         return starts
 
     def _score_header_row(self, row_index: int, grade_col: int, grades: list[int]) -> int:
         row = self.grid[row_index]
-        texts = [
-            cell
-            for col, cell in enumerate(row)
-            if col != grade_col and cell and not is_generic_text(cell) and not parse_grade_cell(cell)
-        ]
+        texts = self._teacher_evidence_cells(row, grade_col)
         if not texts:
             return -10
 
@@ -532,26 +551,77 @@ class SheetParser:
             score += 2
         if len(grades) > 1:
             score += 1
-        if row_index == 0 or self._row_is_empty(self.grid[row_index - 1]) or category_from_text(" ".join(self.grid[row_index - 1])):
+        previous_is_boundary = self._previous_row_is_block_boundary(row_index)
+        next_has_names = self._next_row_has_probable_names(row_index)
+        if previous_is_boundary:
             score += 1
-        if self._next_row_has_probable_names(row_index):
+        if next_has_names:
+            score += 1
+        if previous_is_boundary and next_has_names and self._has_plain_teacher_name(texts):
             score += 1
 
         grade_text = row[grade_col]
         if re.fullmatch(r"\d+", normalize_for_match(grade_text)) and not (
             contains_teacher_keyword(joined) or contains_halaqa_keyword(joined) or "+" in joined
         ):
-            if row_index > 0 and not self._row_is_empty(self.grid[row_index - 1]):
+            if not previous_is_boundary:
                 score -= 2
 
         return score
 
-    def _looks_like_teacher_header_without_grade(self, row: list[str]) -> bool:
-        useful = [cell for cell in row if cell and not is_generic_text(cell)]
-        if not useful:
+    def _previous_row_is_block_boundary(self, row_index: int) -> bool:
+        if row_index == 0:
+            return True
+        previous_row = self.grid[row_index - 1]
+        if self._row_is_empty(previous_row):
+            return True
+        previous_text = " ".join(previous_row)
+        if category_from_text(previous_text):
+            return True
+        normalized = normalize_for_match(previous_text)
+        return "المعلم" in normalized and "الصف" in normalized
+
+    def _has_plain_teacher_name(self, texts: list[str]) -> bool:
+        if len(texts) != 1:
             return False
-        joined = " ".join(useful)
-        return contains_teacher_keyword(joined) or "+" in joined or contains_halaqa_keyword(joined)
+        text = clean_person_name(texts[0], teacher=True)
+        if not is_probable_name(text):
+            return False
+        normalized = normalize_for_match(text)
+        return "طالب" not in normalized and "طالبه" not in normalized
+
+    def _has_valid_teacher_evidence(self, row: list[str], grade_col: int) -> bool:
+        cells = self._teacher_evidence_cells(row, grade_col)
+        if not cells:
+            return False
+        teacher_names, halaqa_name = self._extract_header_names(cells)
+        if teacher_names:
+            return True
+        if halaqa_name and derive_teacher_from_halaqa_name(halaqa_name):
+            return True
+        return False
+
+    def _has_strong_teacher_evidence(self, row: list[str], grade_col: int) -> bool:
+        cells = self._teacher_evidence_cells(row, grade_col)
+        if not cells:
+            return False
+        joined = " ".join(cells)
+        if contains_teacher_keyword(joined) or "+" in joined or "＋" in joined:
+            return True
+        teacher_names, halaqa_name = self._extract_header_names(cells)
+        return bool(halaqa_name and teacher_names)
+
+    def _teacher_evidence_cells(self, row: list[str], grade_col: int) -> list[str]:
+        cells = []
+        for col, cell in enumerate(row):
+            if col == grade_col or not cell:
+                continue
+            if is_generic_text(cell) or parse_grade_cell(cell):
+                continue
+            if abs(col - grade_col) > 5 and not contains_teacher_keyword(cell) and "+" not in cell and not contains_halaqa_keyword(cell):
+                continue
+            cells.append(cell)
+        return cells
 
     def _build_blocks(self, starts: list[BlockStart]) -> list[ImportBlock]:
         if not starts:
@@ -607,6 +677,7 @@ class SheetParser:
             row_number=start.row_index + 1,
             left_col=left + 1,
             right_col=right + 1,
+            start_key=self._start_key(start),
             grades=start.grades,
             grade_label=grade_label,
             category_code=start.category_code,
@@ -636,21 +707,27 @@ class SheetParser:
 
     def _collect_students(self, start_row: int, end_row: int, left: int, right: int) -> list[str]:
         students = []
-        consecutive_empty = 0
         for row_index in range(start_row, end_row + 1):
             row = self.grid[row_index][left : right + 1]
             if self._row_is_empty(row):
-                consecutive_empty += 1
-                if consecutive_empty >= 2:
-                    break
-                continue
-            consecutive_empty = 0
+                break
+            if self._looks_like_header_boundary(row):
+                break
             for cell in row:
                 for part in split_cell_parts(cell):
                     name = clean_person_name(part)
                     if is_probable_name(name):
                         students.append(name)
         return unique_preserving_order(students)
+
+    def _looks_like_header_boundary(self, row: list[str]) -> bool:
+        grade_cols = [index for index, cell in enumerate(row) if parse_grade_cell(cell)]
+        if not grade_cols:
+            return False
+        for grade_col in grade_cols:
+            if self._has_strong_teacher_evidence(row, grade_col):
+                return True
+        return False
 
     def _end_row_for_start(self, row_index: int, start_rows: list[int]) -> int:
         for start_row in start_rows:
@@ -696,6 +773,16 @@ class Command(BaseCommand):
         parser.add_argument("--default-birth-date", default="2010-01-01")
         parser.add_argument("--update-categories", action="store_true")
         parser.add_argument("--replace-teacher-assignments", action="store_true")
+        parser.add_argument(
+            "--allow-empty-halaqas",
+            action="store_true",
+            help="Import valid teacher/grade blocks even when no students are found underneath.",
+        )
+        parser.add_argument(
+            "--debug-parsed-blocks",
+            action="store_true",
+            help="Print the accepted parsed halaqa blocks before importing.",
+        )
         parser.add_argument("--conflicts-csv", default="")
 
     def handle(self, *args, **options):
@@ -703,10 +790,13 @@ class Command(BaseCommand):
         self.options = options
         self.stats = Counter()
         self.issues: list[Issue] = []
+        self.issue_keys = set()
         self.planned_usernames = set()
         self.planned_teachers = {}
         self.planned_students = {}
         self.category_cache = {}
+        self.parser_candidate_count = 0
+        self.parser_rejected_count = 0
 
         try:
             self.default_birth_date = date.fromisoformat(options["default_birth_date"])
@@ -715,17 +805,24 @@ class Command(BaseCommand):
 
         file_path = self._resolve_file_path(options["file"])
         blocks = self._read_blocks(file_path, options["sheet"])
-        self.stdout.write(self.style.NOTICE(f"تم العثور على {len(blocks)} حلقة محتملة في الورقة {options['sheet']}."))
+        self.stdout.write(
+            self.style.NOTICE(
+                f"تم اعتماد {len(blocks)} حلقة من أصل {self.parser_candidate_count} مرشح في الورقة {options['sheet']}."
+            )
+        )
+        if self.parser_rejected_count:
+            self.stdout.write(self.style.WARNING(f"تم تجاهل {self.parser_rejected_count} مرشح لا يملك دليلا كافيا."))
 
-        for block in blocks:
-            for issue in block.issues:
-                self._add_issue(issue.kind, issue.row, issue.value, issue.message)
+        for issue in getattr(self, "parser_issues", []):
+            self._add_issue(issue.kind, issue.row, issue.value, issue.message)
 
         valid_blocks = [
             block
             for block in blocks
-            if block.category_code and block.teacher_names
+            if block.category_code and block.teacher_names and (block.students or options["allow_empty_halaqas"])
         ]
+        if self.dry_run or options["debug_parsed_blocks"]:
+            self._print_parsed_blocks(valid_blocks)
 
         if self.dry_run:
             self.stdout.write(self.style.WARNING("وضع التجربة فقط: لن يتم تعديل قاعدة البيانات."))
@@ -785,7 +882,12 @@ class Command(BaseCommand):
                         grid[row][col] = value
 
         grid = self._trim_grid(grid)
-        return SheetParser(grid).parse()
+        parser = SheetParser(grid, allow_empty_blocks=self.options["allow_empty_halaqas"])
+        blocks = parser.parse()
+        self.parser_candidate_count = parser.candidate_count
+        self.parser_rejected_count = parser.rejected_count
+        self.parser_issues = parser.issues
+        return blocks
 
     def _trim_grid(self, grid: list[list[str]]) -> list[list[str]]:
         while grid and not any(grid[-1]):
@@ -1104,7 +1206,31 @@ class Command(BaseCommand):
             counter += 1
 
     def _add_issue(self, kind: str, row: int | None, value: str, message: str):
-        self.issues.append(Issue(kind=kind, row=row, value=clean_display_text(value), message=message))
+        cleaned_value = clean_display_text(value)
+        issue_key = (kind, row, normalize_for_match(cleaned_value), message)
+        if issue_key in self.issue_keys:
+            return
+        self.issue_keys.add(issue_key)
+        self.issues.append(Issue(kind=kind, row=row, value=cleaned_value, message=message))
+
+    def _print_parsed_blocks(self, blocks: list[ImportBlock]):
+        if not blocks:
+            self.stdout.write(self.style.WARNING("لا توجد حلقات مقبولة بعد فحص الصف/المعلم/الطلاب."))
+            return
+
+        self.stdout.write("")
+        self.stdout.write(self.style.NOTICE("الحلقات التي فهمها المستورد"))
+        header = f"{'row':>5}  {'grade':<8}  {'category':<14}  {'students':>8}  {'halaqa':<32}  teachers"
+        self.stdout.write(header)
+        self.stdout.write("-" * len(header))
+        for block in blocks:
+            category_name = CATEGORY_SPECS.get(block.category_code, {}).get("name", block.category_code or "")
+            halaqa_name = truncate_with_suffix(block.halaqa_name, "", 32)
+            teacher_names = " + ".join(block.teacher_names)
+            self.stdout.write(
+                f"{block.row_number:>5}  {block.grade_label:<8}  {category_name:<14}  "
+                f"{len(block.students):>8}  {halaqa_name:<32}  {teacher_names}"
+            )
 
     def _write_conflicts_csv(self, path_value: str):
         if not path_value:
