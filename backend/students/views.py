@@ -1,5 +1,6 @@
 from collections import defaultdict
 from datetime import date, datetime, time, timedelta
+import re
 
 from django.db.models import Count, ExpressionWrapper, F, IntegerField, Q, Sum, Value
 from django.db.models.functions import Coalesce
@@ -43,6 +44,23 @@ HOMEWORK_EVALUATION_SCORE_MAP = {
 
 def _estimate_pages(verses_total):
     return round((verses_total or 0) / AVERAGE_VERSES_PER_PAGE, 1)
+
+
+def _estimate_recited_pages(record):
+    pages_text = (record.pages or '').strip()
+    if pages_text:
+        numbers = [int(value) for value in re.findall(r'\d+', pages_text)]
+        if not numbers:
+            return 1
+        if '-' in pages_text and len(numbers) >= 2:
+            start_page, end_page = numbers[0], numbers[1]
+            if end_page >= start_page:
+                return (end_page - start_page) + 1
+        if '/' in pages_text and len(numbers) >= 2:
+            return len(set(numbers))
+        return 1
+
+    return _estimate_pages(record.verses_count)
 
 
 def _month_bounds(day_value):
@@ -478,6 +496,11 @@ def _build_plan_progress(plan, memorization_records, reference_date):
             'badge_class': 'muted',
             'expected_percent': 0,
             'actual_percent': 0,
+            'total_pages': 0,
+            'completed_pages': 0,
+            'remaining_pages': 0,
+            'remaining_days': 0,
+            'required_pages_per_day': 0,
             'target': '',
             'date_range': '',
             'notes': '',
@@ -492,13 +515,29 @@ def _build_plan_progress(plan, memorization_records, reference_date):
     effective_end = min(reference_date, plan_end)
     elapsed_days = 0 if effective_end < plan_start else (effective_end - plan_start).days + 1
     expected_ratio = min(elapsed_days / total_days, 1)
-
-    active_days = {
-        record.date
-        for record in memorization_records
+    total_pages = plan.total_pages or 0
+    plan_records = [
+        record for record in memorization_records
         if plan_start <= record.date <= effective_end
-    }
-    actual_ratio = min(len(active_days) / total_days, 1)
+    ]
+
+    if total_pages:
+        completed_pages = min(
+            sum(_estimate_recited_pages(record) for record in plan_records),
+            total_pages,
+        )
+        actual_ratio = completed_pages / total_pages
+    else:
+        active_days = {record.date for record in plan_records}
+        completed_pages = len(active_days)
+        actual_ratio = min(completed_pages / total_days, 1)
+
+    remaining_pages = max(total_pages - completed_pages, 0) if total_pages else 0
+    remaining_days = max((plan_end - reference_date).days, 0)
+    required_pages_per_day = (
+        round(remaining_pages / remaining_days, 1)
+        if total_pages and remaining_pages and remaining_days > 0 else 0
+    )
 
     if reference_date < plan_start:
         status = 'not_started'
@@ -510,6 +549,10 @@ def _build_plan_progress(plan, memorization_records, reference_date):
         badge_class = 'excellent'
         expected_ratio = 1
         actual_ratio = 1
+        if total_pages:
+            completed_pages = total_pages
+            remaining_pages = 0
+            required_pages_per_day = 0
     elif actual_ratio >= min(expected_ratio + 0.1, 1):
         status = 'ahead'
         status_label = 'متقدم'
@@ -527,14 +570,23 @@ def _build_plan_progress(plan, memorization_records, reference_date):
     expected_values = []
     actual_values = []
     cumulative_active_days = set()
+    cumulative_pages = 0
     for chart_day in chart_days:
         elapsed = (chart_day - plan_start).days + 1
         expected_values.append(round(min(elapsed / total_days, 1) * 100))
-        cumulative_active_days.update(
-            record.date for record in memorization_records
+        day_records = [
+            record for record in memorization_records
             if record.date == chart_day and plan_start <= record.date <= plan_end
-        )
-        actual_values.append(round((len(cumulative_active_days) / total_days) * 100))
+        ]
+        if total_pages:
+            cumulative_pages = min(
+                cumulative_pages + sum(_estimate_recited_pages(record) for record in day_records),
+                total_pages,
+            )
+            actual_values.append(round((cumulative_pages / total_pages) * 100))
+        else:
+            cumulative_active_days.update(record.date for record in day_records)
+            actual_values.append(round((len(cumulative_active_days) / total_days) * 100))
 
     return {
         'status': status,
@@ -542,6 +594,11 @@ def _build_plan_progress(plan, memorization_records, reference_date):
         'badge_class': badge_class,
         'expected_percent': round(expected_ratio * 100),
         'actual_percent': round(actual_ratio * 100),
+        'total_pages': total_pages,
+        'completed_pages': round(completed_pages, 1) if completed_pages % 1 else int(completed_pages),
+        'remaining_pages': round(remaining_pages, 1) if remaining_pages % 1 else int(remaining_pages),
+        'remaining_days': remaining_days,
+        'required_pages_per_day': required_pages_per_day,
         'target': plan.target,
         'date_range': f'{plan.start_date.isoformat()} إلى {plan.end_date.isoformat()}',
         'notes': plan.notes,
@@ -1100,6 +1157,10 @@ class StudentViewSet(
                 'status_label': current_plan_progress['status_label'],
                 'expected_percent': current_plan_progress['expected_percent'],
                 'actual_percent': current_plan_progress['actual_percent'],
+                'total_pages': current_plan_progress['total_pages'],
+                'completed_pages': current_plan_progress['completed_pages'],
+                'remaining_pages': current_plan_progress['remaining_pages'],
+                'required_pages_per_day': current_plan_progress['required_pages_per_day'],
                 'target': current_plan_progress['target'] or 'لا توجد خطة',
             },
             'teacher_notes_count': len(teacher_notes),
@@ -1171,6 +1232,11 @@ class StudentViewSet(
                 'date_range': current_plan_progress['date_range'],
                 'expected_percent': current_plan_progress['expected_percent'],
                 'actual_percent': current_plan_progress['actual_percent'],
+                'total_pages': current_plan_progress['total_pages'],
+                'completed_pages': current_plan_progress['completed_pages'],
+                'remaining_pages': current_plan_progress['remaining_pages'],
+                'remaining_days': current_plan_progress['remaining_days'],
+                'required_pages_per_day': current_plan_progress['required_pages_per_day'],
                 'notes': current_plan_progress['notes'],
             },
         }

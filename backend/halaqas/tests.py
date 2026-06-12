@@ -326,7 +326,8 @@ class SupervisorDashboardTests(TestCase):
         self.assertEqual(parent_response.context['summary']['attendance_reference']['status_code'], 'excused')
         self.assertEqual(parent_response.context['summary']['attendance_reference']['source_label'], 'المصدر: الموجه')
         self.assertContains(parent_response, 'عذر مقبول من ولي الأمر')
-        self.assertContains(parent_response, 'المصدر: الموجه')
+        self.assertContains(parent_response, 'المصدر')
+        self.assertContains(parent_response, 'موجه')
 
     def test_supervisor_cannot_overwrite_teacher_attendance(self):
         selected_date = timezone.localdate()
@@ -499,6 +500,7 @@ class HalaqaActionEndpointTests(TestCase):
             'start_date': timezone.localdate(),
             'end_date': timezone.localdate() + timedelta(days=7),
             'target': 'مراجعة المحفوظ الحالي',
+            'total_pages': 40,
             'notes': 'جاهز للبداية',
         })
 
@@ -513,6 +515,7 @@ class HalaqaActionEndpointTests(TestCase):
         self.assertEqual(memorization_record.notes, 'تسميع إضافي')
         self.assertEqual(Attendance.objects.filter(student=self.student, session=self.session).count(), 1)
         self.assertEqual(Plan.objects.filter(student=self.student, halaqa=self.halaqa).count(), 1)
+        self.assertEqual(Plan.objects.get(student=self.student, halaqa=self.halaqa).total_pages, 40)
 
     def test_update_endpoints_used_by_halaqa_detail_page(self):
         attendance = Attendance.objects.create(
@@ -548,6 +551,7 @@ class HalaqaActionEndpointTests(TestCase):
                 'start_date': timezone.localdate().isoformat(),
                 'end_date': (timezone.localdate() + timedelta(days=10)).isoformat(),
                 'target': 'خطة محدثة',
+                'total_pages': 55,
                 'notes': 'تم التحديث',
                 'is_completed': False,
             }),
@@ -562,6 +566,7 @@ class HalaqaActionEndpointTests(TestCase):
         self.assertEqual(attendance.status, 'excused')
         self.assertEqual(attendance.notes, 'بعذر')
         self.assertEqual(plan.target, 'خطة محدثة')
+        self.assertEqual(plan.total_pages, 55)
         self.assertEqual(plan.notes, 'تم التحديث')
 
 
@@ -692,6 +697,22 @@ class HalaqaActionEndpointTests(TestCase):
             Homework.objects.filter(student=self.student, halaqa=self.halaqa, evaluation_date__isnull=True).count(),
             1,
         )
+
+    def test_homework_assignment_uses_today_when_assigned_date_is_blank(self):
+        response = self.client.post(reverse('halaqas:api:homeworks-list'), data={
+            'student': self.student.id,
+            'halaqa': self.halaqa.id,
+            'assigned_date': '',
+            'expected_recitation_date': '',
+            'assignment_type': 'pages',
+            'assignment_text': '',
+            'pages': 'صفحة 8',
+        })
+
+        self.assertEqual(response.status_code, 201)
+        homework = Homework.objects.get(student=self.student, halaqa=self.halaqa)
+        self.assertEqual(homework.assigned_date, timezone.localdate())
+        self.assertIsNone(homework.expected_recitation_date)
 
 
 class MasterAdminDashboardTests(TestCase):

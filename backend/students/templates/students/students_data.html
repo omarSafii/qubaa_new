@@ -1290,6 +1290,15 @@
           <span class="pill {% if summary.plan.badge_class == 'excellent' %}ok{% elif summary.plan.badge_class == 'warning' %}warn{% elif summary.plan.badge_class == 'good' %}info{% else %}mutep{% endif %}">{{ summary.plan.status_label }}</span>
         </div>
         <div class="progress-line"><span style="width: {{ summary.plan.actual_percent }}%"></span></div>
+        {% if summary.plan.total_pages %}
+        <div class="report-grid">
+          <div class="report-line"><span class="report-label">عدد صفحات الخطة</span><strong class="report-value">{{ summary.plan.total_pages }}</strong></div>
+          <div class="report-line"><span class="report-label">المنجز</span><strong class="report-value">{{ summary.plan.completed_pages }} صفحة</strong></div>
+          <div class="report-line"><span class="report-label">المتبقي</span><strong class="report-value">{{ summary.plan.remaining_pages }} صفحة</strong></div>
+          <div class="report-line"><span class="report-label">نسبة الإنجاز</span><strong class="report-value">{{ summary.plan.actual_percent }}%</strong></div>
+          <div class="report-line"><span class="report-label">المطلوب يوميًا</span><strong class="report-value">{{ summary.plan.required_pages_per_day }} صفحة تقريبًا</strong></div>
+        </div>
+        {% endif %}
         <p class="metric-note">التقدم الفعلي {{ summary.plan.actual_percent }}%{% if summary.plan.expected_percent %}، والمتوقع {{ summary.plan.expected_percent }}%{% endif %}.{% if summary.plan.notes %}<br>{{ summary.plan.notes }}{% endif %}</p>
       </article>
     </section>

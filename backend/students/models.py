@@ -188,7 +188,7 @@ class MemorizationRecord(models.Model):
         if self.surah and self.from_verse and self.to_verse:
             return f"{self.surah} ({self.from_verse}-{self.to_verse})"
         if self.pages:
-            return f"صفحات {self.pages}"
+            return self.pages
         return "تسميع غير محدد"
 
     @property
@@ -202,7 +202,7 @@ class MemorizationRecord(models.Model):
         if self.surah:
             return self.surah
         if self.pages:
-            return f"صفحات {self.pages}"
+            return self.pages
         return "تسميع"
 
     @property

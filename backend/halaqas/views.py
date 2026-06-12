@@ -1149,6 +1149,7 @@ def prepare_halaqa_view(request, halaqa, template_name, ensure_current_session=F
             'attendance_locked_for_teacher': entry['attendance_locked_for_teacher'],
             'plan_id': entry['plan_id'],
             'plan_target': entry['plan'].target if entry['plan'] else '',
+            'plan_total_pages': entry['plan'].total_pages if entry['plan'] else '',
             'plan_start': entry['plan'].start_date.isoformat() if entry['plan'] else '',
             'plan_end': entry['plan'].end_date.isoformat() if entry['plan'] else '',
             'plan_notes': entry['plan'].notes if entry['plan'] else '',

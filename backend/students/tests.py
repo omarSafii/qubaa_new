@@ -224,3 +224,52 @@ class StudentReadOnlyViewTests(TestCase):
         self.assertContains(response, 'عرض سجل الحضور')
         self.assertContains(response, 'سورة الملك')
         self.assertContains(response, 'أستاذ الحلقة')
+
+    def test_plan_progress_uses_total_pages_when_available(self):
+        today = timezone.localdate()
+        Plan.objects.create(
+            student=self.student,
+            halaqa=self.halaqa,
+            start_date=today - timedelta(days=5),
+            end_date=today + timedelta(days=15),
+            target='خطة صفحات',
+            total_pages=60,
+        )
+        MemorizationRecord.objects.create(
+            student=self.student,
+            halaqa=self.halaqa,
+            recitation_type='extra',
+            pages='1-15',
+            date=today - timedelta(days=1),
+            evaluation='very_good',
+            is_approved=True,
+        )
+
+        response = self.client.get(reverse('students:students_data', args=[self.student.access_token]))
+
+        plan = response.context['summary']['plan']
+        self.assertEqual(plan['total_pages'], 60)
+        self.assertEqual(plan['completed_pages'], 15)
+        self.assertEqual(plan['remaining_pages'], 45)
+        self.assertEqual(plan['actual_percent'], 25)
+        self.assertEqual(plan['required_pages_per_day'], 3)
+        self.assertContains(response, 'عدد صفحات الخطة')
+        self.assertContains(response, '45 صفحة')
+
+    def test_extra_recitation_page_reference_displays_raw_text(self):
+        today = timezone.localdate()
+        MemorizationRecord.objects.create(
+            student=self.student,
+            halaqa=self.halaqa,
+            recitation_type='extra',
+            pages='صفحة 8',
+            date=today,
+            evaluation='excellent',
+            is_approved=True,
+        )
+
+        response = self.client.get(reverse('students:students_data', args=[self.student.access_token]))
+
+        self.assertEqual(response.context['summary']['latest_recitation']['surah'], 'صفحة 8')
+        self.assertContains(response, 'صفحة 8')
+        self.assertNotContains(response, 'صفحات صفحة 8')

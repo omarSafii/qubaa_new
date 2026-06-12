@@ -124,7 +124,7 @@ class PlanSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Plan
-        fields = ['id', 'student', 'halaqa', 'start_date', 'end_date', 'target', 'is_completed', 'notes']
+        fields = ['id', 'student', 'halaqa', 'start_date', 'end_date', 'target', 'total_pages', 'is_completed', 'notes']
 
 
 class HomeworkSerializer(serializers.ModelSerializer):
@@ -148,6 +148,15 @@ class HomeworkSerializer(serializers.ModelSerializer):
         allow_blank=True,
     )
     recitation_notes = serializers.CharField(write_only=True, required=False, allow_blank=True)
+
+    def to_internal_value(self, data):
+        data = data.copy()
+        if not data.get('assigned_date'):
+            data.pop('assigned_date', None)
+        for field_name in ('expected_recitation_date', 'evaluation_date', 'recitation_date'):
+            if data.get(field_name) == '':
+                data[field_name] = None
+        return super().to_internal_value(data)
 
     class Meta:
         model = Homework

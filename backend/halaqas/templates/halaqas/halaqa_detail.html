@@ -1756,6 +1756,7 @@
                           data-attendance-lock-message="{{ entry.attendance_lock_message|default:'تم تسجيل حضور هذا الطالب من قبل الموجّه، ولا يمكن تعديله من صفحة الأستاذ.' }}"
                           data-plan-id="{{ entry.plan_id|default:'' }}"
                           data-plan-target="{% if entry.plan %}{{ entry.plan.target }}{% endif %}"
+                          data-plan-total-pages="{% if entry.plan %}{{ entry.plan.total_pages|default:'' }}{% endif %}"
                           data-plan-start="{% if entry.plan %}{{ entry.plan.start_date|date:'Y-m-d' }}{% endif %}"
                           data-plan-end="{% if entry.plan %}{{ entry.plan.end_date|date:'Y-m-d' }}{% endif %}"
                           data-plan-notes="{% if entry.plan %}{{ entry.plan.notes }}{% endif %}"
@@ -2024,6 +2025,11 @@
             <div class="mb-3">
               <label class="form-label">الهدف النهائي / الخطة</label>
               <textarea class="form-control" id="planTarget" name="target" rows="3" required></textarea>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">عدد صفحات الخطة</label>
+              <input type="number" class="form-control" id="planTotalPages" name="total_pages" min="1" inputmode="numeric">
             </div>
 
             <div class="mb-3">
@@ -2711,6 +2717,7 @@
         attendanceLockMessage: button.dataset.lockMessage || container.dataset.attendanceLockMessage || '',
         planId: container.dataset.planId,
         planTarget: container.dataset.planTarget,
+        planTotalPages: container.dataset.planTotalPages,
         planStart: container.dataset.planStart,
         planEnd: container.dataset.planEnd,
         planNotes: container.dataset.planNotes,
@@ -2808,6 +2815,7 @@
       const defaultEnd = plusDays(defaultStart, 7);
       document.getElementById('planStartDate').value = meta.planStart || defaultStart;
       document.getElementById('planEndDate').value = meta.planEnd || defaultEnd;
+      document.getElementById('planTotalPages').value = meta.planTotalPages || '';
       document.getElementById('planNotes').value = meta.planNotes || '';
       updatePlanTarget(meta.planTarget || '');
       planModal.show();
@@ -3094,7 +3102,7 @@
         return;
       }
 
-      const title = record.recitation_title || record.surah || (record.pages ? `صفحات ${record.pages}` : '');
+      const title = record.recitation_title || record.surah || record.pages || '';
       const range = record.recitation_range || (
         record.from_verse && record.to_verse ? `${record.from_verse} - ${record.to_verse}` : ''
       );
@@ -3418,6 +3426,11 @@
         showInlineAlert('planAlert', 'يرجى كتابة الخطة.');
         return;
       }
+      const totalPages = numberOrNull(document.getElementById('planTotalPages').value);
+      if (document.getElementById('planTotalPages').value && (!totalPages || totalPages < 1)) {
+        showInlineAlert('planAlert', 'عدد صفحات الخطة يجب أن يكون أكبر من صفر.');
+        return;
+      }
       const notes = document.getElementById('planNotes').value;
       const payload = {
         student: studentId,
@@ -3425,6 +3438,7 @@
         start_date: startDate,
         end_date: endDate,
         target,
+        total_pages: totalPages,
         notes,
         is_completed: false
       };
@@ -3439,6 +3453,7 @@
         const planAppliesToSelectedDate = startDate <= reportState.selected_date && endDate >= reportState.selected_date;
         student.plan_id = response?.id || recordId;
         student.plan_target = planAppliesToSelectedDate ? target : '';
+        student.plan_total_pages = planAppliesToSelectedDate ? (response?.total_pages || totalPages || '') : '';
         student.plan_start = planAppliesToSelectedDate ? startDate : '';
         student.plan_end = planAppliesToSelectedDate ? endDate : '';
         student.plan_notes = notes;
@@ -3452,6 +3467,7 @@
         setActionMeta(studentId, {
           planId: response?.id || recordId,
           planTarget: target,
+          planTotalPages: response?.total_pages || totalPages || '',
           planStart: startDate,
           planEnd: endDate,
           planNotes: notes
@@ -3597,7 +3613,7 @@
         const payload = {
           student: studentId,
           halaqa: document.getElementById('homeworkHalaqaId').value,
-          assigned_date: document.getElementById('homeworkAssignedDate').value,
+          assigned_date: document.getElementById('homeworkAssignedDate').value || reportState.selected_date,
           assignment_type: assignmentType,
           assignment_text: assignmentText,
           pages: assignmentType === 'pages' ? pages : '',

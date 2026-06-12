@@ -432,6 +432,7 @@ class Plan(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     target = models.TextField()
+    total_pages = models.PositiveIntegerField(null=True, blank=True)
     is_completed = models.BooleanField(default=False)
     notes = models.TextField(blank=True)
 
