@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>حلقاتي - معهد قباء</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --color-primary: #0B3C54;
+      --color-secondary: #31617F;
+      --color-accent: #968960;
+      --color-light: #F2D8A1;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 24px;
+      background: linear-gradient(135deg, #f8f9fa 0%, #eef3f5 100%);
+      color: var(--color-primary);
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .page-shell {
+      width: 100%;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .page-header {
+      padding: 22px 0 18px;
+    }
+
+    .page-header h1 {
+      margin: 0;
+      font-size: 1.45rem;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .page-header p {
+      margin: 8px 0 0;
+      color: #64748b;
+    }
+
+    .halaqa-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .halaqa-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 16px;
+      border: 1px solid rgba(11, 60, 84, 0.1);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--color-primary);
+      text-decoration: none;
+      box-shadow: 0 10px 28px rgba(11, 60, 84, 0.08);
+    }
+
+    .halaqa-link:hover,
+    .halaqa-link:focus {
+      color: var(--color-primary);
+      border-color: rgba(49, 97, 127, 0.32);
+    }
+
+    .halaqa-main {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .halaqa-icon {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: linear-gradient(45deg, var(--color-light), var(--color-accent));
+      color: #fff;
+    }
+
+    .halaqa-name {
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .empty-state {
+      padding: 18px;
+      border-radius: 12px;
+      background: #fff;
+      color: #64748b;
+      border: 1px solid rgba(11, 60, 84, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <main class="page-shell">
+    <header class="page-header">
+      <h1>حلقاتي</h1>
+      <p>اختر الحلقة التي تريد فتحها.</p>
+    </header>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags|default:'warning' }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    {% if halaqas %}
+      <div class="halaqa-list">
+        {% for halaqa in halaqas %}
+          <a class="halaqa-link" href="{% url 'halaqas:halaqa_detail' halaqa.pk %}">
+            <span class="halaqa-main">
+              <span class="halaqa-icon"><i class="fas fa-users"></i></span>
+              <span class="halaqa-name">{{ halaqa.name }}</span>
+            </span>
+            <i class="fas fa-arrow-left"></i>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">لا توجد حلقات مسندة لهذا الحساب حالياً.</div>
+    {% endif %}
+  </main>
+</body>
+</html>

@@ -5,8 +5,10 @@ from unittest.mock import patch
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.test import TestCase
+from django.urls import reverse
 from rest_framework.test import APIClient
 
+from halaqas.models import Halaqa, Teacher
 from .models import Profile
 
 
@@ -46,6 +48,51 @@ class UserProfileSignalTests(TestCase):
 
         self.assertTrue(login_succeeded)
         self.assertTrue(Profile.objects.filter(user=user).exists())
+
+
+class TeacherSessionLoginTests(TestCase):
+    def test_teacher_login_redirects_to_single_assigned_halaqa(self):
+        user = get_user_model().objects.create_user(
+            username='single_teacher',
+            password='StrongPass123!',
+        )
+        user.profile.role = 'teacher'
+        user.profile.save(update_fields=['role'])
+        teacher = Teacher.objects.create(user=user, full_name='Single Teacher', phone='0999000001')
+        halaqa = Halaqa.objects.create(name='Single Login Halaqa')
+        halaqa.teachers.add(teacher)
+
+        response = self.client.post(reverse('login'), {
+            'username': 'single_teacher',
+            'password': 'StrongPass123!',
+        })
+
+        self.assertRedirects(response, reverse('halaqas:halaqa_detail', args=[halaqa.pk]), fetch_redirect_response=False)
+
+    def test_teacher_with_multiple_halaqas_sees_only_assigned_halaqas(self):
+        user = get_user_model().objects.create_user(
+            username='multi_teacher',
+            password='StrongPass123!',
+        )
+        user.profile.role = 'teacher'
+        user.profile.save(update_fields=['role'])
+        teacher = Teacher.objects.create(user=user, full_name='Multi Teacher', phone='0999000002')
+        first_halaqa = Halaqa.objects.create(name='Multi Login Halaqa One')
+        second_halaqa = Halaqa.objects.create(name='Multi Login Halaqa Two')
+        other_halaqa = Halaqa.objects.create(name='Unassigned Login Halaqa')
+        first_halaqa.teachers.add(teacher)
+        Halaqa.teachers.through.objects.create(teacher_id=teacher.pk, halaqa_id=second_halaqa.pk)
+
+        response = self.client.post(reverse('login'), {
+            'username': 'multi_teacher',
+            'password': 'StrongPass123!',
+        })
+
+        self.assertRedirects(response, reverse('teacher_halaqas'), fetch_redirect_response=False)
+        list_response = self.client.get(reverse('teacher_halaqas'))
+        self.assertContains(list_response, first_halaqa.name)
+        self.assertContains(list_response, second_halaqa.name)
+        self.assertNotContains(list_response, other_halaqa.name)
 
 
 class EnsureSuperuserCommandTests(TestCase):

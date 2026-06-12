@@ -21,6 +21,7 @@ from rest_framework.response import Response
 from students.models import MemorizationRecord, Student
 from students.serializers import StudentSerializer
 
+from .access import role_for_user, user_can_access_halaqa
 from .forms import HalaqaForm
 from .models import Attendance, Category, Halaqa, HalaqaMembership, Homework, Plan, PointTransaction, Session, Teacher
 from .serializers import (
@@ -77,12 +78,7 @@ ATTENDANCE_LOCKED_ROLES = {'teacher', 'supervisor'}
 
 
 def _role_for_user(user):
-    if not user or not getattr(user, 'is_authenticated', False):
-        return ''
-    if getattr(user, 'is_superuser', False) or getattr(user, 'is_staff', False):
-        return 'admin'
-    profile = getattr(user, 'profile', None)
-    return getattr(profile, 'role', '') or ''
+    return role_for_user(user)
 
 
 def _can_access_supervisor_dashboard(user):
@@ -806,11 +802,14 @@ def supervisor_dashboard(request):
 
 
 @login_required
-def halaqa_detail(request, pk):
+def halaqa_detail(request, pk=None, join_code=None):
+    lookup = {'pk': pk} if pk is not None else {'join_code': join_code}
     halaqa = get_object_or_404(
         Halaqa.objects.prefetch_related('teachers__user', 'members__student'),
-        pk=pk,
+        **lookup,
     )
+    if not user_can_access_halaqa(request.user, halaqa):
+        raise PermissionDenied("لا تملك صلاحية الوصول إلى هذه الحلقة.")
     return prepare_halaqa_view(
         request,
         halaqa,
@@ -820,11 +819,14 @@ def halaqa_detail(request, pk):
 
 
 @require_GET
+@login_required
 def halaqa_share_view(request, link_code):
     halaqa = get_object_or_404(
         Halaqa.objects.prefetch_related('teachers__user', 'members__student'),
         shareable_link=link_code,
     )
+    if not user_can_access_halaqa(request.user, halaqa):
+        raise PermissionDenied("لا تملك صلاحية الوصول إلى هذه الحلقة.")
     return prepare_halaqa_view(request, halaqa, 'halaqas/halaqa_share.html')
 
 

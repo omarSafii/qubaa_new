@@ -1,11 +1,15 @@
 import json
+import tempfile
 from datetime import time, timedelta
+from io import StringIO
 
 from django.contrib.auth import get_user_model
+from django.core.management import call_command
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
+from accounts.models import Profile
 from students.models import MemorizationRecord, Student
 from .models import Attendance, Category, Halaqa, HalaqaMembership, Homework, Plan, PointTransaction, Session, Teacher, TeacherAssignment
 
@@ -14,7 +18,7 @@ User = get_user_model()
 
 
 class HalaqaShareViewTests(TestCase):
-    def test_share_view_resolves_under_halaqas_prefix_without_creating_session(self):
+    def test_share_view_requires_login(self):
         parent = User.objects.create_user(username='share_parent', password='StrongPass123!')
         halaqa = Halaqa.objects.create(name='Shared Halaqa')
         student = Student.objects.create(
@@ -27,8 +31,20 @@ class HalaqaShareViewTests(TestCase):
 
         response = self.client.get(f'/halaqas/halaqa/share/{halaqa.shareable_link}/')
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('/accounts/login/', response['Location'])
         self.assertEqual(Session.objects.count(), 0)
+
+    def test_share_view_allows_assigned_teacher(self):
+        user = User.objects.create_user(username='share_teacher', password='StrongPass123!')
+        teacher = Teacher.objects.create(user=user, full_name='Share Teacher', phone='0999111222')
+        halaqa = Halaqa.objects.create(name='Protected Shared Halaqa')
+        halaqa.teachers.add(teacher)
+        self.client.force_login(user)
+
+        response = self.client.get(f'/halaqas/halaqa/share/{halaqa.shareable_link}/')
+
+        self.assertEqual(response.status_code, 200)
 
 
 class InstituteStructureSyncTests(TestCase):
@@ -83,6 +99,60 @@ class InstituteStructureSyncTests(TestCase):
         self.assertTrue(
             TeacherAssignment.objects.filter(teacher=teacher, halaqa=second_halaqa, is_active=True).exists()
         )
+
+
+class TeacherAccessReportCommandTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='report_access_teacher', password='OldPass123!')
+        self.user.profile.role = 'teacher'
+        self.user.profile.save(update_fields=['role'])
+        self.teacher = Teacher.objects.create(
+            user=self.user,
+            full_name='Report Access Teacher',
+            phone='0999444555',
+        )
+        self.halaqa = Halaqa.objects.create(name='Report Access Halaqa')
+        self.halaqa.teachers.add(self.teacher)
+
+    def test_report_without_reset_does_not_expose_password(self):
+        out = StringIO()
+
+        call_command('generate_teacher_access_report', stdout=out)
+
+        output = out.getvalue()
+        self.assertIn('Report Access Teacher', output)
+        self.assertIn('report_access_teacher', output)
+        self.assertIn('لا يمكن عرض كلمة المرور الحالية', output)
+        self.assertNotIn('OldPass123!', output)
+
+    def test_report_reset_generates_initial_password_and_csv(self):
+        out = StringIO()
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_path = f'{tmpdir}/teacher_access_report.csv'
+            call_command(
+                'generate_teacher_access_report',
+                '--reset-passwords',
+                '--output',
+                output_path,
+                stdout=out,
+            )
+            csv_text = open(output_path, encoding='utf-8-sig').read()
+
+        self.user.refresh_from_db()
+        output = out.getvalue()
+        generated_password = next(part for part in output.split() if part.startswith('Qubaa-'))
+        self.assertTrue(self.user.check_password(generated_password))
+        self.assertIn(generated_password, csv_text)
+        self.assertIn('Report Access Halaqa', csv_text)
+
+    def test_create_missing_users_repairs_missing_profile(self):
+        Profile.objects.filter(user=self.user).delete()
+        out = StringIO()
+
+        call_command('generate_teacher_access_report', '--create-missing-users', stdout=out)
+
+        self.assertTrue(Profile.objects.filter(user=self.user, role='teacher').exists())
 
 
 class HalaqaDetailPageTests(TestCase):
@@ -229,6 +299,27 @@ class HalaqaDetailPageTests(TestCase):
         self.assertEqual(response.context['dashboard_data'][0]['today_attendance_status'], 'absent')
         self.assertEqual(response.context['dashboard_data'][0]['points'], 7)
         self.assertEqual(response.context['memorization_chart']['entries'][-1]['date'], selected_date.isoformat())
+
+    def test_teacher_cannot_access_unassigned_halaqa_by_url(self):
+        other_halaqa = Halaqa.objects.create(name='Ø­Ù„Ù‚Ø© ØºÙŠØ± Ù…Ø³Ù†Ø¯Ø©')
+        self.client.force_login(self.user)
+
+        response = self.client.get(reverse('halaqas:halaqa_detail', args=[other_halaqa.pk]))
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_staff_can_access_any_halaqa_detail(self):
+        staff_user = User.objects.create_user(
+            username='halaqa_staff',
+            password='StrongPass123!',
+            is_staff=True,
+        )
+        other_halaqa = Halaqa.objects.create(name='Ø­Ù„Ù‚Ø© Ù„Ù„Ø¥Ø¯Ø§Ø±Ø©')
+        self.client.force_login(staff_user)
+
+        response = self.client.get(reverse('halaqas:halaqa_detail', args=[other_halaqa.pk]))
+
+        self.assertEqual(response.status_code, 200)
 
 
 class SupervisorDashboardTests(TestCase):
@@ -784,7 +875,7 @@ class MasterAdminDashboardTests(TestCase):
         response = self.client.get('/halaqas/admin-dashboard/')
 
         self.assertEqual(response.status_code, 302)
-        self.assertIn('/admin/login/', response['Location'])
+        self.assertIn('/accounts/login/', response['Location'])
 
     def test_master_admin_dashboard_renders_with_empty_state(self):
         response = self.client.get('/halaqas/admin-dashboard/')
@@ -793,6 +884,16 @@ class MasterAdminDashboardTests(TestCase):
         self.assertContains(response, 'نظرة عامة')
         self.assertContains(response, 'التقارير')
         self.assertContains(response, 'لوحة الإدارة المركزية')
+
+    def test_master_admin_dashboard_allows_profile_admin_role(self):
+        profile_admin = User.objects.create_user(username='profile_admin', password='StrongPass123!')
+        profile_admin.profile.role = 'admin'
+        profile_admin.profile.save(update_fields=['role'])
+        self.client.force_login(profile_admin)
+
+        response = self.client.get('/halaqas/admin-dashboard/')
+
+        self.assertEqual(response.status_code, 200)
 
     def test_master_admin_dashboard_surfaces_teacher_entered_supervisory_data(self):
         teacher_user = User.objects.create_user(username='admin_teacher_source', password='StrongPass123!')

@@ -3,7 +3,7 @@ from collections import Counter
 from datetime import datetime, time, timedelta
 from urllib.parse import urlencode
 
-from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Count, F, IntegerField, ExpressionWrapper, Q, Sum, Value
 from django.db.models.functions import Coalesce
 from django.http import HttpResponse
@@ -15,6 +15,15 @@ from students.models import MemorizationRecord, Student
 
 from .models import Attendance, Category, Halaqa, HalaqaMembership, Homework, Plan, PointTransaction, Session, Teacher
 from .views import _build_homework_snapshot
+
+
+def _can_access_master_admin_dashboard(user):
+    if not user or not user.is_authenticated:
+        return False
+    if user.is_superuser or user.is_staff:
+        return True
+    profile = getattr(user, "profile", None)
+    return getattr(profile, "role", "") == "admin"
 
 PANEL_EXPORT_REPORT_MAP = {
     "overviewPanel": "executive_summary",
@@ -2620,13 +2629,13 @@ def _build_master_admin_dashboard_context(request):
     return context
 
 
-@staff_member_required
+@user_passes_test(_can_access_master_admin_dashboard, login_url="/accounts/login/")
 def master_admin_dashboard(request):
     context = _build_master_admin_dashboard_context(request)
     return render(request, "halaqas/admin/dashboard.html", context)
 
 
-@staff_member_required
+@user_passes_test(_can_access_master_admin_dashboard, login_url="/accounts/login/")
 def master_admin_dashboard_export(request):
     context = _build_master_admin_dashboard_context(request)
     requested_format = request.GET.get("format", "print")

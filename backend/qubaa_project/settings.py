@@ -214,10 +214,12 @@ CORS_ALLOW_ALL_ORIGINS = env_bool("DJANGO_CORS_ALLOW_ALL_ORIGINS", False)
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+LOGIN_URL = "/accounts/login/"
+LOGIN_REDIRECT_URL = "/accounts/login/"
+
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
 }
-
