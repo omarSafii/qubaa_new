@@ -147,43 +147,66 @@
 
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 18px;
-      margin-bottom: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
     }
 
     .stat-card {
-      padding: 22px 18px;
-      text-align: center;
+      min-height: 108px;
+      padding: 14px;
+      text-align: right;
       position: relative;
       overflow: hidden;
-      border-top: 4px solid var(--color-accent);
+      border-radius: 12px;
+      border-top: 0;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      grid-template-areas:
+        "icon label"
+        "icon value"
+        "meta meta";
+      gap: 4px 10px;
+      align-items: center;
     }
 
     .stat-card i {
-      font-size: 2.2rem;
+      grid-area: icon;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(150, 137, 96, 0.12);
+      font-size: 1.1rem;
       color: var(--color-accent);
-      margin-bottom: 12px;
+      margin-bottom: 0;
     }
 
     .stat-card h3 {
-      font-size: 2rem;
-      margin: 0 0 8px;
+      grid-area: value;
+      font-size: 1.45rem;
+      margin: 0;
       color: var(--color-primary);
+      line-height: 1.1;
     }
 
     .stat-card p {
+      grid-area: label;
       margin: 0;
       font-weight: 600;
       color: #5f6c76;
+      font-size: 0.82rem;
     }
 
     .stat-meta {
+      grid-area: meta;
       display: block;
-      margin-top: 8px;
+      margin-top: 6px;
       color: #8a949b;
-      font-size: 0.86rem;
-      line-height: 1.6;
+      font-size: 0.75rem;
+      line-height: 1.45;
     }
 
     .charts-grid {
@@ -1256,7 +1279,21 @@
       }
 
       .stats-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .stat-card {
+        min-height: 96px;
+        padding: 12px;
+      }
+
+      .stat-card h3 {
+        font-size: 1.28rem;
+      }
+
+      .stat-meta {
+        font-size: 0.72rem;
       }
 
       .student-table thead {
@@ -1840,31 +1877,15 @@
             {% csrf_token %}
             <input type="hidden" id="pointsStudentId" name="student">
             <input type="hidden" id="pointsHalaqaId" name="halaqa" value="{{ halaqa.id }}">
-
-            <div class="mb-3">
-              <label class="form-label">تاريخ الإجراء</label>
-              <input type="date" class="form-control" id="pointsActionDate" name="action_date" readonly>
-              <span class="field-note">سيتم احتساب النقاط على التاريخ المحدد في أعلى الصفحة.</span>
-            </div>
+            <input type="hidden" id="pointsActionDate" name="action_date">
 
             <div class="mb-3">
               <label class="form-label">عدد النقاط</label>
               <input type="number" class="form-control" id="pointsValue" name="value" value="5" step="1" required>
-              <span class="field-note">يمكن استخدام القيمة السالبة عند الحاجة إلى خصم نقاط.</span>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">سبب الإجراء</label>
-              <select class="form-select" id="pointsReasonSelect">
-                {% for reason in point_reason_presets %}
-                <option value="{{ reason }}">{{ reason }}</option>
-                {% endfor %}
-              </select>
-              <div class="modal-chip-row" id="pointsReasonChips"></div>
             </div>
 
             <div class="mb-0">
-              <label class="form-label">الملاحظة النهائية</label>
+              <label class="form-label">ملاحظة</label>
               <textarea class="form-control" id="pointsReason" name="reason" rows="3" required></textarea>
             </div>
           </form>
@@ -1986,7 +2007,7 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title"><i class="fas fa-list-check"></i> خطة الطالب</h5>
+          <h5 class="modal-title"><i class="fas fa-list-check"></i> الخطة</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -1999,33 +2020,18 @@
             <input type="hidden" id="planRecordId" name="record_id">
 
             <div class="mb-3">
-              <label class="form-label">الخطة الجاهزة</label>
-              <select class="form-select" id="planTargetSelect">
-                {% for target in plan_target_presets %}
-                <option value="{{ target }}">{{ target }}</option>
-                {% endfor %}
-              </select>
-              <div class="modal-chip-row" id="planTargetChips"></div>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">الهدف النهائي</label>
+              <label class="form-label">الهدف النهائي / الخطة</label>
               <textarea class="form-control" id="planTarget" name="target" rows="3" required></textarea>
             </div>
 
-            <div class="row g-3 mb-3">
-              <div class="col-6">
-                <label class="form-label">من</label>
-                <input type="date" class="form-control" id="planStartDate" name="start_date" required>
-              </div>
-              <div class="col-6">
-                <label class="form-label">إلى</label>
-                <input type="date" class="form-control" id="planEndDate" name="end_date" required>
-              </div>
+            <div class="mb-3">
+              <label class="form-label">تاريخ البداية</label>
+              <input type="date" class="form-control" id="planStartDate" name="start_date" required>
+              <input type="hidden" id="planEndDate" name="end_date">
             </div>
 
             <div class="mb-0">
-              <label class="form-label">ملاحظات</label>
+              <label class="form-label">ملاحظة</label>
               <textarea class="form-control" id="planNotes" name="notes" rows="3"></textarea>
             </div>
           </form>
@@ -2064,18 +2070,13 @@
             <input type="hidden" id="homeworkStage" value="assign">
 
             <div class="homework-stage-panel" data-homework-panel="assign">
-              <div class="mb-3">
-                <label class="form-label">تاريخ الإسناد</label>
-                <input type="date" class="form-control" id="homeworkAssignedDate" name="assigned_date">
-                <span class="field-note">الواجب يرتبط غالباً بتاريخ الصفحة الحالي ويمكن تعديله عند الحاجة.</span>
-              </div>
+              <input type="hidden" id="homeworkAssignedDate" name="assigned_date">
 
               <input type="hidden" id="homeworkAssignmentType" name="assignment_type" value="pages">
 
               <div class="mb-3 recitation-fields" data-assignment-fields="pages">
                 <label class="form-label">رقم الصفحة أو نطاق الصفحات</label>
                 <input type="text" class="form-control" id="homeworkPages" name="pages" maxlength="80" placeholder="مثل: 12 أو 12-14">
-                <span class="field-note">هذا هو الحقل الأساسي لإسناد الواجب. يمكن كتابة صفحة واحدة أو نطاق صفحات.</span>
               </div>
 
               <div class="mb-3">
@@ -2085,16 +2086,8 @@
                 <input type="hidden" id="homeworkToVerse" name="to_verse">
               </div>
 
-              <div class="mb-3">
-                <label class="form-label">عنوان مختصر <span class="field-note">اختياري</span></label>
-                <input type="text" class="form-control" id="homeworkAssignmentText" name="assignment_text" maxlength="120" placeholder="اتركه فارغاً ليُنشأ من الصفحات">
-              </div>
-
-              <div class="mb-3">
-                <label class="form-label">تاريخ التسميع المتوقع</label>
-                <input type="date" class="form-control" id="homeworkExpectedRecitationDate" name="expected_recitation_date">
-                <span class="field-note">يُقترح تلقائياً السبت/الثلاثاء حسب تاريخ الإسناد ويبقى قابلاً للتعديل.</span>
-              </div>
+              <input type="hidden" id="homeworkAssignmentText" name="assignment_text">
+              <input type="hidden" id="homeworkExpectedRecitationDate" name="expected_recitation_date">
 
               <div class="mb-0">
                 <label class="form-label">ملاحظة قصيرة</label>
@@ -2165,40 +2158,17 @@
             </div>
 
             <div class="homework-stage-panel" data-homework-panel="extra">
-              <div class="mb-3">
-                <label class="form-label">تاريخ التسميع</label>
-                <input type="date" class="form-control" id="extraRecitationDate">
-              </div>
-
-              <div class="mb-3">
-                <label class="form-label">نوع التسميع</label>
-                <select class="form-select" id="extraRecitationType">
-                  <option value="surah">سورة وآيات</option>
-                  <option value="pages">صفحات</option>
-                </select>
-              </div>
+              <input type="hidden" id="extraRecitationDate">
+              <input type="hidden" id="extraRecitationType" value="pages">
 
               <div class="mb-3 recitation-fields" data-extra-recitation-fields="pages">
-                <label class="form-label">الصفحات</label>
-                <input type="text" class="form-control" id="extraRecitationPages" maxlength="80" placeholder="مثل: 18-20">
+                <label class="form-label">ما تم تسميعه</label>
+                <input type="text" class="form-control" id="extraRecitationPages" maxlength="80" placeholder="مثل: الشمس، البقرة ص4/5، النازعات من 17 إلى 46">
               </div>
 
-              <div class="recitation-fields" data-extra-recitation-fields="surah">
-                <div class="mb-3">
-                  <label class="form-label">السورة</label>
-                  <select class="form-select surah-select" id="extraRecitationSurah"></select>
-                </div>
-                <div class="modal-field-grid mb-3">
-                  <div>
-                    <label class="form-label">من آية</label>
-                    <input type="number" class="form-control" id="extraRecitationFromVerse" min="1" value="1">
-                  </div>
-                  <div>
-                    <label class="form-label">إلى آية</label>
-                    <input type="number" class="form-control" id="extraRecitationToVerse" min="1" value="1">
-                  </div>
-                </div>
-              </div>
+              <input type="hidden" id="extraRecitationSurah">
+              <input type="hidden" id="extraRecitationFromVerse">
+              <input type="hidden" id="extraRecitationToVerse">
 
               <div class="mb-3">
                 <label class="form-label">التقييم</label>
@@ -2634,6 +2604,9 @@
 
     function buildPresetChips(containerId, presets, applyValue) {
       const container = document.getElementById(containerId);
+      if (!container) {
+        return;
+      }
       container.innerHTML = '';
       presets.forEach((preset) => {
         const button = document.createElement('button');
@@ -2715,12 +2688,10 @@
     }
 
     function updatePointsReason(value) {
-      document.getElementById('pointsReasonSelect').value = value;
       document.getElementById('pointsReason').value = value;
     }
 
     function updatePlanTarget(value) {
-      document.getElementById('planTargetSelect').value = value;
       document.getElementById('planTarget').value = value;
     }
 
@@ -2793,7 +2764,7 @@
       document.getElementById('pointsStudentId').value = meta.studentId;
       document.getElementById('pointsActionDate').value = reportState.selected_date;
       document.getElementById('pointsValue').value = 5;
-      updatePointsReason(pointReasonPresets[0] || 'مشاركة مميزة');
+      updatePointsReason('');
       pointsModal.show();
     }
 
@@ -2903,9 +2874,7 @@
       document.getElementById('homeworkToVerse').value = hasOpenHomework ? (student.homework_to_verse || '') : '';
       document.getElementById('homeworkAssignmentText').value = hasOpenHomework ? (student.homework_assignment_text || '') : '';
       document.getElementById('homeworkAssignmentNotes').value = hasOpenHomework ? (student.homework_assignment_notes || '') : '';
-      document.getElementById('homeworkExpectedRecitationDate').value = hasOpenHomework
-        ? (student.homework_expected_recitation_date || nextExpectedRecitationDate(student.homework_assigned_date || reportState.selected_date))
-        : nextExpectedRecitationDate(reportState.selected_date);
+      document.getElementById('homeworkExpectedRecitationDate').value = '';
 
       document.getElementById('homeworkEvaluationDate').value = student.homework_evaluation_date || reportState.selected_date;
       document.getElementById('homeworkEvaluation').value = student.homework_evaluation || (homeworkEvaluationOptions[0]?.value || 'completed');
@@ -2918,11 +2887,11 @@
       document.getElementById('homeworkRecitationToVerse').value = student.homework_to_verse || 1;
 
       document.getElementById('extraRecitationDate').value = reportState.selected_date;
-      document.getElementById('extraRecitationType').value = 'surah';
+      document.getElementById('extraRecitationType').value = 'pages';
       document.getElementById('extraRecitationPages').value = '';
-      document.getElementById('extraRecitationSurah').value = 'البقرة';
-      document.getElementById('extraRecitationFromVerse').value = 1;
-      document.getElementById('extraRecitationToVerse').value = 1;
+      document.getElementById('extraRecitationSurah').value = '';
+      document.getElementById('extraRecitationFromVerse').value = '';
+      document.getElementById('extraRecitationToVerse').value = '';
       document.getElementById('extraRecitationEvaluation').value = '';
       document.getElementById('extraRecitationNotes').value = '';
 
@@ -3062,7 +3031,7 @@
 
     function buildReportText() {
       const lines = [
-        `تقرير ${reportState.day_name || reportState.date_label}:`,
+        'تقرير اليوم:',
       ];
 
       [...studentTableState.values()]
@@ -3070,7 +3039,7 @@
         .sort((firstStudent, secondStudent) => firstStudent.name.localeCompare(secondStudent.name, 'ar'))
         .forEach((student) => {
           const record = student.today_recitation;
-          const content = [record.recitation_title || record.surah || '', record.recitation_range || '']
+          const content = [record.surah || record.pages || record.recitation_title || '', record.recitation_range || '']
             .filter(Boolean)
             .join(' ')
             .trim();
@@ -3272,6 +3241,10 @@
       const student = studentTableState.get(String(studentId));
       const rawValue = Number(document.getElementById('pointsValue').value);
       const reason = document.getElementById('pointsReason').value.trim();
+      if (!reason) {
+        showInlineAlert('pointsAlert', 'يرجى كتابة ملاحظة.');
+        return;
+      }
       setButtonLoading(button, true, 'حفظ');
       try {
         await submitJson(pointsListUrl, 'POST', {
@@ -3505,7 +3478,7 @@
 
       if (type === 'pages') {
         data.pages = document.getElementById(pagesId).value.trim();
-        data.title = data.pages ? `صفحات ${data.pages}` : '';
+        data.title = data.pages ? (isExtra ? data.pages : `صفحات ${data.pages}`) : '';
         data.range = '';
         return data;
       }
@@ -3625,7 +3598,7 @@
           surah: surah || '',
           from_verse: assignmentType === 'surah' ? fromVerse : null,
           to_verse: assignmentType === 'surah' ? toVerse : null,
-          expected_recitation_date: document.getElementById('homeworkExpectedRecitationDate').value,
+          expected_recitation_date: '',
           assignment_notes: document.getElementById('homeworkAssignmentNotes').value.trim(),
         };
 
@@ -3847,18 +3820,21 @@
       buildPresetChips('pointsReasonChips', pointReasonPresets, updatePointsReason);
       buildPresetChips('planTargetChips', planTargetPresets, updatePlanTarget);
 
-      document.getElementById('pointsReasonSelect').addEventListener('change', (event) => {
+      document.getElementById('pointsReasonSelect')?.addEventListener('change', (event) => {
         updatePointsReason(event.target.value);
       });
-      document.getElementById('planTargetSelect').addEventListener('change', (event) => {
+      document.getElementById('planTargetSelect')?.addEventListener('change', (event) => {
         updatePlanTarget(event.target.value);
+      });
+      document.getElementById('planStartDate').addEventListener('change', (event) => {
+        document.getElementById('planEndDate').value = plusDays(event.target.value || reportState.selected_date, 7);
       });
       document.getElementById('homeworkAssignmentType').addEventListener('change', updateAssignmentFields);
       document.getElementById('homeworkAssignedDate').addEventListener('change', (event) => {
         document.getElementById('homeworkExpectedRecitationDate').value = nextExpectedRecitationDate(event.target.value);
       });
       document.getElementById('homeworkRecitationType').addEventListener('change', updateHomeworkRecitationFields);
-      document.getElementById('extraRecitationType').addEventListener('change', updateExtraRecitationFields);
+      document.getElementById('extraRecitationType')?.addEventListener('change', updateExtraRecitationFields);
       document.querySelectorAll('[data-homework-stage]').forEach((button) => {
         button.addEventListener('click', () => {
           if (!button.disabled) {

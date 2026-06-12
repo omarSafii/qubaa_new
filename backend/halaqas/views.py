@@ -341,10 +341,8 @@ ARABIC_WEEKDAYS = {
 
 
 def _daily_report_recitation_line(record):
-    content_parts = [
-        (record.recitation_title or '').strip(),
-        (record.recitation_range or '').strip(),
-    ]
+    title = (record.surah or record.pages or '').strip()
+    content_parts = [title, (record.recitation_range or '').strip()]
     content = ' '.join(part for part in content_parts if part).strip()
     evaluation = record.get_evaluation_display() if record.evaluation else 'بدون تقييم'
     if content:
@@ -369,7 +367,7 @@ def _build_daily_report(
     monthly_attendance_rate=0,
 ):
     report_lines = [
-        f'تقرير {ARABIC_WEEKDAYS.get(today.weekday(), today.strftime("%Y-%m-%d"))}:',
+        'تقرير اليوم:',
     ]
     report_lines.extend(_daily_report_recitation_line(record) for record in recitation_records)
     return '\n'.join(report_lines)

@@ -620,6 +620,38 @@
       white-space: nowrap;
     }
 
+    @media (max-width: 640px) {
+      .history-table,
+      .history-table thead,
+      .history-table tbody,
+      .history-table tr,
+      .history-table td {
+        display: block;
+        width: 100%;
+      }
+
+      .history-table thead {
+        display: none;
+      }
+
+      .history-table tbody {
+        display: grid;
+        gap: 8px;
+      }
+
+      .history-table tr {
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+      }
+
+      .history-table td {
+        padding: 5px 0;
+        border-bottom: 0;
+      }
+    }
+
     .report-card {
       margin-bottom: 12px;
       background: linear-gradient(180deg, #fff, rgba(242, 216, 161, .06));
@@ -747,16 +779,26 @@
 
     .detail-grid {
       margin-top: 10px;
+      gap: 8px;
     }
 
     .detail-card {
       display: grid;
-      gap: 7px;
+      gap: 5px;
+      border-color: rgba(11, 60, 84, .08);
+      background: #fff;
     }
 
     .detail-card small {
       color: var(--muted);
       font-weight: 700;
+      line-height: 1.55;
+    }
+
+    .detail-card .subtext {
+      margin-top: 0;
+      font-size: .9rem;
+      line-height: 1.65;
     }
 
     .empty-state {
@@ -1108,8 +1150,7 @@
             {% for attendance in attendance_rows %}
             <article class="detail-card">
               <div class="detail-top"><span class="detail-title">{{ attendance.session.date|date:"Y-m-d" }}</span><span class="pill {% if attendance.status == 'present' %}ok{% elif attendance.status == 'excused' %}warn{% elif attendance.status == 'absent' %}bad{% else %}mutep{% endif %}">{{ attendance.get_status_display }}</span></div>
-              <small>{{ attendance.source_label|default:"المصدر غير محدد" }}</small>
-              <div class="subtext">{{ attendance.notes|default:attendance.session.notes|default:"لا توجد ملاحظة." }}</div>
+              {% if attendance.notes or attendance.session.notes %}<div class="subtext">{{ attendance.notes|default:attendance.session.notes }}</div>{% endif %}
             </article>
             {% endfor %}
           </div>
@@ -1126,9 +1167,9 @@
           <div class="detail-grid">
             {% for record in memorization_rows %}
             <article class="detail-card">
-              <div class="detail-top"><span class="detail-title">{{ record.recitation_title }}</span><span class="pill {% if record.evaluation %}ok{% else %}mutep{% endif %}">{% if record.evaluation %}{{ record.get_evaluation_display }}{% else %}بدون تقييم{% endif %}</span></div>
-              <small>{{ record.date|date:"Y-m-d" }}{% if record.recitation_range %} - {{ record.recitation_range }}{% endif %}{% if record.verses_count %} - {{ record.verses_count }} آية{% endif %}</small>
-              <div class="subtext">{{ record.get_recitation_type_display }}{% if record.notes %}<br>{{ record.notes }}{% endif %}</div>
+              <div class="detail-top"><span class="detail-title">{{ record.recitation_title }}{% if record.recitation_range %} - {{ record.recitation_range }}{% endif %}</span><span class="pill {% if record.evaluation %}ok{% else %}mutep{% endif %}">{% if record.evaluation %}{{ record.get_evaluation_display }}{% else %}بدون تقييم{% endif %}</span></div>
+              <small>{{ record.date|date:"Y-m-d" }}</small>
+              {% if record.notes %}<div class="subtext">{{ record.notes }}</div>{% endif %}
             </article>
             {% endfor %}
           </div>
@@ -1149,7 +1190,7 @@
                 <span class="detail-title">{{ homework.get_assignment_type_display }}: {{ homework.assignment_text }}</span>
                 <span class="pill {% if homework.evaluation_date %}ok{% else %}warn{% endif %}">{% if homework.evaluation_date %}تم التقييم{% else %}بانتظار التقييم{% endif %}</span>
               </div>
-              <small>إسناد {{ homework.assigned_date|date:"Y-m-d" }}{% if homework.expected_recitation_date %} - تسميع متوقع {{ homework.expected_recitation_date|date:"Y-m-d" }}{% endif %}{% if homework.evaluation_date %} - تقييم {{ homework.evaluation_date|date:"Y-m-d" }}{% endif %}</small>
+              <small>{{ homework.assigned_date|date:"Y-m-d" }}{% if homework.evaluation_date %} - {{ homework.evaluation_date|date:"Y-m-d" }}{% endif %}</small>
               <div class="subtext">{% if homework.evaluation %}{{ homework.get_evaluation_display }}{% endif %}{% if homework.evaluation_notes or homework.assignment_notes %}<br>{{ homework.evaluation_notes|default:homework.assignment_notes }}{% endif %}</div>
             </article>
             {% endfor %}
@@ -1168,7 +1209,7 @@
             {% for point in points_rows %}
             <article class="detail-card">
               <div class="detail-top"><span class="detail-title">{{ point.reason }}</span><span class="pill {% if point.value > 0 %}ok{% elif point.value < 0 %}bad{% else %}mutep{% endif %}">{{ point.value }} نقطة</span></div>
-              <small>{{ point.date|date:"Y-m-d H:i" }}</small>
+              <small>{{ point.date|date:"Y-m-d" }}</small>
             </article>
             {% endfor %}
           </div>
@@ -1178,38 +1219,6 @@
         </div>
       </details>
 
-      <details class="report-group">
-        <summary><span><i class="fas fa-route"></i> الخطط</span><span class="pill info">{{ plan_rows|length }} خطة</span></summary>
-        <div class="group-body">
-          <div class="detail-grid">
-            {% for plan in plan_rows %}
-            <article class="detail-card">
-              <div class="detail-top"><span class="detail-title">{{ plan.target }}</span><span class="pill {% if plan.is_completed %}ok{% else %}info{% endif %}">{% if plan.is_completed %}مكتملة{% else %}قيد المتابعة{% endif %}</span></div>
-              <small>{{ plan.start_date|date:"Y-m-d" }} إلى {{ plan.end_date|date:"Y-m-d" }}</small>
-              <div class="subtext">{{ plan.notes|default:"لا توجد ملاحظة للخطة." }}</div>
-            </article>
-            {% empty %}
-            <div class="empty-state">لا توجد خطط مرتبطة بالفترة الحالية.</div>
-            {% endfor %}
-          </div>
-        </div>
-      </details>
-
-      <details class="report-group">
-        <summary><span><i class="fas fa-message"></i> ملاحظات المعلم</span><span class="pill info">{{ teacher_notes|length }} ملاحظة</span></summary>
-        <div class="group-body">
-          <div class="detail-grid">
-            {% for note in teacher_notes %}
-            <article class="detail-card">
-              <div class="detail-top"><span class="detail-title">{{ note.source }}</span><span class="pill mutep">{{ note.date|date:"Y-m-d" }}</span></div>
-              <div class="subtext">{{ note.text }}</div>
-            </article>
-            {% empty %}
-            <div class="empty-state">لا توجد ملاحظات معلم متاحة داخل هذا النطاق.</div>
-            {% endfor %}
-          </div>
-        </div>
-      </details>
     </section>
 
     <div class="foot">معهد قباء لتحفيظ القرآن الكريم - لوحة متابعة ولي الأمر</div>
