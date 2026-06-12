@@ -473,14 +473,6 @@
       text-align: center;
     }
 
-    .student-badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-      justify-content: flex-start;
-    }
-
-    .compact-badge,
     .points-pill,
     .today-status-pill,
     .plan-pill,
@@ -493,11 +485,6 @@
       padding: 4px 8px;
       font-size: 0.74rem;
       font-weight: 700;
-    }
-
-    .compact-badge {
-      background: rgba(11, 60, 84, 0.06);
-      color: var(--color-primary);
     }
 
     .mini-stack {
@@ -1462,7 +1449,6 @@
         flex: 1 1 140px;
       }
 
-      .student-badges,
       .attendance-summary {
         justify-content: flex-start;
       }
@@ -1629,14 +1615,6 @@
                     <span class="student-toggle-main">
                       <span class="student-toggle-summary">
                         <span class="student-name">{{ entry.student.name }}</span>
-                        <span class="student-badges">
-                          {% if entry.grade_label != 'غير محدد' %}
-                          <span class="compact-badge">{{ entry.grade_label }}</span>
-                          {% endif %}
-                          {% if entry.category_label != 'غير مصنف' %}
-                          <span class="compact-badge">{{ entry.category_label }}</span>
-                          {% endif %}
-                        </span>
                       </span>
                       <span class="student-toggle-hint">تفاصيل وإجراءات</span>
                     </span>
@@ -3035,7 +3013,10 @@
     }
 
     function buildReportSummary() {
-      const recitationCount = [...studentTableState.values()].filter((student) => student.today_recitation).length;
+      const recitationCount = [...studentTableState.values()].reduce(
+        (total, student) => total + (Array.isArray(student.today_recitations) ? student.today_recitations.length : (student.today_recitation ? 1 : 0)),
+        0
+      );
       return `${reportState.date_label} | ${recitationCount} تسميعات مسجلة`;
     }
 
@@ -3045,16 +3026,19 @@
       ];
 
       [...studentTableState.values()]
-        .filter((student) => student.today_recitation)
         .sort((firstStudent, secondStudent) => firstStudent.name.localeCompare(secondStudent.name, 'ar'))
         .forEach((student) => {
-          const record = student.today_recitation;
-          const content = [record.surah || record.pages || record.recitation_title || '', record.recitation_range || '']
-            .filter(Boolean)
-            .join(' ')
-            .trim();
-          const evaluation = record.evaluation_label || 'بدون تقييم';
-          lines.push(content ? `• ${student.name} - ${content} (${evaluation})` : `• ${student.name} - (${evaluation})`);
+          const records = Array.isArray(student.today_recitations) && student.today_recitations.length
+            ? student.today_recitations
+            : (student.today_recitation ? [student.today_recitation] : []);
+          records.forEach((record) => {
+            const content = [record.surah || record.pages || record.recitation_title || '', record.recitation_range || '']
+              .filter(Boolean)
+              .join(' ')
+              .trim();
+            const evaluation = record.evaluation_label || 'بدون تقييم';
+            lines.push(content ? `• ${student.name} - ${content} (${evaluation})` : `• ${student.name} - (${evaluation})`);
+          });
         });
 
       return lines.join('\n');
@@ -3310,7 +3294,8 @@
           date: document.getElementById('memorizationDate').value
         });
 
-        student.last_memorization = {
+        const memorizationDate = document.getElementById('memorizationDate').value;
+        const recitationRecord = {
           surah,
           pages: '',
           from_verse: fromVerse,
@@ -3320,8 +3305,14 @@
           recitation_type: 'extra',
           evaluation,
           evaluation_label: evaluationLabelMap[evaluation] || '',
-          date: document.getElementById('memorizationDate').value
+          date: memorizationDate
         };
+        student.last_memorization = recitationRecord;
+        if (memorizationDate === reportState.selected_date) {
+          student.today_recitation = recitationRecord;
+          student.today_recitations = Array.isArray(student.today_recitations) ? student.today_recitations : [];
+          student.today_recitations.push(recitationRecord);
+        }
         reportState.monthly_verses_total += versesCount;
         reportState.monthly_records_count += 1;
 
@@ -3543,6 +3534,8 @@
       student.last_memorization = recitationRecord;
       if (dateValue === reportState.selected_date) {
         student.today_recitation = recitationRecord;
+        student.today_recitations = Array.isArray(student.today_recitations) ? student.today_recitations : [];
+        student.today_recitations.push(recitationRecord);
       }
       if (countRecord) {
         reportState.monthly_verses_total += data.versesCount;

@@ -3,6 +3,7 @@ from collections import Counter
 from datetime import datetime, time, timedelta
 from urllib.parse import urlencode
 
+from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Count, F, IntegerField, ExpressionWrapper, Q, Sum, Value
 from django.db.models.functions import Coalesce
 from django.http import HttpResponse
@@ -2619,11 +2620,13 @@ def _build_master_admin_dashboard_context(request):
     return context
 
 
+@staff_member_required
 def master_admin_dashboard(request):
     context = _build_master_admin_dashboard_context(request)
     return render(request, "halaqas/admin/dashboard.html", context)
 
 
+@staff_member_required
 def master_admin_dashboard_export(request):
     context = _build_master_admin_dashboard_context(request)
     requested_format = request.GET.get("format", "print")

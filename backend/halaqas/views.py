@@ -1,4 +1,4 @@
-from collections import Counter
+from collections import Counter, defaultdict
 from datetime import time
 from urllib.parse import urlencode
 
@@ -943,10 +943,9 @@ def prepare_halaqa_view(request, halaqa, template_name, ensure_current_session=F
             date=today,
         ).select_related('student').order_by('student__name', 'id')
     )
-    today_recitation_by_student = {
-        record.student_id: record
-        for record in today_recitation_records
-    }
+    today_recitations_by_student = defaultdict(list)
+    for record in today_recitation_records:
+        today_recitations_by_student[record.student_id].append(record)
 
     month_attendance = Attendance.objects.filter(
         student_id__in=student_ids,
@@ -1133,7 +1132,8 @@ def prepare_halaqa_view(request, halaqa, template_name, ensure_current_session=F
     student_table_state = []
     for entry in dashboard_data:
         last_memorization = entry['last_memorization']
-        today_recitation = today_recitation_by_student.get(entry['student'].id)
+        today_recitations = today_recitations_by_student.get(entry['student'].id, [])
+        today_recitation = today_recitations[-1] if today_recitations else None
         homework = entry['homework']
         student_table_state.append({
             'id': entry['student'].id,
@@ -1185,6 +1185,21 @@ def prepare_halaqa_view(request, halaqa, template_name, ensure_current_session=F
                 }
                 if today_recitation else None
             ),
+            'today_recitations': [
+                {
+                    'surah': record.surah,
+                    'pages': record.pages,
+                    'from_verse': record.from_verse,
+                    'to_verse': record.to_verse,
+                    'recitation_title': record.recitation_title,
+                    'recitation_range': record.recitation_range,
+                    'recitation_type': record.recitation_type,
+                    'evaluation': record.evaluation,
+                    'evaluation_label': record.get_evaluation_display() if record.evaluation else '',
+                    'date': record.date.isoformat(),
+                }
+                for record in today_recitations
+            ],
             'last_memorization': (
                 {
                     'surah': last_memorization.surah,

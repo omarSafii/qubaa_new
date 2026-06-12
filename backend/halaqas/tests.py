@@ -155,7 +155,8 @@ class HalaqaDetailPageTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'نسخ التقرير')
         self.assertContains(response, self.teacher.full_name)
-        self.assertContains(response, self.student.grade)
+        self.assertContains(response, self.student.name)
+        self.assertNotContains(response, self.student.grade)
         self.assertContains(response, 'ممتاز')
         self.assertContains(response, 'عدد الطلاب')
         self.assertContains(response, 'الحضور')
@@ -459,8 +460,16 @@ class SupervisorDashboardTests(TestCase):
 
 class HalaqaActionEndpointTests(TestCase):
     def setUp(self):
+        self.user = User.objects.create_user(username='api_teacher', password='StrongPass123!')
+        self.teacher = Teacher.objects.create(
+            user=self.user,
+            full_name='أستاذ الإجراءات',
+            phone='0999666000',
+        )
+        self.client.force_login(self.user)
         self.parent = User.objects.create_user(username='api_parent', password='StrongPass123!')
         self.halaqa = Halaqa.objects.create(name='حلقة الإجراءات')
+        self.halaqa.teachers.add(self.teacher)
         self.student = Student.objects.create(
             name='طالب الإجراءات',
             birth_date='2012-05-05',
@@ -613,6 +622,52 @@ class HalaqaActionEndpointTests(TestCase):
         self.assertEqual(record.verses_count, 0)
         self.assertEqual(record.notes, 'قرأ صفحات إضافية')
 
+    def test_same_day_recitations_are_preserved_and_reported(self):
+        teacher_user = User.objects.create_user(username='report_teacher', password='StrongPass123!')
+        teacher = Teacher.objects.create(user=teacher_user, full_name='أستاذ التقرير', phone='099900001')
+        self.halaqa.teachers.add(teacher)
+        selected_date = timezone.localdate()
+
+        first_response = self.client.post(reverse('students:memorizationrecord-list'), data={
+            'student': self.student.id,
+            'halaqa': self.halaqa.id,
+            'recitation_type': 'extra',
+            'pages': 'صفحة 8',
+            'evaluation': 'excellent',
+            'date': selected_date.isoformat(),
+            'is_approved': True,
+        })
+        second_response = self.client.post(reverse('students:memorizationrecord-list'), data={
+            'student': self.student.id,
+            'halaqa': self.halaqa.id,
+            'recitation_type': 'extra',
+            'surah': 'الشمس',
+            'from_verse': 1,
+            'to_verse': 15,
+            'evaluation': 'very_good',
+            'date': selected_date.isoformat(),
+            'is_approved': True,
+        })
+
+        self.assertEqual(first_response.status_code, 201)
+        self.assertEqual(second_response.status_code, 201)
+        self.assertEqual(
+            MemorizationRecord.objects.filter(student=self.student, date=selected_date).count(),
+            2,
+        )
+
+        self.client.force_login(teacher_user)
+        response = self.client.get(
+            reverse('halaqas:halaqa_detail', args=[self.halaqa.pk]),
+            {'date': selected_date.isoformat()},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        state = next(item for item in response.context['student_table_state'] if item['id'] == self.student.id)
+        self.assertEqual(len(state['today_recitations']), 2)
+        self.assertContains(response, 'صفحة 8')
+        self.assertContains(response, 'الشمس')
+
     def test_homework_create_and_evaluate_endpoints_support_detail_page_flow(self):
         assigned_date = timezone.localdate() - timedelta(days=1)
 
@@ -716,6 +771,21 @@ class HalaqaActionEndpointTests(TestCase):
 
 
 class MasterAdminDashboardTests(TestCase):
+    def setUp(self):
+        self.staff_user = User.objects.create_user(
+            username='admin_dashboard_staff',
+            password='StrongPass123!',
+            is_staff=True,
+        )
+        self.client.force_login(self.staff_user)
+
+    def test_master_admin_dashboard_requires_staff_login(self):
+        self.client.logout()
+        response = self.client.get('/halaqas/admin-dashboard/')
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('/admin/login/', response['Location'])
+
     def test_master_admin_dashboard_renders_with_empty_state(self):
         response = self.client.get('/halaqas/admin-dashboard/')
 
