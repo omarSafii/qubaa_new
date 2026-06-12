@@ -17,9 +17,10 @@
       --warn: #FFC107;
       --bad: #F44336;
       --info: #2196F3;
-      --line: rgba(11, 60, 84, .09);
+      --line: rgba(11, 60, 84, .05);
       --muted: #657681;
       --soft: 0 5px 15px rgba(0, 0, 0, .05);
+      --hover: 0 10px 25px rgba(0, 0, 0, .1);
       --nav-h: 72px;
     }
 
@@ -111,8 +112,20 @@
     .empty-state {
       border: 1px solid var(--line);
       border-radius: 16px;
-      background: rgba(255, 255, 255, .98);
+      background: #fff;
       box-shadow: var(--soft);
+    }
+
+    .hero:hover,
+    .range-card:hover,
+    .metric-card:hover,
+    .chart-card:hover,
+    .report-card:hover,
+    .report-group:hover,
+    .parent-plan-card:hover,
+    .priority-card:hover,
+    .quick-status-card:hover {
+      box-shadow: var(--hover);
     }
 
     .hero {
