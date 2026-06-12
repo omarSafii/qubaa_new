@@ -19,7 +19,7 @@
       --info: #2196F3;
       --line: rgba(11, 60, 84, .09);
       --muted: #657681;
-      --soft: 0 6px 16px rgba(11, 60, 84, .06);
+      --soft: 0 5px 15px rgba(0, 0, 0, .05);
       --nav-h: 72px;
     }
 
@@ -110,14 +110,22 @@
     .detail-card,
     .empty-state {
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: 16px;
       background: rgba(255, 255, 255, .98);
       box-shadow: var(--soft);
     }
 
     .hero {
-      padding: 12px;
+      padding: 14px;
       background: #fff;
+    }
+
+    .parent-greeting {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: .86rem;
+      font-weight: 800;
+      line-height: 1.6;
     }
 
     .parent-summary-top {
@@ -202,7 +210,7 @@
       min-width: 0;
       padding: 8px 9px;
       border: 1px solid rgba(11, 60, 84, .07);
-      border-radius: 8px;
+      border-radius: 12px;
       background: rgba(242, 216, 161, .12);
     }
 
@@ -410,6 +418,93 @@
       margin: 2px 0 12px;
     }
 
+    .priority-grid,
+    .quick-status-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .priority-card,
+    .quick-status-card {
+      background: #fff;
+      border: 1px solid rgba(11, 60, 84, .05);
+      border-radius: 16px;
+      box-shadow: var(--soft);
+      padding: 14px;
+      min-width: 0;
+    }
+
+    .priority-card {
+      border-right: 4px solid var(--a);
+    }
+
+    .priority-top {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 8px 10px;
+      align-items: center;
+    }
+
+    .quick-status-card {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      grid-template-areas:
+        "icon label"
+        "icon value"
+        "meta meta";
+      gap: 4px 10px;
+      align-items: center;
+    }
+
+    .quick-status-card .summary-icon {
+      grid-area: icon;
+    }
+
+    .quick-label {
+      grid-area: label;
+      margin: 0;
+      color: var(--muted);
+      font-size: .82rem;
+      font-weight: 800;
+    }
+
+    .quick-value {
+      grid-area: value;
+      margin: 0;
+      color: var(--p);
+      font-size: 1rem;
+      font-weight: 900;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .quick-meta {
+      grid-area: meta;
+      color: #7b878e;
+      font-size: .78rem;
+      font-weight: 700;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    .priority-title {
+      margin: 0;
+      font-size: 1.02rem;
+      font-weight: 900;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .priority-note {
+      margin: 8px 0 0;
+      color: #52636d;
+      font-size: .88rem;
+      font-weight: 700;
+      line-height: 1.65;
+    }
+
     .section-head h2,
     .chart-card h3,
     .report-card h2,
@@ -444,7 +539,7 @@
     .chart-card,
     .report-card,
     .report-group {
-      padding: 10px;
+      padding: 14px;
       min-width: 0;
     }
 
@@ -490,8 +585,8 @@
       width: 34px;
       height: 34px;
       border-radius: 10px;
-      background: rgba(150, 137, 96, .16);
-      color: var(--p);
+      background: rgba(150, 137, 96, .12);
+      color: var(--a);
       flex-shrink: 0;
       grid-row: span 2;
     }
@@ -550,14 +645,14 @@
     }
 
     .chart-card {
-      min-height: 310px;
-      background: linear-gradient(180deg, #fff, rgba(242, 216, 161, .06));
+      min-height: 0;
+      background: #fff;
     }
 
     .parent-chart-card {
       min-height: 0;
       display: grid;
-      gap: 10px;
+      gap: 8px;
     }
 
     .chart-card h3 {
@@ -572,16 +667,16 @@
     }
 
     .parent-chart-card .canvas-wrap {
-      height: 160px;
+      height: 150px;
       margin-top: 4px;
     }
 
     .chart-summary {
       display: grid;
-      gap: 7px;
+      gap: 5px;
       color: #52636d;
-      line-height: 1.7;
-      font-size: .92rem;
+      line-height: 1.55;
+      font-size: .84rem;
       font-weight: 700;
     }
 
@@ -619,7 +714,7 @@
       padding: 12px;
       border: 1px solid rgba(150, 137, 96, .22);
       border-right: 4px solid var(--a);
-      border-radius: 8px;
+      border-radius: 16px;
       background: rgba(242, 216, 161, .14);
       color: #53636d;
       line-height: 1.9;
@@ -630,8 +725,8 @@
       margin-top: 12px;
       padding: 14px;
       border: 1px solid rgba(11, 60, 84, .08);
-      border-radius: 8px;
-      background: linear-gradient(180deg, #fff, rgba(242, 216, 161, .12));
+      border-radius: 16px;
+      background: #fff;
       box-shadow: var(--soft);
     }
 
@@ -694,7 +789,7 @@
 
     .report-card {
       margin-bottom: 12px;
-      background: linear-gradient(180deg, #fff, rgba(242, 216, 161, .06));
+      background: #fff;
     }
 
     .report-card h2 {
@@ -860,6 +955,7 @@
     @media (min-width: 640px) {
       .page-shell { padding-left: 18px; padding-right: 18px; }
       .parent-summary-grid,
+      .quick-status-grid,
       .meta-strip,
       .summary-grid,
       .detail-grid {
@@ -881,6 +977,9 @@
       .page-shell { padding-top: 18px; }
       .hero { padding: 16px; }
       .parent-summary-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+      .quick-status-grid {
         grid-template-columns: repeat(4, minmax(0, 1fr));
       }
       .summary-grid {
@@ -982,11 +1081,12 @@
 
   <main class="page-shell">
     <section class="hero">
+      <p class="parent-greeting">السلام عليكم ورحمة الله وبركاته</p>
       <div class="parent-summary-top">
         <div class="student-head">
           <div class="student-avatar"><i class="fas fa-user-graduate"></i></div>
           <div class="parent-summary-info">
-            <div class="eyebrow"><i class="fas fa-chart-simple"></i> متابعة الطالب</div>
+            <div class="eyebrow"><i class="fas fa-chart-simple"></i> ملخص الطالب</div>
             <h1>{{ summary.student_name }}</h1>
           </div>
         </div>
@@ -1051,10 +1151,59 @@
     <section class="page-panel" id="summaryPanel" role="tabpanel">
       <div class="section-head">
         <div>
-          <h2>ملخص الأداء</h2>
-          <p>الحضور والتسميع والواجبات والنقاط.</p>
+          <h2>ملخص الطالب</h2>
         </div>
         <span class="pill info">{{ report_range.label }}</span>
+      </div>
+
+      <div class="priority-grid">
+        <article class="priority-card">
+          <div class="priority-top">
+            <span class="summary-icon"><i class="fas fa-clipboard-list"></i></span>
+            <div>
+              <div class="quick-label">واجب يحتاج متابعة</div>
+              {% if summary.homework.status == 'assigned' or summary.homework.status == 'pending' %}
+              <h3 class="priority-title">{{ summary.homework.title }}</h3>
+              {% else %}
+              <h3 class="priority-title">لا يوجد واجب نشط حاليًا</h3>
+              {% endif %}
+            </div>
+            <span class="pill {% if summary.homework.status == 'assigned' or summary.homework.status == 'pending' %}warn{% elif summary.homework.status == 'evaluated' %}ok{% else %}mutep{% endif %}">{{ summary.homework.status_label }}</span>
+          </div>
+          {% if summary.homework.status == 'assigned' or summary.homework.status == 'pending' %}
+          <p class="priority-note">{{ summary.homework.detail_text }}{% if summary.homework.teacher_note %}<br>{{ summary.homework.teacher_note }}{% endif %}</p>
+          {% endif %}
+        </article>
+      </div>
+
+      <div class="quick-status-grid">
+        <article class="quick-status-card">
+          <span class="summary-icon"><i class="fas fa-microphone-lines"></i></span>
+          <div class="quick-label">آخر تسميع</div>
+          <div class="quick-value">{% if summary.latest_recitation.date %}{{ summary.latest_recitation.surah }}{% if summary.latest_recitation.range %} - {{ summary.latest_recitation.range }}{% endif %}{% else %}لا يوجد تسميع{% endif %}</div>
+          <div class="quick-meta">{{ summary.latest_recitation.evaluation_label }}{% if summary.latest_recitation.date %} - {{ summary.latest_recitation.date }}{% endif %}</div>
+        </article>
+
+        <article class="quick-status-card">
+          <span class="summary-icon"><i class="fas fa-calendar-check"></i></span>
+          <div class="quick-label">آخر حضور</div>
+          <div class="quick-value">{{ summary.attendance_reference.status_label }}</div>
+          <div class="quick-meta">{{ summary.attendance_reference.date }}{% if summary.attendance_reference.note %} - {{ summary.attendance_reference.note }}{% endif %}</div>
+        </article>
+
+        <article class="quick-status-card">
+          <span class="summary-icon"><i class="fas fa-star"></i></span>
+          <div class="quick-label">آخر نقاط</div>
+          <div class="quick-value">{% if summary.points.latest_date %}{{ summary.points.latest_value }} نقطة{% else %}لا توجد حركة حديثة{% endif %}</div>
+          <div class="quick-meta">{% if summary.points.latest_reason %}{{ summary.points.latest_reason }}{% else %}الرصيد الحالي: {{ summary.points.current_total }}{% endif %}</div>
+        </article>
+
+        <article class="quick-status-card">
+          <span class="summary-icon"><i class="fas fa-chart-simple"></i></span>
+          <div class="quick-label">ملخص سريع</div>
+          <div class="quick-value">{{ summary.status_badge }}</div>
+          <div class="quick-meta">الحضور {{ summary.attendance_percentage }}%{% if summary.monthly_memorized_verses %} - {{ summary.monthly_memorized_verses }} آية{% endif %}</div>
+        </article>
       </div>
 
       <div class="chart-grid">
@@ -1062,7 +1211,6 @@
           <div class="chart-top">
             <div>
               <h3><i class="fas fa-star"></i> النقاط</h3>
-              <div class="subtext">تغير النقاط خلال الفترة.</div>
             </div>
             <span class="pill {% if master_report.points.net_total > 0 %}ok{% elif master_report.points.net_total < 0 %}bad{% else %}mutep{% endif %}">{{ master_report.points.net_total }}</span>
           </div>
@@ -1081,7 +1229,6 @@
           <div class="chart-top">
             <div>
               <h3><i class="fas fa-calendar-check"></i> الحضور</h3>
-              <div class="subtext">حاضر، غائب، وغياب مبرر.</div>
             </div>
             <span class="pill {% if master_report.attendance.percentage >= 80 %}ok{% elif master_report.attendance.percentage >= 60 %}warn{% elif master_report.attendance.total %}bad{% else %}mutep{% endif %}">{{ master_report.attendance.percentage }}%</span>
           </div>
@@ -1101,7 +1248,6 @@
           <div class="chart-top">
             <div>
               <h3><i class="fas fa-clipboard-list"></i> الواجبات</h3>
-              <div class="subtext">هل ينجز الطالب ما أُسند إليه؟</div>
             </div>
             <span class="pill {% if master_report.homework.pending_count or master_report.homework.not_completed_count %}warn{% elif master_report.homework.total_count %}ok{% else %}mutep{% endif %}">{{ master_report.homework.completion_percentage }}%</span>
           </div>
@@ -1119,7 +1265,6 @@
           <div class="chart-top">
             <div>
               <h3><i class="fas fa-microphone-lines"></i> جودة التسميع</h3>
-              <div class="subtext">ملخص تقييمات التسميع والحفظ.</div>
             </div>
             <span class="pill {% if master_report.memorization.average_score >= 2.5 %}ok{% elif master_report.memorization.average_score %}warn{% else %}mutep{% endif %}">{{ master_report.memorization.quality_label }}</span>
           </div>
@@ -1147,18 +1292,12 @@
         <div class="progress-line"><span style="width: {{ summary.plan.actual_percent }}%"></span></div>
         <p class="metric-note">التقدم الفعلي {{ summary.plan.actual_percent }}%{% if summary.plan.expected_percent %}، والمتوقع {{ summary.plan.expected_percent }}%{% endif %}.{% if summary.plan.notes %}<br>{{ summary.plan.notes }}{% endif %}</p>
       </article>
-
-      <div class="insight-box">
-        <strong>الخلاصة:</strong>
-        {{ summary.period_insight }}
-      </div>
     </section>
 
     <section class="page-panel" id="reportPanel" role="tabpanel" hidden>
       <div class="section-head">
         <div>
-          <h2>متابعة الطالب</h2>
-          <p>الحضور والتسميع وآخر الواجبات ونقاط الطالب.</p>
+          <h2>التقرير</h2>
         </div>
         <span class="pill mutep">{{ master_report.label }}</span>
       </div>

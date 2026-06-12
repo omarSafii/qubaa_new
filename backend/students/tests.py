@@ -220,7 +220,7 @@ class StudentReadOnlyViewTests(TestCase):
         self.assertEqual(response.context['master_report']['attendance']['percentage'], 50)
         self.assertEqual(len(response.context['attendance_rows']), 2)
         self.assertEqual(len(response.context['timeline_entries']), 2)
-        self.assertContains(response, 'متابعة الطالب')
+        self.assertContains(response, 'ملخص الطالب')
         self.assertContains(response, 'عرض سجل الحضور')
         self.assertContains(response, 'سورة الملك')
         self.assertContains(response, 'أستاذ الحلقة')
