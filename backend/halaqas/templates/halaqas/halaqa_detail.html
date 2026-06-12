@@ -31,28 +31,28 @@
       color: var(--color-primary);
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       min-height: 100vh;
-      padding-top: 74px;
+      padding-top: 82px;
     }
 
     .navbar {
       background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      padding: 10px 20px;
+      padding: 7px 18px;
     }
 
     .navbar-brand {
       display: flex;
       align-items: center;
-      gap: 15px;
+      gap: 10px;
       color: #fff !important;
       font-weight: 600;
-      font-size: 1.25rem;
+      font-size: 1.06rem;
     }
 
     .institute-logo,
     .teacher-avatar {
-      width: 42px;
-      height: 42px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -73,8 +73,9 @@
       color: #fff;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       text-align: right;
+      max-width: min(560px, 100%);
     }
 
     .teacher-info .small {
@@ -1252,11 +1253,11 @@
 
     @media (max-width: 767px) {
       body {
-        padding-top: 92px;
+        padding-top: 116px;
       }
 
       .navbar {
-        padding: 10px 14px;
+        padding: 8px 12px;
       }
 
       .navbar .container-fluid {
@@ -1272,10 +1273,11 @@
       .teacher-info {
         width: 100%;
         justify-content: flex-end;
+        font-size: 0.9rem;
       }
 
       .dashboard-container {
-        padding-top: 18px;
+        padding-top: 14px;
       }
 
       .stats-grid {
@@ -2025,7 +2027,7 @@
             </div>
 
             <div class="mb-3">
-              <label class="form-label">تاريخ البداية</label>
+              <label class="form-label">تاريخ نهاية وقت الخطة</label>
               <input type="date" class="form-control" id="planStartDate" name="start_date" required>
               <input type="hidden" id="planEndDate" name="end_date">
             </div>
@@ -2807,7 +2809,7 @@
       document.getElementById('planStartDate').value = meta.planStart || defaultStart;
       document.getElementById('planEndDate').value = meta.planEnd || defaultEnd;
       document.getElementById('planNotes').value = meta.planNotes || '';
-      updatePlanTarget(meta.planTarget || planTargetPresets[0] || 'مراجعة المحفوظ الحالي');
+      updatePlanTarget(meta.planTarget || '');
       planModal.show();
     }
 
@@ -3412,6 +3414,10 @@
       setButtonLoading(button, true, 'حفظ');
       const recordId = document.getElementById('planRecordId').value;
       const target = document.getElementById('planTarget').value.trim();
+      if (!target) {
+        showInlineAlert('planAlert', 'يرجى كتابة الخطة.');
+        return;
+      }
       const notes = document.getElementById('planNotes').value;
       const payload = {
         student: studentId,

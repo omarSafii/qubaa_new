@@ -127,12 +127,7 @@ def _infer_category(grade):
 
 
 def _time_greeting():
-    hour = timezone.localtime().hour
-    if hour < 12:
-        return 'صباح الخير'
-    if hour < 17:
-        return 'نهارك مبارك'
-    return 'مساء الخير'
+    return 'السلام عليكم ورحمة الله وبركاته'
 
 
 def _format_month_label(day_value):
