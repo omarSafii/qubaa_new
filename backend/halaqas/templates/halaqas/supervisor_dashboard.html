@@ -15,7 +15,7 @@
       --color-success: #4CAF50;
       --color-warning: #FFC107;
       --color-danger: #F44336;
-      --shadow-soft: 0 10px 28px rgba(11, 60, 84, 0.08);
+      --shadow-soft: 0 6px 16px rgba(11, 60, 84, 0.06);
     }
 
     * {
@@ -25,7 +25,8 @@
     body {
       min-height: 100vh;
       padding-top: 72px;
-      background: linear-gradient(135deg, #f8f9fa 0%, #f1f3f5 100%);
+      overflow-x: hidden;
+      background: #f6f7f8;
       color: var(--color-primary);
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
@@ -46,7 +47,7 @@
 
     .navbar-brand {
       font-weight: 700;
-      font-size: 1.18rem;
+      font-size: 1.02rem;
     }
 
     .brand-icon,
@@ -89,7 +90,7 @@
     .hero-card {
       padding: 10px;
       margin-bottom: 8px;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(242, 216, 161, 0.08));
+      background: #fff;
     }
 
     .hero-grid,
@@ -111,8 +112,9 @@
 
     .muted-text {
       color: #62727d;
-      line-height: 1.8;
+      line-height: 1.55;
       margin: 0;
+      font-size: .88rem;
     }
 
     .date-form {
@@ -121,7 +123,7 @@
       align-items: end;
       padding: 7px;
       border-radius: 8px;
-      background: rgba(255, 255, 255, 0.82);
+      background: rgba(11, 60, 84, 0.025);
       border: 1px solid rgba(11, 60, 84, 0.08);
     }
 
@@ -169,15 +171,16 @@
     .stats-grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
       margin-bottom: 8px;
-      gap: 8px;
+      gap: 6px;
     }
 
     .stat-card {
-      padding: 9px;
+      min-height: 64px;
+      padding: 8px;
       display: flex;
       align-items: center;
-      gap: 8px;
-      border-top: 3px solid var(--color-accent);
+      gap: 7px;
+      border-top: 0;
     }
 
     .stat-icon {
@@ -195,11 +198,12 @@
     .stat-card small {
       display: block;
       color: #687783;
-      margin-bottom: 3px;
+      margin-bottom: 1px;
+      font-size: .76rem;
     }
 
     .stat-card strong {
-      font-size: 1.05rem;
+      font-size: 1.08rem;
       line-height: 1.3;
     }
 
@@ -216,9 +220,9 @@
     }
 
     .workflow-card {
-      padding: 10px;
+      padding: 9px;
       margin-bottom: 8px;
-      background: rgba(255,255,255,.97);
+      background: #fff;
     }
 
     .workflow-head {
@@ -226,12 +230,12 @@
       align-items: flex-start;
       justify-content: space-between;
       gap: 14px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .workflow-title {
       margin: 0 0 4px;
-      font-size: 1rem;
+      font-size: .98rem;
       font-weight: 800;
     }
 
@@ -248,7 +252,7 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 5px 8px;
+      padding: 4px 7px;
       border-radius: 999px;
       background: rgba(11, 60, 84, 0.05);
     }
@@ -260,7 +264,7 @@
 
     .choice-section {
       display: grid;
-      gap: 7px;
+      gap: 6px;
       margin-top: 8px;
     }
 
@@ -273,22 +277,22 @@
 
     .choice-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 7px;
+      grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+      gap: 6px;
     }
 
     .choice-card {
-      min-height: 44px;
+      min-height: 48px;
       padding: 8px;
       border-radius: 8px;
       border: 1px solid rgba(11, 60, 84, 0.09);
       background: rgba(255, 255, 255, 0.9);
       color: var(--color-primary);
       text-decoration: none;
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr auto;
       align-items: center;
-      justify-content: space-between;
-      gap: 10px;
+      gap: 8px;
       transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
     }
 
@@ -311,16 +315,17 @@
     .choice-title {
       display: block;
       font-weight: 900;
-      line-height: 1.4;
+      line-height: 1.35;
+      font-size: .92rem;
     }
 
     .choice-meta {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin-top: 5px;
+      margin-top: 3px;
       color: #697882;
-      font-size: 0.82rem;
+      font-size: 0.76rem;
       font-weight: 700;
     }
 
@@ -360,7 +365,7 @@
       border-radius: 8px;
       background: rgba(255, 255, 255, 0.94);
       border: 1px solid rgba(11, 60, 84, 0.08);
-      box-shadow: 0 10px 24px rgba(11, 60, 84, 0.08);
+      box-shadow: var(--shadow-soft);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -398,7 +403,7 @@
 
     .halaqa-title {
       margin: 0 0 5px;
-      font-size: 1rem;
+      font-size: .98rem;
       font-weight: 800;
     }
 
@@ -408,14 +413,14 @@
       flex-wrap: wrap;
       gap: 7px;
       color: #60707a;
-      font-size: 0.88rem;
+      font-size: 0.82rem;
     }
 
     .meta-pill {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 5px 9px;
+      padding: 4px 7px;
       border-radius: 999px;
       background: rgba(11, 60, 84, 0.06);
       font-weight: 700;
@@ -445,11 +450,11 @@
 
     .student-list {
       display: grid;
-      gap: 8px;
+      gap: 7px;
     }
 
     .student-card {
-      padding: 9px;
+      padding: 8px;
       box-shadow: none;
     }
 
@@ -469,15 +474,15 @@
 
     .student-name {
       margin: 0 0 3px;
-      font-size: .98rem;
+      font-size: .94rem;
       font-weight: 800;
       color: var(--color-primary);
     }
 
     .source-line {
       color: #6c7a84;
-      font-size: 0.84rem;
-      line-height: 1.7;
+      font-size: 0.78rem;
+      line-height: 1.55;
     }
 
     .lock-message {
@@ -582,14 +587,14 @@
     }
 
     .empty-state {
-      padding: 18px;
-      border-radius: 14px;
+      padding: 12px;
+      border-radius: 8px;
       border: 1px dashed rgba(11, 60, 84, 0.16);
       background: rgba(11, 60, 84, 0.03);
       color: #6e7d87;
       text-align: center;
       font-weight: 700;
-      line-height: 1.8;
+      line-height: 1.6;
     }
 
     .footer-note {
@@ -625,7 +630,7 @@
 
     @media (max-width: 767px) {
       body {
-        padding-top: 92px;
+        padding-top: 84px;
       }
 
       .navbar {
@@ -642,7 +647,7 @@
       }
 
       .supervisor-info {
-        width: 100%;
+        width: auto;
         justify-content: flex-end;
       }
 
@@ -747,7 +752,7 @@
 
     @media (max-width: 430px) {
       .choice-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       .stats-grid {
@@ -755,12 +760,23 @@
       }
 
       .stat-card {
-        display: block;
+        display: grid;
+        justify-items: center;
         text-align: center;
+        gap: 4px;
+        padding: 7px 5px;
       }
 
       .stat-icon {
-        margin-bottom: 4px;
+        margin-bottom: 0;
+      }
+
+      .stat-card small {
+        font-size: .68rem;
+      }
+
+      .stat-card strong {
+        font-size: .95rem;
       }
 
       .status-option span {
@@ -781,7 +797,7 @@
         <div class="supervisor-avatar"><i class="fas fa-user-shield"></i></div>
         <div>
           <div class="fw-semibold">لوحة الموجه</div>
-          <div class="small">الحضور اليومي للحلقات</div>
+          <div class="small">الحضور اليومي</div>
         </div>
       </div>
     </div>
@@ -791,7 +807,7 @@
     <section class="dashboard-card hero-card">
       <div class="hero-grid">
         <div>
-          <h1 class="hero-title"><i class="fas fa-clipboard-check"></i> تسجيل حضور الطلاب</h1>
+          <h1 class="hero-title"><i class="fas fa-clipboard-check"></i> الحضور</h1>
           <p class="muted-text">{{ selected_date|date:"Y-m-d" }}{% if selected_category %} - {{ selected_category.name }}{% endif %}{% if selected_halaqa %} - {{ selected_halaqa.name }}{% endif %}</p>
         </div>
         <form method="get" class="date-form">
@@ -832,13 +848,12 @@
     <section class="dashboard-card workflow-card">
       <div class="workflow-head">
         <div>
-          <h2 class="workflow-title">مسار تسجيل الحضور</h2>
-          <p class="muted-text">اختر الفئة ثم الحلقة، وستظهر قائمة الطلاب المطلوبة فقط.</p>
+          <h2 class="workflow-title">اختيار الحلقة</h2>
         </div>
         <div class="workflow-steps" aria-label="مسار العمل">
-          <span class="workflow-step {% if selected_category %}is-active{% endif %}"><i class="fas fa-layer-group"></i> اختيار الفئة</span>
-          <span class="workflow-step {% if selected_halaqa %}is-active{% endif %}"><i class="fas fa-mosque"></i> اختيار الحلقة</span>
-          <span class="workflow-step {% if selected_halaqa %}is-active{% endif %}"><i class="fas fa-user-check"></i> تسجيل الحضور</span>
+          <span class="workflow-step {% if selected_category %}is-active{% endif %}"><i class="fas fa-layer-group"></i> الفئة</span>
+          <span class="workflow-step {% if selected_halaqa %}is-active{% endif %}"><i class="fas fa-mosque"></i> الحلقة</span>
+          <span class="workflow-step {% if selected_halaqa %}is-active{% endif %}"><i class="fas fa-user-check"></i> الحضور</span>
         </div>
       </div>
 
@@ -886,7 +901,7 @@
           <div class="empty-state">لا توجد حلقات نشطة داخل هذه الفئة.</div>
           {% endif %}
         {% else %}
-        <div class="empty-state">اختر فئة أولاً لعرض حلقاتها النشطة.</div>
+        <div class="empty-state">اختر الفئة لعرض الحلقات.</div>
         {% endif %}
       </div>
     </section>
@@ -933,10 +948,12 @@
                     <div class="lock-message"><i class="fas fa-lock"></i> {{ student_row.lock_message }}</div>
                     {% endif %}
                   </div>
+                  {% if student_row.source_label or student_row.notes %}
                   <div class="source-line">
-                    {% if student_row.source_label %}{{ student_row.source_label }}{% else %}لا يوجد مصدر مسجل{% endif %}
-                    {% if student_row.notes %}<br>ملاحظة: {{ student_row.notes }}{% endif %}
+                    {% if student_row.source_label %}{{ student_row.source_label }}{% endif %}
+                    {% if student_row.notes %}{% if student_row.source_label %}<br>{% endif %}ملاحظة: {{ student_row.notes }}{% endif %}
                   </div>
+                  {% endif %}
                 </div>
 
                 <div class="status-grid" role="radiogroup" aria-label="حضور {{ student_row.student.name }}">

@@ -116,29 +116,35 @@
     }
 
     .hero {
-      padding: 14px;
+      padding: 12px;
       background: #fff;
     }
 
-    .hero-main {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
+    .parent-summary-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-width: 0;
     }
 
     .student-head {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       gap: 10px;
       min-width: 0;
     }
 
     .student-avatar {
-      width: 48px;
-      height: 48px;
+      width: 42px;
+      height: 42px;
       color: var(--p);
-      font-size: 1.25rem;
+      font-size: 1.08rem;
       background: linear-gradient(135deg, var(--l), var(--a));
+    }
+
+    .parent-summary-info {
+      min-width: 0;
     }
 
     .eyebrow,
@@ -152,9 +158,9 @@
     }
 
     .eyebrow {
-      margin-bottom: 4px;
+      margin-bottom: 2px;
       color: var(--a);
-      font-size: .88rem;
+      font-size: .78rem;
     }
 
     h1,
@@ -165,8 +171,8 @@
     }
 
     h1 {
-      margin-bottom: 4px;
-      font-size: clamp(1.35rem, 5vw, 1.9rem);
+      margin-bottom: 0;
+      font-size: clamp(1.12rem, 4.6vw, 1.55rem);
       font-weight: 900;
       letter-spacing: 0;
       line-height: 1.35;
@@ -183,6 +189,36 @@
       display: grid;
       grid-template-columns: 1fr;
       gap: 8px;
+    }
+
+    .parent-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .parent-summary-item {
+      min-width: 0;
+      padding: 8px 9px;
+      border: 1px solid rgba(11, 60, 84, .07);
+      border-radius: 8px;
+      background: rgba(242, 216, 161, .12);
+    }
+
+    .parent-summary-item small {
+      display: block;
+      margin-bottom: 2px;
+      color: var(--muted);
+      font-size: .74rem;
+      font-weight: 800;
+    }
+
+    .parent-summary-item strong {
+      display: block;
+      font-size: .88rem;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
     }
 
     .meta-item,
@@ -823,6 +859,7 @@
 
     @media (min-width: 640px) {
       .page-shell { padding-left: 18px; padding-right: 18px; }
+      .parent-summary-grid,
       .meta-strip,
       .summary-grid,
       .detail-grid {
@@ -843,12 +880,8 @@
     @media (min-width: 900px) {
       .page-shell { padding-top: 18px; }
       .hero { padding: 16px; }
-      .hero-main {
-        grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr);
-        align-items: start;
-      }
-      .meta-strip {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+      .parent-summary-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
       }
       .summary-grid {
         grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -885,6 +918,9 @@
       .student-avatar {
         width: 44px;
         height: 44px;
+      }
+      .parent-summary-top {
+        align-items: flex-start;
       }
       .report-grid {
         grid-template-columns: 1fr;
@@ -946,27 +982,21 @@
 
   <main class="page-shell">
     <section class="hero">
-      <div class="hero-main">
-        <div>
-          <div class="student-head">
-            <div class="student-avatar"><i class="fas fa-user-graduate"></i></div>
-            <div>
-              <div class="eyebrow"><i class="fas fa-sparkles"></i> ملخص تقدم الطالب</div>
-              <h1>{{ summary.student_name }}</h1>
-              <p class="lead">تقرير مختصر يساعد ولي الأمر على متابعة التقدم.</p>
-              <div class="tags mt-2">
-                <span class="pill {% if summary.status_badge == 'جيد' %}ok{% elif summary.status_badge == 'يحتاج متابعة' %}warn{% else %}mutep{% endif %}">{{ summary.status_badge }}</span>
-                <span class="pill mutep">{{ report_range.label }}</span>
-              </div>
-            </div>
+      <div class="parent-summary-top">
+        <div class="student-head">
+          <div class="student-avatar"><i class="fas fa-user-graduate"></i></div>
+          <div class="parent-summary-info">
+            <div class="eyebrow"><i class="fas fa-chart-simple"></i> متابعة الطالب</div>
+            <h1>{{ summary.student_name }}</h1>
           </div>
         </div>
-        <div class="meta-strip">
-          <div class="meta-item"><small><i class="fas fa-mosque"></i> الحلقة</small><strong>{{ summary.halaqa_name }}</strong></div>
-          <div class="meta-item"><small><i class="fas fa-user-tie"></i> أستاذ الحلقة</small><strong>{{ summary.teacher }}</strong></div>
-          <div class="meta-item"><small><i class="fas fa-calendar-days"></i> الفترة</small><strong>{{ master_report.start }} إلى {{ master_report.end }}</strong></div>
-          <div class="meta-item"><small><i class="fas fa-clock"></i> آخر تحديث</small><strong>{{ summary.last_updated_display }}</strong></div>
-        </div>
+        <span class="pill {% if summary.status_badge == 'جيد' %}ok{% elif summary.status_badge == 'يحتاج متابعة' %}warn{% else %}mutep{% endif %}">{{ summary.status_badge }}</span>
+      </div>
+      <div class="parent-summary-grid">
+        <div class="parent-summary-item"><small><i class="fas fa-mosque"></i> الحلقة</small><strong>{{ summary.halaqa_name }}</strong></div>
+        <div class="parent-summary-item"><small><i class="fas fa-user-tie"></i> الأستاذ</small><strong>{{ summary.teacher }}</strong></div>
+        <div class="parent-summary-item"><small><i class="fas fa-calendar-days"></i> الفترة</small><strong>{{ report_range.label }}</strong></div>
+        <div class="parent-summary-item"><small><i class="fas fa-clock"></i> آخر تحديث</small><strong>{{ summary.last_updated_display }}</strong></div>
       </div>
     </section>
 
