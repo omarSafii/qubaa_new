@@ -329,53 +329,49 @@ def _build_daily_history(*, halaqa, student_ids, selected_date):
     return history
 
 
+ARABIC_WEEKDAYS = {
+    0: 'الاثنين',
+    1: 'الثلاثاء',
+    2: 'الأربعاء',
+    3: 'الخميس',
+    4: 'الجمعة',
+    5: 'السبت',
+    6: 'الأحد',
+}
+
+
+def _daily_report_recitation_line(record):
+    content_parts = [
+        (record.recitation_title or '').strip(),
+        (record.recitation_range or '').strip(),
+    ]
+    content = ' '.join(part for part in content_parts if part).strip()
+    evaluation = record.get_evaluation_display() if record.evaluation else 'بدون تقييم'
+    if content:
+        return f'• {record.student.name} - {content} ({evaluation})'
+    return f'• {record.student.name} - ({evaluation})'
+
+
 def _build_daily_report(
     *,
     today,
-    halaqa,
-    teacher_name,
-    student_count,
-    category_badges,
-    grade_badges,
-    current_session,
-    today_attendance_summary,
-    monthly_points_total,
-    monthly_verses_total,
-    monthly_records_count,
-    monthly_attendance_rate,
+    recitation_records,
+    halaqa=None,
+    teacher_name='',
+    student_count=0,
+    category_badges=None,
+    grade_badges=None,
+    current_session=None,
+    today_attendance_summary=None,
+    monthly_points_total=0,
+    monthly_verses_total=0,
+    monthly_records_count=0,
+    monthly_attendance_rate=0,
 ):
     report_lines = [
-        f'تقرير يوم {today.strftime("%Y-%m-%d")}',
-        f'الحلقة: {halaqa.name}',
-        f'المعلم: {teacher_name or "غير محدد"}',
-        f'عدد الطلاب النشطين: {student_count}',
+        f'تقرير {ARABIC_WEEKDAYS.get(today.weekday(), today.strftime("%Y-%m-%d"))}:',
     ]
-
-    categories_text = '، '.join(item['label'] for item in category_badges) or 'غير مصنف'
-    grades_text = '، '.join(item['label'] for item in grade_badges) or 'غير محدد'
-    report_lines.append(f'التصنيف الحالي: {categories_text}')
-    report_lines.append(f'الصفوف الحالية: {grades_text}')
-
-    if current_session:
-        report_lines.append(
-            f'جلسة اليوم: {current_session.start_time.strftime("%H:%M")} - '
-            f'{current_session.end_time.strftime("%H:%M")}'
-        )
-    else:
-        report_lines.append('جلسة اليوم: لا توجد جلسة مسجلة لليوم حتى الآن')
-
-    report_lines.append(
-        'حضور اليوم: '
-        f'{today_attendance_summary["present"]} حاضر، '
-        f'{today_attendance_summary["absent"]} غائب، '
-        f'{today_attendance_summary["excused"]} مبرر'
-    )
-    report_lines.append(
-        f'مؤشرات الشهر: {monthly_points_total:+} نقطة، '
-        f'{monthly_verses_total} آية محفوظة، '
-        f'{monthly_records_count} تسميعات، '
-        f'حضور {monthly_attendance_rate}%'
-    )
+    report_lines.extend(_daily_report_recitation_line(record) for record in recitation_records)
     return '\n'.join(report_lines)
 
 
@@ -948,6 +944,16 @@ def prepare_halaqa_view(request, halaqa, template_name, ensure_current_session=F
         total=Coalesce(Sum(VERSE_COUNT_EXPR), 0)
     )['total']
     month_records_count = month_memorization_qs.count()
+    today_recitation_records = list(
+        MemorizationRecord.objects.filter(
+            student_id__in=student_ids,
+            date=today,
+        ).select_related('student').order_by('student__name', 'id')
+    )
+    today_recitation_by_student = {
+        record.student_id: record
+        for record in today_recitation_records
+    }
 
     month_attendance = Attendance.objects.filter(
         student_id__in=student_ids,
@@ -1117,6 +1123,7 @@ def prepare_halaqa_view(request, halaqa, template_name, ensure_current_session=F
 
     daily_report_preview = _build_daily_report(
         today=today,
+        recitation_records=today_recitation_records,
         halaqa=halaqa,
         teacher_name=teacher_name,
         student_count=len(students),
@@ -1133,6 +1140,7 @@ def prepare_halaqa_view(request, halaqa, template_name, ensure_current_session=F
     student_table_state = []
     for entry in dashboard_data:
         last_memorization = entry['last_memorization']
+        today_recitation = today_recitation_by_student.get(entry['student'].id)
         homework = entry['homework']
         student_table_state.append({
             'id': entry['student'].id,
@@ -1168,6 +1176,21 @@ def prepare_halaqa_view(request, halaqa, template_name, ensure_current_session=F
             'homework_evaluation_label': homework['evaluation_label'] if homework else '',
             'homework_evaluation_date': homework['evaluation_date_iso'] if homework else '',
             'homework_evaluation_notes': homework['evaluation_notes'] if homework else '',
+            'today_recitation': (
+                {
+                    'surah': today_recitation.surah,
+                    'pages': today_recitation.pages,
+                    'from_verse': today_recitation.from_verse,
+                    'to_verse': today_recitation.to_verse,
+                    'recitation_title': today_recitation.recitation_title,
+                    'recitation_range': today_recitation.recitation_range,
+                    'recitation_type': today_recitation.recitation_type,
+                    'evaluation': today_recitation.evaluation,
+                    'evaluation_label': today_recitation.get_evaluation_display() if today_recitation.evaluation else '',
+                    'date': today_recitation.date.isoformat(),
+                }
+                if today_recitation else None
+            ),
             'last_memorization': (
                 {
                     'surah': last_memorization.surah,
@@ -1191,6 +1214,7 @@ def prepare_halaqa_view(request, halaqa, template_name, ensure_current_session=F
         'selected_date': today.isoformat(),
         'selected_date_display': today.strftime('%d/%m/%Y'),
         'date_label': today.strftime('%Y-%m-%d'),
+        'day_name': ARABIC_WEEKDAYS.get(today.weekday(), today.strftime('%Y-%m-%d')),
         'session_label': current_session_label,
         'student_count': len(students),
         'categories_text': categories_text,

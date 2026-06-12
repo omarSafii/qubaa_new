@@ -3056,41 +3056,27 @@
     }
 
     function buildReportSummary() {
-      return [
-        reportState.date_label,
-        `حضور اليوم ${reportState.today_attendance_summary.present}/${reportState.student_count}`,
-        `${reportState.monthly_records_count} تسميعات`,
-        `${formatSignedNumber(reportState.monthly_points_total)} نقطة`
-      ].join(' | ');
+      const recitationCount = [...studentTableState.values()].filter((student) => student.today_recitation).length;
+      return `${reportState.date_label} | ${recitationCount} تسميعات مسجلة`;
     }
 
     function buildReportText() {
-      const currentHistory = selectedHistoryEntry();
       const lines = [
-        `تقرير يوم ${reportState.date_label}`,
-        `الحلقة: ${reportState.halaqa_name}`,
-        `المعلم: ${reportState.teacher_name || 'غير محدد'}`,
-        `عدد الطلاب النشطين: ${reportState.student_count}`,
-        `التصنيف الحالي: ${reportState.categories_text}`,
-        `الصفوف الحالية: ${reportState.grades_text}`,
-        `جلسة اليوم: ${reportState.session_label}`,
-        `حضور اليوم: ${reportState.today_attendance_summary.present} حاضر، ${reportState.today_attendance_summary.absent} غائب، ${reportState.today_attendance_summary.excused} مبرر`,
-        `مؤشرات ${reportState.month_label}: ${formatSignedNumber(reportState.monthly_points_total)} نقطة، ${reportState.monthly_verses_total} آية محفوظة، ${reportState.monthly_records_count} تسميعات، حضور ${reportState.monthly_attendance_rate}%`,
+        `تقرير ${reportState.day_name || reportState.date_label}:`,
       ];
 
-      if (currentHistory.notes?.length) {
-        lines.push('ملاحظات مرتبطة بالتاريخ:');
-        currentHistory.notes.forEach((noteLine) => {
-          lines.push(`- ${noteLine}`);
+      [...studentTableState.values()]
+        .filter((student) => student.today_recitation)
+        .sort((firstStudent, secondStudent) => firstStudent.name.localeCompare(secondStudent.name, 'ar'))
+        .forEach((student) => {
+          const record = student.today_recitation;
+          const content = [record.recitation_title || record.surah || '', record.recitation_range || '']
+            .filter(Boolean)
+            .join(' ')
+            .trim();
+          const evaluation = record.evaluation_label || 'بدون تقييم';
+          lines.push(content ? `• ${student.name} - ${content} (${evaluation})` : `• ${student.name} - (${evaluation})`);
         });
-      }
-
-      if (reportState.recentActions.length) {
-        lines.push('أبرز اليوم:');
-        reportState.recentActions.forEach((actionLine) => {
-          lines.push(`- ${actionLine}`);
-        });
-      }
 
       return lines.join('\n');
     }
@@ -3547,7 +3533,7 @@
     }
 
     function applyRecitationToStudent(student, data, { evaluation, evaluationLabel, dateValue, countRecord = true, recitationType = 'extra' }) {
-      student.last_memorization = {
+      const recitationRecord = {
         surah: data.surah,
         pages: data.pages,
         from_verse: data.fromVerse,
@@ -3559,6 +3545,10 @@
         evaluation_label: evaluationLabel || '',
         date: dateValue,
       };
+      student.last_memorization = recitationRecord;
+      if (dateValue === reportState.selected_date) {
+        student.today_recitation = recitationRecord;
+      }
       if (countRecord) {
         reportState.monthly_verses_total += data.versesCount;
         reportState.monthly_records_count += 1;

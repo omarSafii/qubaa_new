@@ -910,7 +910,7 @@
             <div>
               <div class="eyebrow"><i class="fas fa-sparkles"></i> ملخص تقدم الطالب</div>
               <h1>{{ summary.student_name }}</h1>
-              <p class="lead">صفحة مبسطة لولي الأمر تعرض أهم ما يحتاجه بسرعة: الحضور، الواجب، التسميع، والنقاط.</p>
+              <p class="lead">تقرير مختصر يساعد ولي الأمر على متابعة التقدم.</p>
               <div class="tags mt-2">
                 <span class="pill {% if summary.status_badge == 'جيد' %}ok{% elif summary.status_badge == 'يحتاج متابعة' %}warn{% else %}mutep{% endif %}">{{ summary.status_badge }}</span>
                 <span class="pill mutep">{{ report_range.label }}</span>
@@ -922,7 +922,7 @@
           <div class="meta-item"><small><i class="fas fa-mosque"></i> الحلقة</small><strong>{{ summary.halaqa_name }}</strong></div>
           <div class="meta-item"><small><i class="fas fa-user-tie"></i> أستاذ الحلقة</small><strong>{{ summary.teacher }}</strong></div>
           <div class="meta-item"><small><i class="fas fa-calendar-days"></i> الفترة</small><strong>{{ master_report.start }} إلى {{ master_report.end }}</strong></div>
-          <div class="meta-item"><small><i class="fas fa-clock"></i> آخر تحديث</small><strong>{{ summary.last_updated_display }}<br><span class="subtext">المصدر: {{ summary.last_updated_source }}</span></strong></div>
+          <div class="meta-item"><small><i class="fas fa-clock"></i> آخر تحديث</small><strong>{{ summary.last_updated_display }}</strong></div>
         </div>
       </div>
     </section>
@@ -978,8 +978,8 @@
     <section class="page-panel" id="summaryPanel" role="tabpanel">
       <div class="section-head">
         <div>
-          <h2>نظرة ولي الأمر</h2>
-          <p>أربع إشارات كافية لفهم وضع الطالب في هذه الفترة.</p>
+          <h2>ملخص الأداء</h2>
+          <p>الحضور والتسميع والواجبات والنقاط.</p>
         </div>
         <span class="pill info">{{ report_range.label }}</span>
       </div>
@@ -1084,8 +1084,8 @@
     <section class="page-panel" id="reportPanel" role="tabpanel" hidden>
       <div class="section-head">
         <div>
-          <h2>تقرير ولي الأمر</h2>
-          <p>التقرير الزمني الرئيسي بنفس معلوماته المهمة، لكن في مجموعات أبسط وأسهل للمراجعة.</p>
+          <h2>متابعة الطالب</h2>
+          <p>الحضور والتسميع وآخر الواجبات ونقاط الطالب.</p>
         </div>
         <span class="pill mutep">{{ master_report.label }}</span>
       </div>
