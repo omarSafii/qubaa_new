@@ -1,3 +1,4 @@
+import os
 import json
 import tempfile
 from datetime import time, timedelta
@@ -5,11 +6,14 @@ from io import StringIO
 
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
+from openpyxl import Workbook
 
 from accounts.models import Profile
+from halaqas.access import assigned_halaqas_for_teacher
 from students.models import MemorizationRecord, Student
 from .models import Attendance, Category, Halaqa, HalaqaMembership, Homework, Plan, PointTransaction, Session, Teacher, TeacherAssignment
 
@@ -153,6 +157,213 @@ class TeacherAccessReportCommandTests(TestCase):
         call_command('generate_teacher_access_report', '--create-missing-users', stdout=out)
 
         self.assertTrue(Profile.objects.filter(user=self.user, role='teacher').exists())
+
+
+class RebuildHalaqasFromColumnsCommandTests(TestCase):
+    def _write_workbook(self, rows_by_column):
+        workbook = Workbook()
+        worksheet = workbook.active
+        worksheet.title = 'Sheet2'
+        for column_index, values in enumerate(rows_by_column, start=1):
+            for row_index, value in enumerate(values, start=1):
+                worksheet.cell(row=row_index, column=column_index, value=value)
+        temp = tempfile.NamedTemporaryFile(suffix='.xlsx', delete=False)
+        temp.close()
+        workbook.save(temp.name)
+        return temp.name
+
+    def test_dry_run_does_not_write_database_changes(self):
+        workbook_path = self._write_workbook([
+            ['Teacher One', 'Student One', 'Student Two', '5'],
+        ])
+        out = StringIO()
+
+        try:
+            call_command(
+                'rebuild_halaqas_from_columns',
+                '--file',
+                workbook_path,
+                '--sheet',
+                'Sheet2',
+                '--dry-run',
+                '--create-missing-teachers',
+                '--create-missing-students',
+                '--create-missing-categories',
+                stdout=out,
+            )
+        finally:
+            os.unlink(workbook_path)
+
+        self.assertIn('Parsed halaqas/columns: 1', out.getvalue())
+        self.assertEqual(Halaqa.objects.count(), 0)
+        self.assertEqual(Teacher.objects.count(), 0)
+        self.assertEqual(Student.objects.count(), 0)
+
+    def test_commit_rebuilds_active_memberships_without_deleting_history_or_resetting_password(self):
+        user = User.objects.create_user(username='rebuild_teacher', password='OldPass123!')
+        user.profile.role = 'teacher'
+        user.profile.save(update_fields=['role'])
+        teacher = Teacher.objects.create(user=user, full_name='Teacher One', phone='0999000000')
+        old_halaqa = Halaqa.objects.create(name='Old Halaqa')
+        old_halaqa.teachers.add(teacher)
+        student = Student.objects.create(
+            name='Student One',
+            birth_date='2014-01-01',
+            grade='4',
+        )
+        old_membership = HalaqaMembership.objects.create(student=student, halaqa=old_halaqa, is_active=True)
+        workbook_path = self._write_workbook([
+            ['Teacher One', 'Student One', '5'],
+        ])
+        out = StringIO()
+
+        try:
+            call_command(
+                'rebuild_halaqas_from_columns',
+                '--file',
+                workbook_path,
+                '--sheet',
+                'Sheet2',
+                '--commit',
+                '--create-missing-categories',
+                stdout=out,
+            )
+        finally:
+            os.unlink(workbook_path)
+
+        user.refresh_from_db()
+        student.refresh_from_db()
+        old_membership.refresh_from_db()
+        new_membership = HalaqaMembership.objects.get(student=student, is_active=True)
+
+        self.assertTrue(user.check_password('OldPass123!'))
+        self.assertEqual(Student.objects.count(), 1)
+        self.assertFalse(old_membership.is_active)
+        self.assertIsNotNone(old_membership.end_date)
+        self.assertNotEqual(new_membership.halaqa_id, old_halaqa.id)
+        self.assertEqual(student.halaqa_id, new_membership.halaqa_id)
+        self.assertEqual(set(new_membership.halaqa.teachers.values_list('pk', flat=True)), {teacher.pk})
+        self.assertEqual(TeacherAssignment.objects.filter(teacher=teacher, is_active=True).count(), 1)
+
+    def test_commit_allows_same_teacher_in_multiple_columns_through_halaqa_teachers(self):
+        user = User.objects.create_user(username='multi_rebuild_teacher', password='OldPass123!')
+        user.profile.role = 'teacher'
+        user.profile.save(update_fields=['role'])
+        teacher = Teacher.objects.create(user=user, full_name='Teacher One', phone='0999000000')
+        workbook_path = self._write_workbook([
+            ['Teacher One+Teacher Two', 'Student One', '5'],
+            ['Teacher One', 'Student Two', '6'],
+        ])
+        out = StringIO()
+
+        try:
+            call_command(
+                'rebuild_halaqas_from_columns',
+                '--file',
+                workbook_path,
+                '--sheet',
+                'Sheet2',
+                '--commit',
+                '--create-missing-teachers',
+                '--create-missing-students',
+                '--create-missing-categories',
+                stdout=out,
+            )
+        finally:
+            os.unlink(workbook_path)
+
+        assigned_names = set(assigned_halaqas_for_teacher(teacher).values_list('name', flat=True))
+        self.assertEqual(assigned_names, {'حلقة Teacher One + Teacher Two', 'حلقة Teacher One'})
+        self.assertEqual(Halaqa.objects.get(name='حلقة Teacher One').teachers.count(), 1)
+        self.assertEqual(TeacherAssignment.objects.filter(teacher=teacher, is_active=True).count(), 0)
+        self.assertTrue(user.check_password('OldPass123!'))
+
+    def test_commit_blocks_exact_duplicate_existing_student_names_with_details(self):
+        Student.objects.create(name='Student One', birth_date='2014-01-01')
+        Student.objects.create(name='Student One', birth_date='2015-01-01')
+        workbook_path = self._write_workbook([
+            ['Teacher One', 'Student One', '5'],
+        ])
+        out = StringIO()
+
+        try:
+            with self.assertRaises(CommandError):
+                call_command(
+                    'rebuild_halaqas_from_columns',
+                    '--file',
+                    workbook_path,
+                    '--sheet',
+                    'Sheet2',
+                    '--commit',
+                    '--create-missing-teachers',
+                    '--create-missing-categories',
+                    stdout=out,
+                )
+        finally:
+            os.unlink(workbook_path)
+
+        output = out.getvalue()
+        self.assertIn('duplicate_student_exact_in_db', output)
+        self.assertIn('id=', output)
+        self.assertIn('current_halaqa=', output)
+        self.assertEqual(Student.objects.filter(name='Student One').count(), 2)
+
+    def test_merge_duplicate_students_moves_history_and_deletes_empty_duplicate(self):
+        keep = Student.objects.create(name='Merge Student', birth_date='2014-01-01')
+        remove = Student.objects.create(name='Merge Student', birth_date='2015-01-01')
+        shared_halaqa = Halaqa.objects.create(name='Merge Shared Halaqa')
+        real_halaqa = Halaqa.objects.create(name='Merge Real Halaqa')
+        HalaqaMembership.objects.create(student=keep, halaqa=shared_halaqa, is_active=False, end_date=timezone.localdate())
+        HalaqaMembership.objects.create(student=remove, halaqa=shared_halaqa, is_active=True)
+        HalaqaMembership.objects.create(student=keep, halaqa=real_halaqa, is_active=True)
+        session = Session.objects.create(
+            halaqa=shared_halaqa,
+            date=timezone.localdate(),
+            start_time=time(16, 0),
+            end_time=time(18, 0),
+        )
+        attendance = Attendance.objects.create(session=session, student=remove, status='present')
+        points = PointTransaction.objects.create(student=remove, halaqa=shared_halaqa, value=3, reason='merge test')
+        plan = Plan.objects.create(
+            student=remove,
+            halaqa=shared_halaqa,
+            start_date=timezone.localdate(),
+            end_date=timezone.localdate() + timedelta(days=1),
+            target='merge plan',
+        )
+        homework = Homework.objects.create(
+            student=remove,
+            halaqa=shared_halaqa,
+            assignment_type='text',
+            assignment_text='merge homework',
+        )
+        recitation = MemorizationRecord.objects.create(
+            student=remove,
+            halaqa=shared_halaqa,
+            pages='1',
+            evaluation='good',
+        )
+        out = StringIO()
+
+        call_command(
+            'merge_duplicate_students',
+            '--name',
+            'Merge Student',
+            '--keep-id',
+            str(keep.pk),
+            '--remove-id',
+            str(remove.pk),
+            '--commit',
+            stdout=out,
+        )
+
+        self.assertFalse(Student.objects.filter(pk=remove.pk).exists())
+        self.assertEqual(Student.objects.filter(name='Merge Student').count(), 1)
+        for obj in [attendance, points, plan, homework, recitation]:
+            obj.refresh_from_db()
+            self.assertEqual(obj.student_id, keep.pk)
+        self.assertEqual(HalaqaMembership.objects.filter(student=keep, halaqa=shared_halaqa).count(), 1)
+        self.assertEqual(HalaqaMembership.objects.filter(student=keep, is_active=True).count(), 1)
 
 
 class HalaqaDetailPageTests(TestCase):
