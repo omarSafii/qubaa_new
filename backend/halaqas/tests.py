@@ -15,7 +15,19 @@ from openpyxl import Workbook
 from accounts.models import Profile
 from halaqas.access import assigned_halaqas_for_teacher
 from students.models import MemorizationRecord, Student
-from .models import Attendance, Category, Halaqa, HalaqaMembership, Homework, Plan, PointTransaction, Session, Teacher, TeacherAssignment
+from .models import (
+    Attendance,
+    Category,
+    Halaqa,
+    HalaqaMembership,
+    Homework,
+    Plan,
+    PointTransaction,
+    Session,
+    SupervisorAttendanceShare,
+    Teacher,
+    TeacherAssignment,
+)
 
 
 User = get_user_model()
@@ -585,6 +597,63 @@ class SupervisorDashboardTests(TestCase):
         self.client.force_login(self.teacher_user)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
+
+    def test_public_supervisor_share_requires_valid_token(self):
+        response = self.client.get(reverse('halaqas:supervisor_attendance_share', args=['missing-token']))
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_public_supervisor_share_saves_attendance_without_login(self):
+        share = SupervisorAttendanceShare.objects.create()
+        url = reverse('halaqas:supervisor_attendance_share', args=[share.token])
+        selected_date = timezone.localdate()
+
+        response = self.client.post(url, {
+            'selected_date': selected_date.isoformat(),
+            'category': str(self.category.id),
+            'halaqa': str(self.halaqa.id),
+            f'status_{self.student.id}': 'present',
+            f'notes_{self.student.id}': 'رابط خاص',
+        })
+
+        self.assertRedirects(
+            response,
+            f'{url}?date={selected_date.isoformat()}&category={self.category.id}&halaqa={self.halaqa.id}',
+            fetch_redirect_response=False,
+        )
+        attendance = Attendance.objects.get(student=self.student, session__halaqa=self.halaqa)
+        self.assertEqual(attendance.status, 'present')
+        self.assertEqual(attendance.notes, 'رابط خاص')
+        self.assertIsNone(attendance.recorded_by)
+        self.assertEqual(attendance.recorded_by_role, 'supervisor')
+
+    def test_public_supervisor_share_does_not_overwrite_teacher_attendance(self):
+        share = SupervisorAttendanceShare.objects.create()
+        selected_date = timezone.localdate()
+        session = Session.objects.create(
+            halaqa=self.halaqa,
+            date=selected_date,
+            start_time=time(15, 0),
+            end_time=time(17, 0),
+        )
+        Attendance.objects.create(
+            session=session,
+            student=self.student,
+            status='absent',
+            recorded_by=self.teacher_user,
+            recorded_by_role='teacher',
+        )
+
+        self.client.post(reverse('halaqas:supervisor_attendance_share', args=[share.token]), {
+            'selected_date': selected_date.isoformat(),
+            'category': str(self.category.id),
+            'halaqa': str(self.halaqa.id),
+            f'status_{self.student.id}': 'present',
+        })
+
+        attendance = Attendance.objects.get(student=self.student, session=session)
+        self.assertEqual(attendance.status, 'absent')
+        self.assertEqual(attendance.recorded_by_role, 'teacher')
 
     def test_supervisor_records_attendance_visible_to_teacher_and_parent(self):
         selected_date = timezone.localdate()

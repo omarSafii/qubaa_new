@@ -23,7 +23,18 @@ from students.serializers import StudentSerializer
 
 from .access import role_for_user, user_can_access_halaqa
 from .forms import HalaqaForm
-from .models import Attendance, Category, Halaqa, HalaqaMembership, Homework, Plan, PointTransaction, Session, Teacher
+from .models import (
+    Attendance,
+    Category,
+    Halaqa,
+    HalaqaMembership,
+    Homework,
+    Plan,
+    PointTransaction,
+    Session,
+    SupervisorAttendanceShare,
+    Teacher,
+)
 from .serializers import (
     AttendanceSerializer,
     HalaqaSerializer,
@@ -557,6 +568,16 @@ def supervisor_dashboard(request):
     if not _can_access_supervisor_dashboard(request.user):
         raise PermissionDenied("لا تملك صلاحية الوصول إلى لوحة الموجه.")
 
+    return _supervisor_attendance_dashboard(request)
+
+
+def supervisor_attendance_share(request, token):
+    get_object_or_404(SupervisorAttendanceShare, token=token, is_active=True)
+    return _supervisor_attendance_dashboard(request, share_token=token)
+
+
+def _supervisor_attendance_dashboard(request, share_token=None):
+    is_public_share = bool(share_token)
     raw_date = request.POST.get('selected_date') if request.method == 'POST' else request.GET.get('date', '')
     selected_date = parse_date(raw_date or '') or timezone.localdate()
 
@@ -652,12 +673,15 @@ def supervisor_dashboard(request):
             params['category'] = category.id
         if halaqa:
             params['halaqa'] = halaqa.id
+        if is_public_share:
+            return f'{reverse("halaqas:supervisor_attendance_share", args=[share_token])}?{urlencode(params)}'
         return f'{reverse("halaqas:supervisor_dashboard")}?{urlencode(params)}'
 
     if request.method == 'POST':
         saved_count = 0
         conflict_count = 0
-        role = _role_for_user(request.user)
+        role = 'supervisor' if is_public_share else _role_for_user(request.user)
+        recorded_by = None if is_public_share else request.user
         sessions_by_halaqa = {}
 
         with transaction.atomic():
@@ -695,7 +719,7 @@ def supervisor_dashboard(request):
                     defaults={
                         'status': status_value,
                         'notes': request.POST.get(f'notes_{student_id}', '').strip(),
-                        'recorded_by': request.user,
+                        'recorded_by': recorded_by,
                         'recorded_by_role': role,
                     },
                 )
@@ -793,6 +817,8 @@ def supervisor_dashboard(request):
             {'value': 'absent', 'label': 'غائب', 'icon': 'fas fa-user-xmark'},
             {'value': 'excused', 'label': 'غياب مبرر', 'icon': 'fas fa-circle-exclamation'},
         ],
+        'is_public_share': is_public_share,
+        'share_token': share_token,
         'summary': {
             'halaqa_count': Halaqa.objects.filter(is_active=True).count(),
             'student_count': HalaqaMembership.objects.filter(halaqa__is_active=True, is_active=True).count(),

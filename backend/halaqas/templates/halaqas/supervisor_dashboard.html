@@ -789,7 +789,7 @@
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
     <div class="container-fluid">
-      <a class="navbar-brand" href="{% url 'halaqas:supervisor_dashboard' %}">
+      <a class="navbar-brand" href="{% if is_public_share %}#{% else %}{% url 'halaqas:supervisor_dashboard' %}{% endif %}">
         <span class="brand-icon"><i class="fas fa-book-quran"></i></span>
         معهد قباء لتحفيظ القرآن الكريم
       </a>
@@ -843,6 +843,10 @@
       <div class="alert alert-{{ message.tags|default:'info' }} mb-0">{{ message }}</div>
       {% endfor %}
     </div>
+    {% endif %}
+
+    {% if is_public_share %}
+    <div class="alert alert-warning mb-2">هذا الرابط مخصص لتسجيل حضور الحلقات. الرجاء عدم مشاركته إلا مع المسؤولين.</div>
     {% endif %}
 
     <section class="dashboard-card workflow-card">

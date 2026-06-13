@@ -207,6 +207,26 @@ class Halaqa(models.Model):
         return reverse("halaqa-share", kwargs={"link_code": self.shareable_link})
 
 
+class SupervisorAttendanceShare(models.Model):
+    token = models.CharField(max_length=64, unique=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "رابط حضور الموجه"
+        verbose_name_plural = "روابط حضور الموجهين"
+        ordering = ["-updated_at", "-id"]
+
+    def __str__(self):
+        return f"Supervisor attendance share #{self.pk}"
+
+    def save(self, *args, **kwargs):
+        if not self.token:
+            self.token = secrets.token_urlsafe(32)
+        super().save(*args, **kwargs)
+
+
 class TeacherAssignment(models.Model):
     teacher = models.ForeignKey(
         Teacher,
