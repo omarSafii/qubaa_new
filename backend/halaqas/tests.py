@@ -1,4 +1,5 @@
 import os
+import csv
 import json
 import tempfile
 from datetime import time, timedelta
@@ -979,6 +980,75 @@ class HalaqaActionEndpointTests(TestCase):
 
         self.assertNotEqual(self.halaqa.shareable_link, first_token)
         self.assertIn(f'/halaqas/halaqa/{self.halaqa.id}/?key={self.halaqa.shareable_link}', reset_out.getvalue())
+
+    def test_generate_halaqa_share_link_all_shows_existing_and_generates_missing(self):
+        existing_token = self.halaqa.shareable_link
+        other_halaqa = Halaqa.objects.create(name='حلقة رابط جماعي')
+        other_halaqa.teachers.add(self.teacher)
+        Halaqa.objects.filter(pk=other_halaqa.pk).update(shareable_link='')
+        other_halaqa.refresh_from_db()
+        out = StringIO()
+
+        call_command('generate_halaqa_share_link', '--all', stdout=out)
+
+        self.halaqa.refresh_from_db()
+        other_halaqa.refresh_from_db()
+        output = out.getvalue()
+
+        self.assertEqual(self.halaqa.shareable_link, existing_token)
+        self.assertTrue(other_halaqa.shareable_link)
+        self.assertIn(f'{self.halaqa.id} | {self.halaqa.name}', output)
+        self.assertIn(f'{other_halaqa.id} | {other_halaqa.name}', output)
+        self.assertIn(self.teacher.full_name, output)
+        self.assertIn(f'/halaqas/halaqa/{self.halaqa.id}/?key={existing_token}', output)
+        self.assertIn(f'/halaqas/halaqa/{other_halaqa.id}/?key={other_halaqa.shareable_link}', output)
+
+    def test_generate_halaqa_share_link_all_csv_export(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_path = os.path.join(tmpdir, 'halaqa_direct_links.csv')
+            out = StringIO()
+
+            call_command(
+                'generate_halaqa_share_link',
+                '--all',
+                '--output',
+                output_path,
+                stdout=out,
+            )
+
+            with open(output_path, encoding='utf-8-sig', newline='') as csv_file:
+                rows = list(csv.DictReader(csv_file))
+
+        self.assertEqual(
+            list(rows[0].keys()),
+            ['halaqa_id', 'halaqa_name', 'teachers', 'direct_link', 'notes'],
+        )
+        self.assertTrue(any(row['halaqa_id'] == str(self.halaqa.id) for row in rows))
+        row = next(row for row in rows if row['halaqa_id'] == str(self.halaqa.id))
+        self.assertEqual(row['halaqa_name'], self.halaqa.name)
+        self.assertIn(self.teacher.full_name, row['teachers'])
+        self.assertIn(f'/halaqas/halaqa/{self.halaqa.id}/?key={self.halaqa.shareable_link}', row['direct_link'])
+
+    def test_generate_halaqa_share_link_all_reset_rotates_active_halaqas(self):
+        other_halaqa = Halaqa.objects.create(name='حلقة تدوير جماعي')
+        inactive_halaqa = Halaqa.objects.create(name='حلقة غير نشطة', is_active=False)
+        first_token = self.halaqa.shareable_link
+        other_token = other_halaqa.shareable_link
+        inactive_token = inactive_halaqa.shareable_link
+        out = StringIO()
+
+        call_command('generate_halaqa_share_link', '--all', '--reset', stdout=out)
+
+        self.halaqa.refresh_from_db()
+        other_halaqa.refresh_from_db()
+        inactive_halaqa.refresh_from_db()
+        output = out.getvalue()
+
+        self.assertNotEqual(self.halaqa.shareable_link, first_token)
+        self.assertNotEqual(other_halaqa.shareable_link, other_token)
+        self.assertEqual(inactive_halaqa.shareable_link, inactive_token)
+        self.assertIn('WARNING: --all --reset', output)
+        self.assertIn('WARNING COMPLETE', output)
 
     def test_update_endpoints_used_by_halaqa_detail_page(self):
         attendance = Attendance.objects.create(
