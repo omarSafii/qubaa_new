@@ -9,10 +9,13 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.dateparse import parse_date
 from rest_framework import mixins, status, viewsets
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
+from halaqas.access import request_can_access_halaqa
 from halaqas.models import Attendance, Halaqa, HalaqaMembership, Homework, Plan, PointTransaction, Session, Teacher
 from .models import MemorizationRecord, Student
 from .serializers import MemorizationRecordSerializer, StudentRegistrationSerializer, StudentSerializer
@@ -1320,6 +1323,7 @@ class MemorizationRecordViewSet(
     mixins.RetrieveModelMixin,
     viewsets.GenericViewSet,
 ):
+    authentication_classes = [SessionAuthentication, JWTAuthentication]
     queryset = MemorizationRecord.objects.all()
     serializer_class = MemorizationRecordSerializer
     permission_classes = [AllowAny]
@@ -1334,6 +1338,17 @@ class MemorizationRecordViewSet(
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        halaqa = serializer.validated_data.get('halaqa')
+        student = serializer.validated_data.get('student')
+        if (
+            not halaqa
+            or not request_can_access_halaqa(request, halaqa)
+            or not HalaqaMembership.objects.filter(student=student, halaqa=halaqa, is_active=True).exists()
+        ):
+            return Response(
+                {'detail': 'لا تملك صلاحية تعديل بيانات هذه الحلقة.'},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         user = request.user if getattr(request.user, 'is_authenticated', False) else None
         save_kwargs = {'created_by': user}
         if serializer.validated_data.get('is_approved') and user and not serializer.validated_data.get('approved_by'):

@@ -1,3 +1,5 @@
+import secrets
+
 from django.db.models import Q
 
 from .models import Halaqa, Teacher, TeacherAssignment
@@ -66,3 +68,27 @@ def user_can_access_halaqa(user, halaqa):
         return False
 
     return assigned_halaqas_for_teacher(teacher).filter(pk=halaqa.pk).exists()
+
+
+def halaqa_share_key_matches(halaqa, key):
+    if not halaqa or not key:
+        return False
+    return secrets.compare_digest(str(halaqa.shareable_link or ""), str(key))
+
+
+def request_share_key(request):
+    if hasattr(request, "query_params"):
+        return request.query_params.get("key", "")
+    return request.GET.get("key", "")
+
+
+def request_can_access_halaqa(request, halaqa):
+    user = getattr(request, "user", None)
+    return user_can_access_halaqa(user, halaqa) or halaqa_share_key_matches(
+        halaqa,
+        request_share_key(request),
+    )
+
+
+def request_has_halaqa_share_access(request, halaqa):
+    return halaqa_share_key_matches(halaqa, request_share_key(request))

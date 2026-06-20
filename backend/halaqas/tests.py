@@ -544,6 +544,35 @@ class HalaqaDetailPageTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
+    def test_direct_key_opens_halaqa_detail_without_login(self):
+        self.client.logout()
+
+        response = self.client.get(
+            reverse('halaqas:halaqa_detail', args=[self.halaqa.pk]),
+            {'key': self.halaqa.shareable_link},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.halaqa.name)
+
+    def test_bare_halaqa_detail_still_requires_login(self):
+        self.client.logout()
+
+        response = self.client.get(reverse('halaqas:halaqa_detail', args=[self.halaqa.pk]))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('/accounts/login/', response['Location'])
+
+    def test_invalid_direct_key_is_denied(self):
+        self.client.logout()
+
+        response = self.client.get(
+            reverse('halaqas:halaqa_detail', args=[self.halaqa.pk]),
+            {'key': 'not-the-real-key'},
+        )
+
+        self.assertEqual(response.status_code, 403)
+
 
 class SupervisorDashboardTests(TestCase):
     def setUp(self):
@@ -896,6 +925,60 @@ class HalaqaActionEndpointTests(TestCase):
         self.assertEqual(Attendance.objects.filter(student=self.student, session=self.session).count(), 1)
         self.assertEqual(Plan.objects.filter(student=self.student, halaqa=self.halaqa).count(), 1)
         self.assertEqual(Plan.objects.get(student=self.student, halaqa=self.halaqa).total_pages, 40)
+
+    def test_direct_key_allows_write_for_matching_halaqa_only(self):
+        self.client.logout()
+        url = reverse('halaqas:api:points-list')
+
+        response = self.client.post(f'{url}?key={self.halaqa.shareable_link}', data={
+            'student': self.student.id,
+            'halaqa': self.halaqa.id,
+            'value': 4,
+            'reason': 'رابط مباشر',
+        })
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(PointTransaction.objects.filter(student=self.student, halaqa=self.halaqa).count(), 1)
+
+    def test_direct_key_cannot_write_to_another_halaqa(self):
+        self.client.logout()
+        other_parent = User.objects.create_user(username='other_api_parent', password='StrongPass123!')
+        other_halaqa = Halaqa.objects.create(name='حلقة أخرى للرابط')
+        other_student = Student.objects.create(
+            name='طالب حلقة أخرى',
+            birth_date='2013-08-08',
+            parent=other_parent,
+            parent_phone='0777888999',
+        )
+        HalaqaMembership.objects.create(student=other_student, halaqa=other_halaqa, is_active=True)
+
+        response = self.client.post(
+            f'{reverse("halaqas:api:points-list")}?key={self.halaqa.shareable_link}',
+            data={
+                'student': other_student.id,
+                'halaqa': other_halaqa.id,
+                'value': 4,
+                'reason': 'محاولة خاطئة',
+            },
+        )
+
+        self.assertEqual(response.status_code, 403)
+        self.assertFalse(PointTransaction.objects.filter(student=other_student, halaqa=other_halaqa).exists())
+
+    def test_generate_halaqa_share_link_command_prints_and_resets_link(self):
+        first_token = self.halaqa.shareable_link
+        out = StringIO()
+
+        call_command('generate_halaqa_share_link', '--halaqa-id', str(self.halaqa.id), stdout=out)
+
+        self.assertIn(f'/halaqas/halaqa/{self.halaqa.id}/?key={first_token}', out.getvalue())
+
+        reset_out = StringIO()
+        call_command('generate_halaqa_share_link', '--halaqa-id', str(self.halaqa.id), '--reset', stdout=reset_out)
+        self.halaqa.refresh_from_db()
+
+        self.assertNotEqual(self.halaqa.shareable_link, first_token)
+        self.assertIn(f'/halaqas/halaqa/{self.halaqa.id}/?key={self.halaqa.shareable_link}', reset_out.getvalue())
 
     def test_update_endpoints_used_by_halaqa_detail_page(self):
         attendance = Attendance.objects.create(

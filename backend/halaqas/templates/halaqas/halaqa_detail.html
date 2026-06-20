@@ -2188,6 +2188,7 @@
     const homeworksListUrl = "{% url 'halaqas:api:homeworks-list' %}";
     const plansListUrl = "{% url 'halaqas:api:plans-list' %}";
     const memorizationListUrl = "{% url 'students:memorizationrecord-list' %}";
+    const shareAccessKey = new URLSearchParams(window.location.search).get('key') || '';
 
     const pointsModal = new bootstrap.Modal(document.getElementById('pointsModal'));
     const memorizationModal = new bootstrap.Modal(document.getElementById('memorizationModal'));
@@ -2245,6 +2246,15 @@
 
     function detailUrl(listUrl, recordId) {
       return `${listUrl}${recordId}/`;
+    }
+
+    function accessUrl(url) {
+      if (!shareAccessKey) {
+        return url;
+      }
+      const finalUrl = new URL(url, window.location.origin);
+      finalUrl.searchParams.set('key', shareAccessKey);
+      return `${finalUrl.pathname}${finalUrl.search}${finalUrl.hash}`;
     }
 
     function todayString() {
@@ -2564,7 +2574,7 @@
     }
 
     async function submitJson(url, method, payload) {
-      const response = await fetch(url, {
+      const response = await fetch(accessUrl(url), {
         method,
         credentials: 'same-origin',
         headers: {

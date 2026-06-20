@@ -201,7 +201,7 @@ class Halaqa(models.Model):
         return "".join(secrets.choice("ABCDEFGHJKLMNPQRSTUVWXYZ23456789") for _ in range(6))
 
     def _generate_shareable_link(self):
-        return secrets.token_urlsafe(16)
+        return secrets.token_urlsafe(32)
 
     def get_absolute_url(self):
         return reverse("halaqa-share", kwargs={"link_code": self.shareable_link})

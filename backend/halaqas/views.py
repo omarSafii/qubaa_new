@@ -4,6 +4,7 @@ from urllib.parse import urlencode
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import redirect_to_login
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Count, ExpressionWrapper, F, FloatField, IntegerField, Q, Sum, Value
@@ -14,14 +15,16 @@ from django.utils import timezone
 from django.utils.dateparse import parse_date
 from django.views.decorators.http import require_GET
 from rest_framework import status, viewsets
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.decorators import api_view
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from students.models import MemorizationRecord, Student
 from students.serializers import StudentSerializer
 
-from .access import role_for_user, user_can_access_halaqa
+from .access import request_can_access_halaqa, request_has_halaqa_share_access, role_for_user, user_can_access_halaqa
 from .forms import HalaqaForm
 from .models import (
     Attendance,
@@ -94,6 +97,16 @@ def _role_for_user(user):
 
 def _can_access_supervisor_dashboard(user):
     return _role_for_user(user) in {'supervisor', 'admin'}
+
+
+def _student_belongs_to_halaqa(student_id, halaqa):
+    if not student_id or not halaqa:
+        return False
+    return HalaqaMembership.objects.filter(
+        student_id=student_id,
+        halaqa=halaqa,
+        is_active=True,
+    ).exists()
 
 
 def _attendance_source_label(attendance):
@@ -384,8 +397,32 @@ class TeacherStudentViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class TeacherAttendanceViewSet(viewsets.ModelViewSet):
+    authentication_classes = [SessionAuthentication, JWTAuthentication]
     permission_classes = [AllowAny]
     serializer_class = AttendanceSerializer
+
+    def _halaqa_from_request(self, instance=None):
+        if instance is not None:
+            return instance.session.halaqa
+
+        session_id = self.request.data.get('session')
+        if not session_id:
+            return None
+        session = Session.objects.select_related('halaqa').filter(pk=session_id).first()
+        return session.halaqa if session else None
+
+    def _ensure_write_access(self, halaqa):
+        if not halaqa or not request_can_access_halaqa(self.request, halaqa):
+            raise PermissionDenied("لا تملك صلاحية تعديل بيانات هذه الحلقة.")
+        student_id = self.request.data.get('student')
+        if not _student_belongs_to_halaqa(student_id, halaqa):
+            raise PermissionDenied("لا تملك صلاحية تعديل بيانات هذا الطالب.")
+        return halaqa
+
+    def _actor_role(self, halaqa):
+        if request_has_halaqa_share_access(self.request, halaqa):
+            return 'teacher'
+        return _role_for_user(self.request.user if getattr(self.request.user, 'is_authenticated', False) else None)
 
     def get_queryset(self):
         queryset = Attendance.objects.select_related('student', 'session__halaqa', 'recorded_by')
@@ -398,8 +435,9 @@ class TeacherAttendanceViewSet(viewsets.ModelViewSet):
         return queryset
 
     def create(self, request, *args, **kwargs):
+        halaqa = self._ensure_write_access(self._halaqa_from_request())
         user = request.user if getattr(request.user, 'is_authenticated', False) else None
-        role = _role_for_user(user)
+        role = self._actor_role(halaqa)
         session_id = request.data.get('session')
         student_id = request.data.get('student')
         existing_attendance = None
@@ -427,8 +465,9 @@ class TeacherAttendanceViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
+        halaqa = self._ensure_write_access(self._halaqa_from_request(instance))
         user = request.user if getattr(request.user, 'is_authenticated', False) else None
-        role = _role_for_user(user)
+        role = self._actor_role(halaqa)
         conflict_message = _attendance_conflict_message(instance, role)
         if conflict_message:
             return Response({'detail': conflict_message}, status=status.HTTP_409_CONFLICT)
@@ -440,16 +479,37 @@ class TeacherAttendanceViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         user = self.request.user if getattr(self.request.user, 'is_authenticated', False) else None
-        serializer.save(recorded_by=user, recorded_by_role=_role_for_user(user))
+        halaqa = serializer.validated_data['session'].halaqa
+        role = self._actor_role(halaqa)
+        serializer.save(recorded_by=user, recorded_by_role=role)
 
     def perform_update(self, serializer):
         user = self.request.user if getattr(self.request.user, 'is_authenticated', False) else None
-        serializer.save(recorded_by=user, recorded_by_role=_role_for_user(user))
+        halaqa = serializer.instance.session.halaqa
+        role = self._actor_role(halaqa)
+        serializer.save(recorded_by=user, recorded_by_role=role)
 
 
 class TeacherPointViewSet(viewsets.ModelViewSet):
+    authentication_classes = [SessionAuthentication, JWTAuthentication]
     permission_classes = [AllowAny]
     serializer_class = PointSerializer
+
+    def _halaqa_from_request(self, instance=None):
+        if instance is not None:
+            return instance.halaqa
+
+        halaqa_id = self.request.data.get('halaqa')
+        if not halaqa_id:
+            return None
+        return Halaqa.objects.filter(pk=halaqa_id).first()
+
+    def _ensure_write_access(self, halaqa):
+        if not halaqa or not request_can_access_halaqa(self.request, halaqa):
+            raise PermissionDenied("لا تملك صلاحية تعديل بيانات هذه الحلقة.")
+        student_id = self.request.data.get('student')
+        if not _student_belongs_to_halaqa(student_id, halaqa):
+            raise PermissionDenied("لا تملك صلاحية تعديل بيانات هذا الطالب.")
 
     def get_queryset(self):
         queryset = PointTransaction.objects.select_related('student', 'halaqa')
@@ -461,14 +521,39 @@ class TeacherPointViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(halaqa_id=halaqa_id)
         return queryset
 
+    def create(self, request, *args, **kwargs):
+        self._ensure_write_access(self._halaqa_from_request())
+        return super().create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        self._ensure_write_access(self._halaqa_from_request(self.get_object()))
+        return super().update(request, *args, **kwargs)
+
     def perform_create(self, serializer):
         user = self.request.user if getattr(self.request.user, 'is_authenticated', False) else None
         serializer.save(created_by=user)
 
 
 class TeacherPlanViewSet(viewsets.ModelViewSet):
+    authentication_classes = [SessionAuthentication, JWTAuthentication]
     permission_classes = [AllowAny]
     serializer_class = PlanSerializer
+
+    def _halaqa_from_request(self, instance=None):
+        if instance is not None:
+            return instance.halaqa
+
+        halaqa_id = self.request.data.get('halaqa')
+        if not halaqa_id:
+            return None
+        return Halaqa.objects.filter(pk=halaqa_id).first()
+
+    def _ensure_write_access(self, halaqa):
+        if not halaqa or not request_can_access_halaqa(self.request, halaqa):
+            raise PermissionDenied("لا تملك صلاحية تعديل بيانات هذه الحلقة.")
+        student_id = self.request.data.get('student')
+        if not _student_belongs_to_halaqa(student_id, halaqa):
+            raise PermissionDenied("لا تملك صلاحية تعديل بيانات هذا الطالب.")
 
     def get_queryset(self):
         queryset = Plan.objects.select_related('student', 'halaqa')
@@ -483,13 +568,38 @@ class TeacherPlanViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(is_completed=(is_completed == 'true'))
         return queryset
 
+    def create(self, request, *args, **kwargs):
+        self._ensure_write_access(self._halaqa_from_request())
+        return super().create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        self._ensure_write_access(self._halaqa_from_request(self.get_object()))
+        return super().update(request, *args, **kwargs)
+
     def perform_create(self, serializer):
         serializer.save()
 
 
 class TeacherHomeworkViewSet(viewsets.ModelViewSet):
+    authentication_classes = [SessionAuthentication, JWTAuthentication]
     permission_classes = [AllowAny]
     serializer_class = HomeworkSerializer
+
+    def _halaqa_from_request(self, instance=None):
+        if instance is not None:
+            return instance.halaqa
+
+        halaqa_id = self.request.data.get('halaqa')
+        if not halaqa_id:
+            return None
+        return Halaqa.objects.filter(pk=halaqa_id).first()
+
+    def _ensure_write_access(self, halaqa):
+        if not halaqa or not request_can_access_halaqa(self.request, halaqa):
+            raise PermissionDenied("لا تملك صلاحية تعديل بيانات هذه الحلقة.")
+        student_id = self.request.data.get('student')
+        if not _student_belongs_to_halaqa(student_id, halaqa):
+            raise PermissionDenied("لا تملك صلاحية تعديل بيانات هذا الطالب.")
 
     def get_queryset(self):
         queryset = Homework.objects.select_related('student', 'halaqa')
@@ -503,6 +613,14 @@ class TeacherHomeworkViewSet(viewsets.ModelViewSet):
         if pending in {'true', 'false'}:
             queryset = queryset.filter(evaluation_date__isnull=(pending == 'true'))
         return queryset
+
+    def create(self, request, *args, **kwargs):
+        self._ensure_write_access(self._halaqa_from_request())
+        return super().create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        self._ensure_write_access(self._halaqa_from_request(self.get_object()))
+        return super().update(request, *args, **kwargs)
 
     def perform_create(self, serializer):
         user = self.request.user if getattr(self.request.user, 'is_authenticated', False) else None
@@ -827,14 +945,15 @@ def _supervisor_attendance_dashboard(request, share_token=None):
     })
 
 
-@login_required
 def halaqa_detail(request, pk=None, join_code=None):
     lookup = {'pk': pk} if pk is not None else {'join_code': join_code}
     halaqa = get_object_or_404(
         Halaqa.objects.prefetch_related('teachers__user', 'members__student'),
         **lookup,
     )
-    if not user_can_access_halaqa(request.user, halaqa):
+    if not request_can_access_halaqa(request, halaqa):
+        if not getattr(request.user, 'is_authenticated', False) and not request.GET.get('key'):
+            return redirect_to_login(request.get_full_path())
         raise PermissionDenied("لا تملك صلاحية الوصول إلى هذه الحلقة.")
     return prepare_halaqa_view(
         request,
