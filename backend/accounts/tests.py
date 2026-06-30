@@ -10,6 +10,7 @@ from rest_framework.test import APIClient
 
 from halaqas.models import Halaqa, Teacher
 from .models import Profile
+from .views import REMEMBER_LOGIN_SECONDS
 
 
 class CurrentUserEndpointTests(TestCase):
@@ -68,6 +69,66 @@ class TeacherSessionLoginTests(TestCase):
         })
 
         self.assertRedirects(response, reverse('halaqas:halaqa_detail', args=[halaqa.pk]), fetch_redirect_response=False)
+
+    def test_teacher_can_login_with_full_name(self):
+        user = get_user_model().objects.create_user(
+            username='teacher_001',
+            password='StrongPass123!',
+        )
+        user.profile.role = 'teacher'
+        user.profile.save(update_fields=['role'])
+        teacher = Teacher.objects.create(user=user, full_name='Teacher Full Name', phone='0999000003')
+        halaqa = Halaqa.objects.create(name='Full Name Login Halaqa')
+        halaqa.teachers.add(teacher)
+
+        response = self.client.post(reverse('login'), {
+            'username': 'Teacher Full Name',
+            'password': 'StrongPass123!',
+        })
+
+        self.assertRedirects(response, reverse('halaqas:halaqa_detail', args=[halaqa.pk]), fetch_redirect_response=False)
+
+    def test_remember_login_extends_session_expiry(self):
+        user = get_user_model().objects.create_user(
+            username='remember_teacher',
+            password='StrongPass123!',
+        )
+        user.profile.role = 'teacher'
+        user.profile.save(update_fields=['role'])
+        teacher = Teacher.objects.create(user=user, full_name='Remember Teacher', phone='0999000004')
+        halaqa = Halaqa.objects.create(name='Remember Login Halaqa')
+        halaqa.teachers.add(teacher)
+
+        self.client.post(reverse('login'), {
+            'username': 'Remember Teacher',
+            'password': 'StrongPass123!',
+            'remember_login': '1',
+        })
+
+        self.assertFalse(self.client.session.get_expire_at_browser_close())
+        self.assertAlmostEqual(
+            self.client.session.get_expiry_age(),
+            REMEMBER_LOGIN_SECONDS,
+            delta=5,
+        )
+
+    def test_login_without_remember_expires_when_browser_closes(self):
+        user = get_user_model().objects.create_user(
+            username='session_teacher',
+            password='StrongPass123!',
+        )
+        user.profile.role = 'teacher'
+        user.profile.save(update_fields=['role'])
+        teacher = Teacher.objects.create(user=user, full_name='Session Teacher', phone='0999000005')
+        halaqa = Halaqa.objects.create(name='Session Login Halaqa')
+        halaqa.teachers.add(teacher)
+
+        self.client.post(reverse('login'), {
+            'username': 'Session Teacher',
+            'password': 'StrongPass123!',
+        })
+
+        self.assertTrue(self.client.session.get_expire_at_browser_close())
 
     def test_teacher_with_multiple_halaqas_sees_only_assigned_halaqas(self):
         user = get_user_model().objects.create_user(

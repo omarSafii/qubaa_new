@@ -170,19 +170,24 @@
           {% endif %}
 
           <div class="mb-3">
-            <label class="form-label" for="username">اسم المستخدم</label>
+            <label class="form-label" for="username">اسم الأستاذ أو اسم المستخدم</label>
             <div class="input-group">
               <span class="input-group-text"><i class="fas fa-user"></i></span>
-              <input class="form-control" id="username" name="username" type="text" autocomplete="username" required autofocus>
+              <input class="form-control" id="username" name="username" type="text" autocomplete="username" placeholder="اسم الأستاذ أو اسم المستخدم" required autofocus>
             </div>
           </div>
 
-          <div class="mb-4">
+          <div class="mb-3">
             <label class="form-label" for="password">كلمة المرور</label>
             <div class="input-group">
               <span class="input-group-text"><i class="fas fa-lock"></i></span>
               <input class="form-control" id="password" name="password" type="password" autocomplete="current-password" required>
             </div>
+          </div>
+
+          <div class="form-check mb-4">
+            <input class="form-check-input" id="remember_login" name="remember_login" type="checkbox" value="1">
+            <label class="form-check-label" for="remember_login">حفظ تسجيل الدخول</label>
           </div>
 
           <button class="btn btn-login" type="submit">دخول</button>

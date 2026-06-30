@@ -12,6 +12,10 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import MyTokenObtainPairSerializer
 from rest_framework.permissions import IsAuthenticated
 from halaqas.access import assigned_halaqas_for_user, role_for_user
+from halaqas.models import Teacher
+
+
+REMEMBER_LOGIN_SECONDS = 60 * 60 * 24 * 365
 
 
 class RegisterView(APIView):
@@ -70,6 +74,20 @@ def _post_login_redirect(user, request=None):
     return next_url or reverse("halaqas:supervisor_dashboard")
 
 
+def _authenticate_by_identifier(request, identifier, password):
+    user = authenticate(request, username=identifier, password=password)
+    if user is not None:
+        return user
+
+    teachers = Teacher.objects.filter(full_name__iexact=identifier).select_related("user")
+    for teacher in teachers:
+        user = authenticate(request, username=teacher.user.get_username(), password=password)
+        if user is not None:
+            return user
+
+    return None
+
+
 def login_view(request):
     if request.user.is_authenticated:
         return redirect(_post_login_redirect(request.user, request))
@@ -78,13 +96,17 @@ def login_view(request):
     if request.method == "POST":
         username = request.POST.get("username", "").strip()
         password = request.POST.get("password", "")
-        user = authenticate(request, username=username, password=password)
+        user = _authenticate_by_identifier(request, username, password)
         if user is None:
-            context["error"] = "اسم المستخدم أو كلمة المرور غير صحيحة."
+            context["error"] = "اسم الأستاذ أو كلمة المرور غير صحيحة."
         elif not user.is_active:
             context["error"] = "هذا الحساب غير مفعل."
         else:
             login(request, user)
+            if request.POST.get("remember_login"):
+                request.session.set_expiry(REMEMBER_LOGIN_SECONDS)
+            else:
+                request.session.set_expiry(0)
             return redirect(_post_login_redirect(user, request))
 
     return render(request, 'accounts/login_page.html', context)
