@@ -14,6 +14,7 @@ ENV/
 .env.*
 !.env.example
 !**/.env.example
+test_neon_connection.py
 
 # Django local/generated files
 *.sqlite3

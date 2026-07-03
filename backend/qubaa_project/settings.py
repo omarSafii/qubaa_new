@@ -4,10 +4,12 @@ Django settings for qubaa_project project.
 
 import os
 from pathlib import Path
-from urllib.parse import parse_qs, unquote, urlparse
 
+import dj_database_url
 from django.core.exceptions import ImproperlyConfigured
+from dotenv import load_dotenv
 
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -37,45 +39,6 @@ def env_list(name, default=None):
     return [item.strip() for item in value.split(",") if item.strip()]
 
 
-def database_config_from_url(database_url):
-    parsed = urlparse(database_url)
-    scheme = parsed.scheme.lower()
-
-    if scheme in {"postgres", "postgresql", "pgsql"}:
-        query = parse_qs(parsed.query)
-        options = {}
-        sslmode = query.get("sslmode", [None])[0]
-        if sslmode:
-            options["sslmode"] = sslmode
-
-        config = {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": unquote(parsed.path.lstrip("/")),
-            "USER": unquote(parsed.username or ""),
-            "PASSWORD": unquote(parsed.password or ""),
-            "HOST": parsed.hostname or "localhost",
-            "PORT": str(parsed.port or "5432"),
-            "CONN_MAX_AGE": env_int("DJANGO_DB_CONN_MAX_AGE", 60),
-            "CONN_HEALTH_CHECKS": True,
-        }
-        if options:
-            config["OPTIONS"] = options
-        return config
-
-    if scheme == "sqlite":
-        sqlite_path = unquote(parsed.path or "")
-        if sqlite_path.startswith("/") and sqlite_path != "/:memory:":
-            sqlite_path = sqlite_path.lstrip("/")
-        return {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / sqlite_path if sqlite_path and sqlite_path != ":memory:" else sqlite_path,
-        }
-
-    raise ImproperlyConfigured(
-        "Unsupported DATABASE_URL scheme. Use postgresql://... for production."
-    )
-
-
 database_url = env("DATABASE_URL")
 DEBUG = env_bool("DJANGO_DEBUG", default=not bool(database_url))
 
@@ -103,15 +66,10 @@ CSRF_TRUSTED_ORIGINS = env_list(
     ],
 )
 
-if database_url:
-    default_database = database_config_from_url(database_url)
-else:
-    default_database = {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-
-DATABASES = {"default": default_database}
+DATABASES = {
+    "default": dj_database_url.config(default=os.environ.get("DATABASE_URL"))
+}
+DATABASES["default"]["CONN_MAX_AGE"] = 0
 
 if not DEBUG and not ALLOWED_HOSTS:
     raise ImproperlyConfigured("DJANGO_ALLOWED_HOSTS must be set when DJANGO_DEBUG is False.")
