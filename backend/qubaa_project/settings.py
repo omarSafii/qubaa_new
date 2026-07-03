@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+RENDER = os.environ.get("RENDER", False)
 
 
 def env(name, default=None):
@@ -65,6 +66,10 @@ CSRF_TRUSTED_ORIGINS = env_list(
         "https://qubaa-new.onrender.com",
     ],
 )
+
+if RENDER:
+    DEBUG = False
+    ALLOWED_HOSTS = ["*"]
 
 DATABASES = {
     "default": dj_database_url.config(default=os.environ.get("DATABASE_URL"))
@@ -150,8 +155,9 @@ USE_TZ = True
 
 
 STATIC_URL = "/static/"
-STATIC_ROOT = Path(env("DJANGO_STATIC_ROOT", BASE_DIR / "staticfiles"))
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_DIRS = [BASE_DIR / "static"] if (BASE_DIR / "static").exists() else []
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = Path(env("DJANGO_MEDIA_ROOT", BASE_DIR / "media"))
