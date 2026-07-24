@@ -1,9 +1,12 @@
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
+from django.conf import settings
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.cache import never_cache
+from django.views.decorators.http import require_POST
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -13,9 +16,6 @@ from .serializers import MyTokenObtainPairSerializer
 from rest_framework.permissions import IsAuthenticated
 from halaqas.access import assigned_halaqas_for_user, role_for_user
 from halaqas.models import Teacher
-
-
-REMEMBER_LOGIN_SECONDS = 60 * 60 * 24 * 365
 
 
 class RegisterView(APIView):
@@ -88,6 +88,7 @@ def _authenticate_by_identifier(request, identifier, password):
     return None
 
 
+@never_cache
 def login_view(request):
     if request.user.is_authenticated:
         return redirect(_post_login_redirect(request.user, request))
@@ -103,10 +104,7 @@ def login_view(request):
             context["error"] = "هذا الحساب غير مفعل."
         else:
             login(request, user)
-            if request.POST.get("remember_login"):
-                request.session.set_expiry(REMEMBER_LOGIN_SECONDS)
-            else:
-                request.session.set_expiry(0)
+            request.session.set_expiry(settings.SESSION_COOKIE_AGE)
             return redirect(_post_login_redirect(user, request))
 
     return render(request, 'accounts/login_page.html', context)
@@ -116,6 +114,14 @@ def legacy_login_page_view(request):
     return redirect("login")
 
 
+@require_POST
+@login_required
+def logout_view(request):
+    logout(request)
+    return redirect("login")
+
+
+@never_cache
 @login_required
 def teacher_halaqas_view(request):
     if role_for_user(request.user) != "teacher":

@@ -545,7 +545,7 @@ class HalaqaDetailPageTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
-    def test_direct_key_opens_halaqa_detail_without_login(self):
+    def test_direct_key_does_not_bypass_teacher_login(self):
         self.client.logout()
 
         response = self.client.get(
@@ -553,8 +553,8 @@ class HalaqaDetailPageTests(TestCase):
             {'key': self.halaqa.shareable_link},
         )
 
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, self.halaqa.name)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('/accounts/login/', response['Location'])
 
     def test_bare_halaqa_detail_still_requires_login(self):
         self.client.logout()
@@ -564,7 +564,7 @@ class HalaqaDetailPageTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn('/accounts/login/', response['Location'])
 
-    def test_invalid_direct_key_is_denied(self):
+    def test_invalid_direct_key_also_redirects_to_login(self):
         self.client.logout()
 
         response = self.client.get(
@@ -572,7 +572,8 @@ class HalaqaDetailPageTests(TestCase):
             {'key': 'not-the-real-key'},
         )
 
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('/accounts/login/', response['Location'])
 
 
 class SupervisorDashboardTests(TestCase):

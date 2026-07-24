@@ -37,6 +37,17 @@
       padding: 22px 0 18px;
     }
 
+    .page-header-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .logout-button {
+      white-space: nowrap;
+    }
+
     .page-header h1 {
       margin: 0;
       font-size: 1.45rem;
@@ -109,8 +120,19 @@
 <body>
   <main class="page-shell">
     <header class="page-header">
-      <h1>حلقاتي</h1>
-      <p>اختر الحلقة التي تريد فتحها.</p>
+      <div class="page-header-row">
+        <div>
+          <h1>حلقاتي</h1>
+          <p>اختر الحلقة التي تريد فتحها.</p>
+        </div>
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button class="btn btn-outline-danger btn-sm logout-button" type="submit">
+            <i class="fas fa-right-from-bracket"></i>
+            تسجيل الخروج
+          </button>
+        </form>
+      </div>
     </header>
 
     {% if messages %}

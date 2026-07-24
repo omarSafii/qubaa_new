@@ -2,6 +2,7 @@ import os
 from io import StringIO
 from unittest.mock import patch
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.test import TestCase
@@ -10,7 +11,6 @@ from rest_framework.test import APIClient
 
 from halaqas.models import Halaqa, Teacher
 from .models import Profile
-from .views import REMEMBER_LOGIN_SECONDS
 
 
 class CurrentUserEndpointTests(TestCase):
@@ -52,6 +52,26 @@ class UserProfileSignalTests(TestCase):
 
 
 class TeacherSessionLoginTests(TestCase):
+    def create_teacher(self, username='teacher_user', full_name='Teacher User'):
+        user = get_user_model().objects.create_user(
+            username=username,
+            password='StrongPass123!',
+        )
+        user.profile.role = 'teacher'
+        user.profile.save(update_fields=['role'])
+        teacher = Teacher.objects.create(user=user, full_name=full_name, phone=f'09{user.pk:08d}')
+        halaqa = Halaqa.objects.create(name=f'{full_name} Halaqa')
+        halaqa.teachers.add(teacher)
+        return user, teacher, halaqa
+
+    def test_anonymous_login_page_displays_form(self):
+        response = self.client.get(reverse('login'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'تسجيل الدخول')
+        self.assertContains(response, 'autocomplete="username"')
+        self.assertContains(response, 'autocomplete="current-password"')
+
     def test_teacher_login_redirects_to_single_assigned_halaqa(self):
         user = get_user_model().objects.create_user(
             username='single_teacher',
@@ -88,47 +108,125 @@ class TeacherSessionLoginTests(TestCase):
 
         self.assertRedirects(response, reverse('halaqas:halaqa_detail', args=[halaqa.pk]), fetch_redirect_response=False)
 
-    def test_remember_login_extends_session_expiry(self):
-        user = get_user_model().objects.create_user(
-            username='remember_teacher',
-            password='StrongPass123!',
-        )
-        user.profile.role = 'teacher'
-        user.profile.save(update_fields=['role'])
-        teacher = Teacher.objects.create(user=user, full_name='Remember Teacher', phone='0999000004')
-        halaqa = Halaqa.objects.create(name='Remember Login Halaqa')
-        halaqa.teachers.add(teacher)
+    def test_invalid_login_stays_on_page_with_arabic_error(self):
+        response = self.client.post(reverse('login'), {
+            'username': 'missing_teacher',
+            'password': 'WrongPass123!',
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'اسم الأستاذ أو كلمة المرور غير صحيحة.')
+        self.assertNotIn('_auth_user_id', self.client.session)
+
+    def test_authenticated_teacher_opening_login_redirects_without_loop(self):
+        user, _teacher, halaqa = self.create_teacher('active_teacher', 'Active Teacher')
+        self.client.force_login(user)
+
+        response = self.client.get(reverse('login'))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('halaqas:halaqa_detail', args=[halaqa.pk]))
+        self.assertNotEqual(response.url, reverse('login'))
+
+    def test_teacher_session_is_persistent_for_configured_age(self):
+        _user, _teacher, _halaqa = self.create_teacher('persistent_teacher', 'Persistent Teacher')
 
         self.client.post(reverse('login'), {
-            'username': 'Remember Teacher',
+            'username': 'persistent_teacher',
             'password': 'StrongPass123!',
-            'remember_login': '1',
         })
 
         self.assertFalse(self.client.session.get_expire_at_browser_close())
         self.assertAlmostEqual(
             self.client.session.get_expiry_age(),
-            REMEMBER_LOGIN_SECONDS,
+            settings.SESSION_COOKIE_AGE,
             delta=5,
         )
+        self.assertGreaterEqual(settings.SESSION_COOKIE_AGE, 60 * 60 * 24 * 30)
+        self.assertTrue(settings.SESSION_SAVE_EVERY_REQUEST)
 
-    def test_login_without_remember_expires_when_browser_closes(self):
-        user = get_user_model().objects.create_user(
-            username='session_teacher',
+    def test_anonymous_teacher_page_redirects_to_login(self):
+        _user, _teacher, halaqa = self.create_teacher('protected_teacher', 'Protected Teacher')
+
+        response = self.client.get(reverse('halaqas:halaqa_detail', args=[halaqa.pk]))
+
+        expected = f"{reverse('login')}?next={reverse('halaqas:halaqa_detail', args=[halaqa.pk])}"
+        self.assertRedirects(response, expected, fetch_redirect_response=False)
+
+    def test_teacher_cannot_access_another_teachers_halaqa(self):
+        user, _teacher, _halaqa = self.create_teacher('first_teacher', 'First Teacher')
+        _other_user, _other_teacher, other_halaqa = self.create_teacher('second_teacher', 'Second Teacher')
+        self.client.force_login(user)
+
+        response = self.client.get(reverse('halaqas:halaqa_detail', args=[other_halaqa.pk]))
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_logout_post_flushes_session_and_protects_teacher_page(self):
+        user, _teacher, halaqa = self.create_teacher('logout_teacher', 'Logout Teacher')
+        self.client.force_login(user)
+
+        response = self.client.post(reverse('logout'))
+
+        self.assertRedirects(response, reverse('login'), fetch_redirect_response=False)
+        self.assertNotIn('_auth_user_id', self.client.session)
+        protected_response = self.client.get(reverse('halaqas:halaqa_detail', args=[halaqa.pk]))
+        self.assertEqual(protected_response.status_code, 302)
+        self.assertTrue(protected_response.url.startswith(reverse('login')))
+
+    def test_logout_rejects_get(self):
+        user, _teacher, _halaqa = self.create_teacher('get_logout_teacher', 'Get Logout Teacher')
+        self.client.force_login(user)
+
+        response = self.client.get(reverse('logout'))
+
+        self.assertEqual(response.status_code, 405)
+        self.assertIn('_auth_user_id', self.client.session)
+
+    def test_admin_and_supervisor_login_redirects_are_unchanged(self):
+        admin = get_user_model().objects.create_user(
+            username='login_admin',
+            password='StrongPass123!',
+            is_staff=True,
+        )
+        supervisor = get_user_model().objects.create_user(
+            username='login_supervisor',
             password='StrongPass123!',
         )
-        user.profile.role = 'teacher'
-        user.profile.save(update_fields=['role'])
-        teacher = Teacher.objects.create(user=user, full_name='Session Teacher', phone='0999000005')
-        halaqa = Halaqa.objects.create(name='Session Login Halaqa')
-        halaqa.teachers.add(teacher)
+        supervisor.profile.role = 'supervisor'
+        supervisor.profile.save(update_fields=['role'])
 
-        self.client.post(reverse('login'), {
-            'username': 'Session Teacher',
+        admin_response = self.client.post(reverse('login'), {
+            'username': admin.username,
             'password': 'StrongPass123!',
         })
+        self.assertRedirects(
+            admin_response,
+            reverse('halaqas:master_admin_dashboard'),
+            fetch_redirect_response=False,
+        )
+        self.client.logout()
+        supervisor_response = self.client.post(reverse('login'), {
+            'username': supervisor.username,
+            'password': 'StrongPass123!',
+        })
+        self.assertRedirects(
+            supervisor_response,
+            reverse('halaqas:supervisor_dashboard'),
+            fetch_redirect_response=False,
+        )
 
-        self.assertTrue(self.client.session.get_expire_at_browser_close())
+    def test_external_next_url_is_not_used(self):
+        user, _teacher, halaqa = self.create_teacher('safe_next_teacher', 'Safe Next Teacher')
+
+        response = self.client.post(f"{reverse('login')}?next=https://example.net/", {
+            'username': user.username,
+            'password': 'StrongPass123!',
+            'next': 'https://example.net/',
+        })
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('halaqas:halaqa_detail', args=[halaqa.pk]))
 
     def test_teacher_with_multiple_halaqas_sees_only_assigned_halaqas(self):
         user = get_user_model().objects.create_user(

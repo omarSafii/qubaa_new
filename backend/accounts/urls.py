@@ -12,6 +12,7 @@ urlpatterns = [
     path('token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('login/', login_view, name='login'),
+    path('logout/', logout_view, name='logout'),
     path('login_page/', legacy_login_page_view, name='login_page'),
     path('my-halaqas/', teacher_halaqas_view, name='teacher_halaqas'),
     path('signup_page/',signup_view,name='signup_page'),

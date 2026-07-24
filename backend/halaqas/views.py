@@ -4,7 +4,6 @@ from urllib.parse import urlencode
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import redirect_to_login
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Count, ExpressionWrapper, F, FloatField, IntegerField, Q, Sum, Value
@@ -13,6 +12,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.dateparse import parse_date
+from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_GET
 from rest_framework import status, viewsets
 from rest_framework.authentication import SessionAuthentication
@@ -945,15 +945,15 @@ def _supervisor_attendance_dashboard(request, share_token=None):
     })
 
 
+@never_cache
+@login_required
 def halaqa_detail(request, pk=None, join_code=None):
     lookup = {'pk': pk} if pk is not None else {'join_code': join_code}
     halaqa = get_object_or_404(
         Halaqa.objects.prefetch_related('teachers__user', 'members__student'),
         **lookup,
     )
-    if not request_can_access_halaqa(request, halaqa):
-        if not getattr(request.user, 'is_authenticated', False) and not request.GET.get('key'):
-            return redirect_to_login(request.get_full_path())
+    if not user_can_access_halaqa(request.user, halaqa):
         raise PermissionDenied("لا تملك صلاحية الوصول إلى هذه الحلقة.")
     return prepare_halaqa_view(
         request,
