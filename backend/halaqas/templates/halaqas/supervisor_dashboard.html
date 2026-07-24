@@ -50,6 +50,22 @@
       font-size: 1.02rem;
     }
 
+    .navbar-brand-shell {
+      margin-bottom: 0;
+    }
+
+    .navbar-brand-link {
+      color: inherit;
+      text-decoration: none;
+      font: inherit;
+    }
+
+    .navbar-brand-link:hover,
+    .navbar-brand-link:focus {
+      color: inherit;
+      text-decoration: none;
+    }
+
     .brand-icon,
     .supervisor-avatar {
       width: 36px;
@@ -789,10 +805,17 @@
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
     <div class="container-fluid">
-      <a class="navbar-brand" href="{% if is_public_share %}#{% else %}{% url 'halaqas:supervisor_dashboard' %}{% endif %}">
+      {% if is_public_share %}
+      <a class="navbar-brand" href="#">
         <span class="brand-icon"><i class="fas fa-book-quran"></i></span>
         معهد قباء لتحفيظ القرآن الكريم
       </a>
+      {% else %}
+      <div class="navbar-brand navbar-brand-shell">
+        {% include "accounts/_logout_icon.html" with icon_class="brand-icon" %}
+        <a class="navbar-brand-link" href="{% url 'halaqas:supervisor_dashboard' %}">معهد قباء لتحفيظ القرآن الكريم</a>
+      </div>
+      {% endif %}
       <div class="supervisor-info">
         <div class="supervisor-avatar"><i class="fas fa-user-shield"></i></div>
         <div>
@@ -1000,6 +1023,10 @@
   <button type="button" class="scroll-progress-btn" id="scrollProgressBtn" aria-label="العودة إلى أعلى الصفحة">
     <i class="fas fa-arrow-up"></i>
   </button>
+
+  {% if not is_public_share %}
+    {% include "accounts/_logout_dialog.html" %}
+  {% endif %}
 
   <script>
     const scrollProgressBtn = document.getElementById('scrollProgressBtn');

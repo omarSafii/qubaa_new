@@ -5,7 +5,7 @@ from unittest.mock import patch
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
-from django.test import TestCase
+from django.test import Client, TestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
 
@@ -63,6 +63,15 @@ class TeacherSessionLoginTests(TestCase):
         halaqa = Halaqa.objects.create(name=f'{full_name} Halaqa')
         halaqa.teachers.add(teacher)
         return user, teacher, halaqa
+
+    def create_supervisor(self, username='supervisor_user'):
+        user = get_user_model().objects.create_user(
+            username=username,
+            password='StrongPass123!',
+        )
+        user.profile.role = 'supervisor'
+        user.profile.save(update_fields=['role'])
+        return user
 
     def test_anonymous_login_page_displays_form(self):
         response = self.client.get(reverse('login'))
@@ -217,6 +226,64 @@ class TeacherSessionLoginTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'data-logout-trigger')
         self.assertContains(response, 'هل أنت متأكد أنك تريد تسجيل الخروج؟')
+
+    def test_quran_icon_is_logout_trigger_on_teacher_halaqa_selection_page(self):
+        user = get_user_model().objects.create_user(
+            username='selection_teacher',
+            password='StrongPass123!',
+        )
+        user.profile.role = 'teacher'
+        user.profile.save(update_fields=['role'])
+        teacher = Teacher.objects.create(user=user, full_name='Selection Teacher', phone='0999000011')
+        first_halaqa = Halaqa.objects.create(name='Teacher Selection Halaqa One')
+        second_halaqa = Halaqa.objects.create(name='Teacher Selection Halaqa Two')
+        first_halaqa.teachers.add(teacher)
+        Halaqa.teachers.through.objects.create(teacher_id=teacher.pk, halaqa_id=second_halaqa.pk)
+        self.client.force_login(user)
+
+        response = self.client.get(reverse('teacher_halaqas'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'data-logout-trigger')
+        self.assertContains(response, 'title="تسجيل الخروج"')
+        self.assertContains(response, 'هل أنت متأكد أنك تريد تسجيل الخروج؟')
+        self.assertNotContains(response, 'btn-outline-light')
+
+    def test_quran_icon_is_logout_trigger_on_supervisor_dashboard(self):
+        supervisor = self.create_supervisor('icon_supervisor')
+        self.client.force_login(supervisor)
+
+        response = self.client.get(reverse('halaqas:supervisor_dashboard'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'data-logout-trigger')
+        self.assertContains(response, 'title="تسجيل الخروج"')
+        self.assertContains(response, 'هل أنت متأكد أنك تريد تسجيل الخروج؟')
+        self.assertNotContains(response, 'btn-outline-light')
+
+    def test_logout_requires_csrf_token(self):
+        user, _teacher, halaqa = self.create_teacher('csrf_logout_teacher', 'CSRF Logout Teacher')
+        csrf_client = Client(enforce_csrf_checks=True)
+        csrf_client.force_login(user)
+
+        missing_token_response = csrf_client.post(reverse('logout'))
+
+        self.assertEqual(missing_token_response.status_code, 403)
+        self.assertIn('_auth_user_id', csrf_client.session)
+
+        page_response = csrf_client.get(reverse('halaqas:halaqa_detail', args=[halaqa.pk]))
+        self.assertEqual(page_response.status_code, 200)
+        self.assertContains(page_response, 'csrfmiddlewaretoken')
+
+        csrf_token = csrf_client.cookies['csrftoken'].value
+        response = csrf_client.post(
+            reverse('logout'),
+            {'csrfmiddlewaretoken': csrf_token},
+            HTTP_X_CSRFTOKEN=csrf_token,
+        )
+
+        self.assertRedirects(response, reverse('login'), fetch_redirect_response=False)
+        self.assertNotIn('_auth_user_id', csrf_client.session)
 
     def test_admin_and_supervisor_login_redirects_are_unchanged(self):
         admin = get_user_model().objects.create_user(

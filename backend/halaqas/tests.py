@@ -634,6 +634,15 @@ class SupervisorDashboardTests(TestCase):
 
         self.assertEqual(response.status_code, 404)
 
+    def test_public_supervisor_share_does_not_render_logout_trigger(self):
+        share = SupervisorAttendanceShare.objects.create()
+
+        response = self.client.get(reverse('halaqas:supervisor_attendance_share', args=[share.token]))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, 'data-logout-trigger')
+        self.assertNotContains(response, 'data-logout-dialog')
+
     def test_public_supervisor_share_saves_attendance_without_login(self):
         share = SupervisorAttendanceShare.objects.create()
         url = reverse('halaqas:supervisor_attendance_share', args=[share.token])
