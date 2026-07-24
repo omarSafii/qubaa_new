@@ -1463,12 +1463,10 @@
 
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">
-        <div class="institute-logo">
-          <i class="fas fa-book-quran"></i>
-        </div>
+      <div class="navbar-brand">
+        {% include "accounts/_logout_icon.html" with icon_class="institute-logo" %}
         معهد قباء لتحفيظ القرآن الكريم
-      </a>
+      </div>
 
       <div class="teacher-info">
         <div class="teacher-avatar">
@@ -1484,13 +1482,6 @@
           </div>
           <div class="small">الحلقة: {{ halaqa.name }}</div>
         </div>
-        <form method="post" action="{% url 'logout' %}">
-          {% csrf_token %}
-          <button class="btn btn-sm btn-outline-light" type="submit">
-            <i class="fas fa-right-from-bracket"></i>
-            تسجيل الخروج
-          </button>
-        </form>
       </div>
     </div>
   </nav>
@@ -3883,5 +3874,6 @@
     });
   </script>
 
-  </body>
+  {% include "accounts/_logout_dialog.html" %}
+</body>
 </html>

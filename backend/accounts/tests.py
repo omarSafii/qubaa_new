@@ -183,6 +183,41 @@ class TeacherSessionLoginTests(TestCase):
         self.assertEqual(response.status_code, 405)
         self.assertIn('_auth_user_id', self.client.session)
 
+    def test_quran_icon_is_logout_trigger_on_teacher_page_without_old_text_button(self):
+        user, _teacher, halaqa = self.create_teacher('icon_teacher', 'Icon Teacher')
+        self.client.force_login(user)
+
+        response = self.client.get(reverse('halaqas:halaqa_detail', args=[halaqa.pk]))
+
+        self.assertContains(response, 'data-logout-trigger')
+        self.assertContains(response, 'title="تسجيل الخروج"')
+        self.assertContains(response, 'هل أنت متأكد أنك تريد تسجيل الخروج؟')
+        self.assertNotContains(response, 'btn-outline-light')
+
+    def test_logout_cancel_control_is_client_side_and_does_not_end_session(self):
+        user, _teacher, halaqa = self.create_teacher('cancel_teacher', 'Cancel Teacher')
+        self.client.force_login(user)
+
+        response = self.client.get(reverse('halaqas:halaqa_detail', args=[halaqa.pk]))
+
+        self.assertContains(response, 'data-logout-cancel')
+        self.assertContains(response, 'type="button" data-logout-cancel')
+        self.assertIn('_auth_user_id', self.client.session)
+
+    def test_quran_icon_is_logout_trigger_on_custom_admin_page(self):
+        admin = get_user_model().objects.create_user(
+            username='icon_admin',
+            password='StrongPass123!',
+            is_staff=True,
+        )
+        self.client.force_login(admin)
+
+        response = self.client.get(reverse('halaqas:master_admin_dashboard'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'data-logout-trigger')
+        self.assertContains(response, 'هل أنت متأكد أنك تريد تسجيل الخروج؟')
+
     def test_admin_and_supervisor_login_redirects_are_unchanged(self):
         admin = get_user_model().objects.create_user(
             username='login_admin',

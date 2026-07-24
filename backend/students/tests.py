@@ -1,8 +1,9 @@
 from datetime import datetime, time, timedelta
 
 from django.contrib.auth import get_user_model
-from django.db import IntegrityError, transaction
+from django.db import IntegrityError, connection, transaction
 from django.test import TestCase
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 from django.utils import timezone
 
@@ -273,3 +274,180 @@ class StudentReadOnlyViewTests(TestCase):
         self.assertEqual(response.context['summary']['latest_recitation']['surah'], 'صفحة 8')
         self.assertContains(response, 'صفحة 8')
         self.assertNotContains(response, 'صفحات صفحة 8')
+
+    def test_parent_page_header_uses_real_student_name(self):
+        response = self.client.get(reverse('students:students_data', args=[self.student.access_token]))
+
+        self.assertContains(response, 'السلام عليكم ورحمة الله وبركاته')
+        self.assertContains(response, f'صفحة ولي أمر الطالب: {self.student.name}')
+        self.assertNotContains(response, str(self.student.access_token))
+
+    def test_latest_recitation_and_next_homework_are_real_records(self):
+        today = timezone.localdate()
+        MemorizationRecord.objects.create(
+            student=self.student,
+            halaqa=self.halaqa,
+            surah='النبأ',
+            from_verse=1,
+            to_verse=12,
+            date=today,
+            evaluation='excellent',
+            notes='قراءة متقنة',
+        )
+        Homework.objects.create(
+            student=self.student,
+            halaqa=self.halaqa,
+            assigned_date=today,
+            assignment_type='pages',
+            assignment_text='الصفحات 20-22',
+            pages='20-22',
+            expected_recitation_date=today + timedelta(days=3),
+            assignment_notes='مراجعة هادئة',
+        )
+
+        response = self.client.get(reverse('students:students_data', args=[self.student.access_token]))
+
+        self.assertContains(response, 'سورة النبأ')
+        self.assertContains(response, 'قراءة متقنة')
+        self.assertContains(response, 'الصفحات 20-22')
+        self.assertContains(response, 'مراجعة هادئة')
+
+    def test_empty_parent_page_has_friendly_states(self):
+        response = self.client.get(reverse('students:students_data', args=[self.student.access_token]))
+
+        self.assertContains(response, 'لم يُسجل تسميع بعد')
+        self.assertContains(response, 'لم يُحدد التسميع القادم بعد')
+        self.assertContains(response, 'لا توجد سجلات للطالب ضمن الفترة المحددة')
+
+    def test_unified_days_are_identical_and_multiple_points_share_one_row(self):
+        today = timezone.localdate()
+        session = Session.objects.create(
+            halaqa=self.halaqa,
+            date=today,
+            start_time=time(16, 0),
+            end_time=time(18, 0),
+        )
+        Attendance.objects.create(session=session, student=self.student, status='present')
+        for value in (3, 4):
+            PointTransaction.objects.create(
+                student=self.student,
+                halaqa=self.halaqa,
+                value=value,
+                reason='نشاط',
+                date=timezone.make_aware(datetime.combine(today, time(12, value))),
+            )
+
+        response = self.client.get(reverse('students:students_data', args=[self.student.access_token]))
+        rows = response.context['parent_dashboard']['rows']
+
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]['date'], today)
+        self.assertEqual(len(rows[0]['points']), 2)
+        self.assertEqual(rows[0]['points_total'], 7)
+        self.assertGreaterEqual(response.content.decode().count(today.isoformat()), 5)
+
+    def test_absence_and_missing_attendance_have_distinct_messages(self):
+        today = timezone.localdate()
+        absent_day = today - timedelta(days=1)
+        session = Session.objects.create(
+            halaqa=self.halaqa,
+            date=absent_day,
+            start_time=time(16, 0),
+            end_time=time(18, 0),
+        )
+        Attendance.objects.create(session=session, student=self.student, status='absent')
+        PointTransaction.objects.create(
+            student=self.student,
+            halaqa=self.halaqa,
+            value=0,
+            reason='قيمة فعلية صفر',
+            date=timezone.make_aware(datetime.combine(today, time(12, 0))),
+        )
+
+        response = self.client.get(reverse('students:students_data', args=[self.student.access_token]))
+
+        self.assertContains(response, 'الطالب غائب، لذلك لا توجد بيانات لهذا اليوم')
+        self.assertContains(response, 'لم تُسجل حالة الحضور لهذا اليوم')
+        self.assertContains(response, 'المجموع: 0')
+
+    def test_present_day_without_points_has_clear_message(self):
+        today = timezone.localdate()
+        session = Session.objects.create(
+            halaqa=self.halaqa,
+            date=today,
+            start_time=time(16, 0),
+            end_time=time(18, 0),
+        )
+        Attendance.objects.create(session=session, student=self.student, status='present')
+
+        response = self.client.get(reverse('students:students_data', args=[self.student.access_token]))
+
+        self.assertContains(response, 'لم تُسجل نقاط لهذا اليوم')
+
+    def test_date_filter_and_pagination_preserve_tab(self):
+        today = timezone.localdate()
+        for offset in range(12):
+            MemorizationRecord.objects.create(
+                student=self.student,
+                halaqa=self.halaqa,
+                pages=f'صفحة {offset + 1}',
+                date=today - timedelta(days=offset),
+            )
+
+        response = self.client.get(
+            reverse('students:students_data', args=[self.student.access_token]),
+            {'scope': 'all', 'page': 2, 'tab': 'points'},
+        )
+
+        dashboard = response.context['parent_dashboard']
+        self.assertEqual(dashboard['page_obj'].number, 2)
+        self.assertEqual(len(dashboard['rows']), 2)
+        self.assertEqual(dashboard['active_tab'], 'points')
+        self.assertIn('tab=points', dashboard['filter_query'])
+
+        filtered = self.client.get(
+            reverse('students:students_data', args=[self.student.access_token]),
+            {
+                'start_date': (today - timedelta(days=2)).isoformat(),
+                'end_date': today.isoformat(),
+            },
+        )
+        self.assertEqual(len(filtered.context['parent_dashboard']['rows']), 3)
+
+    def test_parent_token_never_leaks_another_students_records(self):
+        other_parent = User.objects.create_user(username='other_parent_dashboard', password='StrongPass123!')
+        other_student = Student.objects.create(
+            name='طالب آخر',
+            birth_date='2013-01-01',
+            parent=other_parent,
+        )
+        HalaqaMembership.objects.create(student=other_student, halaqa=self.halaqa, is_active=True)
+        MemorizationRecord.objects.create(
+            student=other_student,
+            halaqa=self.halaqa,
+            pages='بيانات الطالب الآخر',
+            date=timezone.localdate(),
+        )
+
+        response = self.client.get(reverse('students:students_data', args=[self.student.access_token]))
+
+        self.assertNotContains(response, 'بيانات الطالب الآخر')
+        self.assertNotContains(response, other_student.name)
+
+    def test_query_count_does_not_scale_per_daily_record(self):
+        url = reverse('students:students_data', args=[self.student.access_token])
+        with CaptureQueriesContext(connection) as initial_queries:
+            self.client.get(url)
+
+        today = timezone.localdate()
+        for offset in range(8):
+            MemorizationRecord.objects.create(
+                student=self.student,
+                halaqa=self.halaqa,
+                pages=f'صفحة {offset}',
+                date=today - timedelta(days=offset),
+            )
+        with CaptureQueriesContext(connection) as populated_queries:
+            self.client.get(url)
+
+        self.assertLess(len(populated_queries) - len(initial_queries), 8)

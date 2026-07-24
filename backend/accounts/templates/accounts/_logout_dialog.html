@@ -1,0 +1,85 @@
+<style>
+  .logout-icon-trigger {
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    font: inherit;
+  }
+  .logout-icon-trigger:focus-visible {
+    outline: 3px solid rgba(255, 255, 255, .95);
+    outline-offset: 3px;
+  }
+  .logout-confirmation[hidden] { display: none; }
+  .logout-confirmation {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: rgba(3, 20, 30, .62);
+    backdrop-filter: blur(5px);
+  }
+  .logout-confirmation__card {
+    width: min(100%, 420px);
+    border-radius: 20px;
+    background: #fff;
+    color: #0B3C54;
+    padding: 26px;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, .28);
+    text-align: right;
+  }
+  .logout-confirmation__card h2 {
+    margin: 0 0 20px;
+    font-size: 1.15rem;
+    line-height: 1.7;
+  }
+  .logout-confirmation__actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .logout-confirmation__actions .btn { flex: 1 1 150px; }
+</style>
+
+<div class="logout-confirmation" data-logout-dialog hidden role="dialog" aria-modal="true" aria-labelledby="logout-confirmation-title">
+  <div class="logout-confirmation__card">
+    <h2 id="logout-confirmation-title">هل أنت متأكد أنك تريد تسجيل الخروج؟</h2>
+    <div class="logout-confirmation__actions">
+      <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button class="btn btn-danger" type="submit">تسجيل الخروج</button>
+      </form>
+      <button class="btn btn-outline-secondary" type="button" data-logout-cancel>إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (() => {
+    const dialog = document.querySelector('[data-logout-dialog]');
+    if (!dialog) return;
+    const cancel = dialog.querySelector('[data-logout-cancel]');
+    let opener = null;
+
+    const closeDialog = () => {
+      dialog.hidden = true;
+      opener?.focus();
+    };
+
+    document.querySelectorAll('[data-logout-trigger]').forEach((trigger) => {
+      trigger.addEventListener('click', () => {
+        opener = trigger;
+        dialog.hidden = false;
+        cancel?.focus();
+      });
+    });
+    cancel?.addEventListener('click', closeDialog);
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) closeDialog();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !dialog.hidden) closeDialog();
+    });
+  })();
+</script>

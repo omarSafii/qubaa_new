@@ -838,15 +838,13 @@
 
     <nav class="navbar navbar-dark fixed-top admin-navbar">
         <div class="container-fluid">
-            <a class="navbar-brand admin-brand" href="{% block brand_link %}#{% endblock %}">
-                <div class="brand-mark">
-                    <i class="fas fa-book-quran"></i>
-                </div>
+            <div class="navbar-brand admin-brand">
+                {% include "accounts/_logout_icon.html" with icon_class="brand-mark" %}
                 <div class="brand-text">
-                    <strong>{{ brand_title|default:"معهد قباء لتحفيظ القرآن الكريم" }}</strong>
+                    <strong><a class="text-white" href="{% block brand_link %}#{% endblock %}">{{ brand_title|default:"معهد قباء لتحفيظ القرآن الكريم" }}</a></strong>
                     <span>{{ brand_subtitle|default:"لوحة تشغيل موحدة" }}</span>
                 </div>
-            </a>
+            </div>
 
             <div class="admin-user">
                 <div class="admin-user__avatar">
@@ -863,6 +861,7 @@
     <main class="page-shell container-fluid">
         {% block page_content %}{% endblock %}
     </main>
+    {% include "accounts/_logout_dialog.html" %}
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {

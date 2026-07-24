@@ -18,6 +18,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from halaqas.access import request_can_access_halaqa
 from halaqas.models import Attendance, Halaqa, HalaqaMembership, Homework, Plan, PointTransaction, Session, Teacher
 from .models import MemorizationRecord, Student
+from .parent_dashboard import build_parent_daily_log
 from .serializers import MemorizationRecordSerializer, StudentRegistrationSerializer, StudentSerializer
 
 
@@ -143,6 +144,8 @@ def _resolve_report_range(request, today):
     raw_month = request.GET.get('month', '')
     raw_start = request.GET.get('start_date', '')
     raw_end = request.GET.get('end_date', '')
+    if raw_start or raw_end:
+        raw_range = 'custom'
 
     if raw_range == 'today':
         start_date = today
@@ -788,6 +791,11 @@ class StudentViewSet(
             is_active=True,
         ).select_related('halaqa').order_by('-join_date', '-id').first()
         halaqa = Halaqa.objects.filter(pk=membership.halaqa_id).first() if membership else None
+        parent_dashboard = build_parent_daily_log(
+            student=student,
+            halaqa=halaqa,
+            request=request,
+        )
 
         attendance_qs = Attendance.objects.none()
         points_qs = PointTransaction.objects.none()
@@ -1039,6 +1047,9 @@ class StudentViewSet(
         memorization_daily = {
             day: 0 for day in chart_days
         }
+        memorization_pages_daily = {
+            day: 0 for day in chart_days
+        }
         points_daily = {
             day: 0 for day in chart_days
         }
@@ -1055,6 +1066,7 @@ class StudentViewSet(
 
         for record in memorization_records:
             memorization_daily[record.date] += record.verses_count
+            memorization_pages_daily[record.date] += _estimate_recited_pages(record)
         for transaction in point_transactions:
             points_daily[transaction.date.date()] += transaction.value
         for attendance in attendance_records:
@@ -1244,7 +1256,7 @@ class StudentViewSet(
             },
         }
 
-        return render(request, 'students/students_data.html', {
+        return render(request, 'students/parent_dashboard.html', {
             'student': student,
             'halaqa': halaqa,
             'parent_name': student.parent.first_name if student.parent else '',
@@ -1270,6 +1282,7 @@ class StudentViewSet(
             'memorization_chart': {
                 'labels': day_labels,
                 'values': memorization_values,
+                'pages': [memorization_pages_daily[day] for day in chart_days],
             },
             'points_chart': {
                 'labels': day_labels,
@@ -1286,6 +1299,7 @@ class StudentViewSet(
                 'actual': current_plan_progress['actual_values'],
             },
             'plan_progress': current_plan_progress,
+            'parent_dashboard': parent_dashboard,
             'homework_status_chart': {
                 'labels': ['منجز', 'جزئي', 'غير منجز', 'بانتظار التقييم'],
                 'values': [
