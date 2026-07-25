@@ -1,3 +1,4 @@
+import re
 from datetime import datetime, time, timedelta
 
 from django.contrib.auth import get_user_model
@@ -93,6 +94,17 @@ class StudentReadOnlyViewTests(TestCase):
             grade='ابتدائي خامس',
         )
         HalaqaMembership.objects.create(student=self.student, halaqa=self.halaqa, is_active=True)
+
+    def seed_memorization_days(self, count):
+        today = timezone.localdate()
+        for offset in range(count):
+            MemorizationRecord.objects.create(
+                student=self.student,
+                halaqa=self.halaqa,
+                pages=f'صفحة {offset + 1}',
+                date=today - timedelta(days=offset),
+            )
+        return today
 
     def test_students_data_route_uses_existing_retrieve_view_without_creating_session(self):
         response = self.client.get(reverse('students:students_data', args=[self.student.access_token]))
@@ -319,6 +331,68 @@ class StudentReadOnlyViewTests(TestCase):
         self.assertContains(response, 'لم يُحدد التسميع القادم بعد')
         self.assertContains(response, 'لا توجد سجلات للطالب ضمن الفترة المحددة')
 
+    def test_parent_page_defaults_to_memorization_tab_and_90_day_period(self):
+        response = self.client.get(reverse('students:students_data', args=[self.student.access_token]))
+
+        dashboard = response.context['parent_dashboard']
+        self.assertEqual(dashboard['active_tab'], 'memorization')
+        self.assertEqual(dashboard['period'], '90')
+        self.assertContains(response, 'value="90" selected')
+        self.assertNotContains(response, 'name="start_date"')
+        self.assertNotContains(response, 'name="end_date"')
+        self.assertNotContains(response, '>تطبيق<', html=True)
+        self.assertNotContains(response, '>مسح الفلتر<', html=True)
+
+    def test_period_options_30_90_180_and_all_work(self):
+        self.seed_memorization_days(200)
+        url = reverse('students:students_data', args=[self.student.access_token])
+
+        recent_30 = self.client.get(url, {'period': '30'})
+        recent_90 = self.client.get(url, {'period': '90'})
+        recent_180 = self.client.get(url, {'period': '180'})
+        all_days = self.client.get(url, {'period': 'all'})
+
+        self.assertEqual(recent_30.context['parent_dashboard']['total_days'], 30)
+        self.assertEqual(recent_90.context['parent_dashboard']['total_days'], 90)
+        self.assertEqual(recent_180.context['parent_dashboard']['total_days'], 180)
+        self.assertEqual(all_days.context['parent_dashboard']['total_days'], 200)
+        self.assertEqual(len(all_days.context['parent_dashboard']['rows']), 10)
+        self.assertGreater(all_days.context['parent_dashboard']['page_obj'].paginator.num_pages, 1)
+
+    def test_invalid_tab_and_period_fall_back_to_defaults(self):
+        response = self.client.get(
+            reverse('students:students_data', args=[self.student.access_token]),
+            {'tab': 'unknown', 'period': '999'},
+        )
+
+        dashboard = response.context['parent_dashboard']
+        self.assertEqual(dashboard['active_tab'], 'memorization')
+        self.assertEqual(dashboard['period'], '90')
+
+    def test_charts_render_inside_charts_tab_only(self):
+        response = self.client.get(reverse('students:students_data', args=[self.student.access_token]))
+        html = response.content.decode()
+        before_charts, marker, charts_panel = html.partition('data-panel="charts"')
+
+        self.assertTrue(marker)
+        self.assertNotIn('سير الخطة', before_charts)
+        self.assertNotIn('تقدم الطالب في الحفظ', before_charts)
+        self.assertNotIn('الأداء العام', before_charts)
+        self.assertIn('سير الخطة', charts_panel)
+        self.assertIn('تقدم الطالب في الحفظ', charts_panel)
+        self.assertIn('الأداء العام', charts_panel)
+
+    def test_charts_tab_hides_pagination_and_uses_charts_active_state(self):
+        self.seed_memorization_days(12)
+        response = self.client.get(
+            reverse('students:students_data', args=[self.student.access_token]),
+            {'tab': 'charts', 'period': 'all', 'page': 2},
+        )
+
+        self.assertEqual(response.context['parent_dashboard']['active_tab'], 'charts')
+        self.assertContains(response, 'data-pagination-wrap hidden')
+        self.assertContains(response, 'data-panel="charts"')
+
     def test_unified_days_are_identical_and_multiple_points_share_one_row(self):
         today = timezone.localdate()
         session = Session.objects.create(
@@ -396,14 +470,16 @@ class StudentReadOnlyViewTests(TestCase):
 
         response = self.client.get(
             reverse('students:students_data', args=[self.student.access_token]),
-            {'scope': 'all', 'page': 2, 'tab': 'points'},
+            {'period': 'all', 'page': 2, 'tab': 'points'},
         )
 
         dashboard = response.context['parent_dashboard']
         self.assertEqual(dashboard['page_obj'].number, 2)
         self.assertEqual(len(dashboard['rows']), 2)
         self.assertEqual(dashboard['active_tab'], 'points')
+        self.assertEqual(dashboard['period'], 'all')
         self.assertIn('tab=points', dashboard['filter_query'])
+        self.assertIn('period=all', dashboard['filter_query'])
 
         filtered = self.client.get(
             reverse('students:students_data', args=[self.student.access_token]),
@@ -413,6 +489,45 @@ class StudentReadOnlyViewTests(TestCase):
             },
         )
         self.assertEqual(len(filtered.context['parent_dashboard']['rows']), 3)
+
+    def test_period_change_preserves_current_tab_state(self):
+        self.seed_memorization_days(40)
+        response = self.client.get(
+            reverse('students:students_data', args=[self.student.access_token]),
+            {'tab': 'attendance', 'period': '30'},
+        )
+
+        dashboard = response.context['parent_dashboard']
+        self.assertEqual(dashboard['active_tab'], 'attendance')
+        self.assertEqual(dashboard['period'], '30')
+        self.assertContains(response, 'id="activeTabInput" value="attendance"')
+        self.assertContains(response, 'value="30" selected')
+
+    def test_table_tabs_share_same_unified_days_and_row_count(self):
+        self.seed_memorization_days(14)
+        url = reverse('students:students_data', args=[self.student.access_token])
+
+        memorization_response = self.client.get(url, {'period': 'all', 'page': 2, 'tab': 'memorization'})
+        attendance_response = self.client.get(url, {'period': 'all', 'page': 2, 'tab': 'attendance'})
+        points_response = self.client.get(url, {'period': 'all', 'page': 2, 'tab': 'points'})
+
+        memorization_rows = memorization_response.context['parent_dashboard']['rows']
+        attendance_rows = attendance_response.context['parent_dashboard']['rows']
+        points_rows = points_response.context['parent_dashboard']['rows']
+
+        self.assertEqual([row['date'] for row in memorization_rows], [row['date'] for row in attendance_rows])
+        self.assertEqual([row['date'] for row in memorization_rows], [row['date'] for row in points_rows])
+        self.assertEqual(len(memorization_rows), len(attendance_rows))
+        self.assertEqual(len(memorization_rows), len(points_rows))
+
+    def test_parent_page_includes_sticky_tabs_and_mobile_layout_rules(self):
+        response = self.client.get(reverse('students:students_data', args=[self.student.access_token]))
+        html = response.content.decode()
+
+        self.assertIn('position: sticky;', html)
+        self.assertIn('overflow-x: auto;', html)
+        self.assertIn('@media (max-width: 600px)', html)
+        self.assertRegex(html, re.compile(r'data-tab="charts"', re.S))
 
     def test_parent_token_never_leaks_another_students_records(self):
         other_parent = User.objects.create_user(username='other_parent_dashboard', password='StrongPass123!')

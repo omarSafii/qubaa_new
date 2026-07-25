@@ -13,26 +13,49 @@ from .models import MemorizationRecord
 
 
 PAGE_SIZE = 10
-RECENT_DAYS = 90
-VALID_TABS = {"memorization", "plan", "attendance", "homework", "points"}
+DEFAULT_PERIOD = "90"
+PERIOD_DAY_OPTIONS = {
+    "30": 30,
+    "90": 90,
+    "180": 180,
+    "all": None,
+}
+VALID_TABS = {"memorization", "plan", "attendance", "homework", "points", "charts"}
+
+
+def _normalized_period(request, *, has_custom_dates):
+    period = (request.GET.get("period", "") or "").strip()
+    legacy_scope = (request.GET.get("scope", "") or "").strip()
+
+    if period in PERIOD_DAY_OPTIONS:
+        return period
+    if has_custom_dates:
+        return DEFAULT_PERIOD
+    if legacy_scope == "all":
+        return "all"
+    return DEFAULT_PERIOD
 
 
 def _range_from_request(request):
     today = timezone.localdate()
-    scope = request.GET.get("scope", "recent")
     start = parse_date(request.GET.get("start_date", "") or request.GET.get("from_date", ""))
     end = parse_date(request.GET.get("end_date", "") or request.GET.get("to_date", ""))
+    has_custom_dates = bool(start or end)
+    period = _normalized_period(request, has_custom_dates=has_custom_dates)
 
-    if start or end:
-        scope = "custom"
-    if scope == "all" and not start and not end:
-        return scope, None, None
+    if has_custom_dates:
+        start = start or today - timedelta(days=PERIOD_DAY_OPTIONS[DEFAULT_PERIOD] - 1)
+        end = min(end or today, today)
+        if start > end:
+            start, end = end, start
+        return period, start, end, True
 
-    start = start or today - timedelta(days=RECENT_DAYS - 1)
-    end = min(end or today, today)
-    if start > end:
-        start, end = end, start
-    return scope, start, end
+    if period == "all":
+        return period, None, None, False
+
+    period_days = PERIOD_DAY_OPTIONS[period]
+    start = today - timedelta(days=period_days - 1)
+    return period, start, today, False
 
 
 def _within_range(queryset, field, start, end):
@@ -50,7 +73,7 @@ def _absence_message(row, empty_message):
 
 
 def build_parent_daily_log(*, student, halaqa, request):
-    scope, start, end = _range_from_request(request)
+    period, start, end, uses_custom_dates = _range_from_request(request)
     active_tab = request.GET.get("tab", "memorization")
     if active_tab not in VALID_TABS:
         active_tab = "memorization"
@@ -159,24 +182,29 @@ def build_parent_daily_log(*, student, halaqa, request):
     ).first()
 
     preserved = {
-        "scope": scope,
-        "start_date": start.isoformat() if start else "",
-        "end_date": end.isoformat() if end else "",
+        "period": period,
         "tab": active_tab,
     }
+    if uses_custom_dates:
+        preserved["start_date"] = start.isoformat() if start else ""
+        preserved["end_date"] = end.isoformat() if end else ""
     filter_query = urlencode({key: value for key, value in preserved.items() if value})
 
     return {
         "rows": daily_rows,
         "page_obj": page_obj,
         "active_tab": active_tab,
-        "scope": scope,
-        "from_date": preserved["start_date"],
-        "to_date": preserved["end_date"],
+        "period": period,
+        "uses_custom_dates": uses_custom_dates,
         "filter_query": filter_query,
         "latest_recitation": latest_recitation,
         "next_homework": next_homework,
         "is_empty": not activity_days,
         "total_days": len(activity_days),
-        "recent_days": RECENT_DAYS,
+        "period_options": [
+            {"value": "30", "label": "آخر 30 يومًا"},
+            {"value": "90", "label": "آخر 90 يومًا"},
+            {"value": "180", "label": "آخر 180 يومًا"},
+            {"value": "all", "label": "الكل"},
+        ],
     }

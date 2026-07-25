@@ -58,7 +58,7 @@
     .hero-meta span { padding: 7px 12px; border-radius: 999px; background: rgba(255,255,255,.12); }
     .section-title { margin: 32px 2px 14px; font-size: 1.25rem; font-weight: 900; }
     .recitation-grid, .charts-grid { display: grid; gap: 14px; }
-    .info-card, .chart-card, .filter-card, .details-card {
+    .info-card, .chart-card, .details-card {
       border: 1px solid var(--border);
       border-radius: 20px;
       background: var(--surface);
@@ -79,17 +79,29 @@
     .chart-card p { color: var(--muted); font-size: .85rem; margin: 0 0 14px; }
     .chart-wrap { position: relative; height: 250px; }
     .chart-empty { display: none; height: 100%; place-items: center; color: var(--muted); text-align: center; }
-    .filter-card { padding: 16px; }
-    .filter-grid { display: grid; gap: 12px; }
-    .filter-actions { display: flex; gap: 8px; align-items: end; flex-wrap: wrap; }
-    .details-card { overflow: hidden; }
+    .details-card { overflow: visible; }
+    .details-sticky {
+      position: sticky;
+      top: 10px;
+      z-index: 30;
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      border-radius: 20px 20px 0 0;
+      background: rgba(248, 251, 252, .94);
+      backdrop-filter: blur(10px);
+    }
+    .details-toolbar {
+      display: grid;
+      gap: 10px;
+      align-items: center;
+    }
     .tabs {
       display: flex;
       gap: 6px;
       overflow-x: auto;
-      padding: 10px;
-      border-bottom: 1px solid var(--border);
+      padding: 0;
       scrollbar-width: thin;
+      min-width: 0;
     }
     .tab-button {
       border: 0;
@@ -99,9 +111,49 @@
       background: #edf3f5;
       color: var(--navy);
       font-weight: 800;
+      transition: background .18s ease, color .18s ease, box-shadow .18s ease;
     }
     .tab-button.active { background: var(--navy); color: #fff; }
-    .tab-panel { padding: 12px; }
+    .tab-button:hover { background: #dde8ec; }
+    .tab-button:focus-visible {
+      outline: 3px solid rgba(11, 60, 84, .18);
+      outline-offset: 2px;
+    }
+    .period-filter {
+      display: grid;
+      gap: 6px;
+      width: min(100%, 220px);
+      justify-self: start;
+    }
+    .period-label {
+      margin: 0;
+      color: var(--muted);
+      font-size: .86rem;
+      font-weight: 800;
+    }
+    .period-select {
+      min-height: 42px;
+      padding: 0 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--navy);
+      font-weight: 800;
+      box-shadow: none;
+    }
+    .period-select:focus {
+      border-color: rgba(49,97,127,.55);
+      outline: 0;
+      box-shadow: 0 0 0 .18rem rgba(49,97,127,.12);
+    }
+    .tab-panel { padding: 16px; }
+    .tab-panel-copy {
+      margin: 0 0 14px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .tab-panel--charts { padding-top: 18px; }
+    .daily-table-wrap { overflow-x: auto; }
     .daily-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
     .daily-table th { padding: 8px 12px; color: var(--muted); font-size: .85rem; }
     .daily-table td { padding: 14px 12px; background: #f8fafb; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); vertical-align: top; }
@@ -113,18 +165,23 @@
     .absence { color: #b42318; font-weight: 800; }
     .badge-soft { display: inline-flex; padding: 5px 9px; border-radius: 999px; background: rgba(49,97,127,.10); }
     .pagination-wrap { display: flex; justify-content: center; gap: 8px; align-items: center; flex-wrap: wrap; padding: 16px; }
+    .pagination-wrap[hidden] { display: none; }
     .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
     @media (min-width: 760px) {
       .page-shell { width: min(1180px, calc(100% - 40px)); padding-top: 28px; }
       .recitation-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .charts-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .chart-card.performance { grid-column: 1 / -1; }
-      .filter-grid { grid-template-columns: 1fr 1fr 1fr auto; align-items: end; }
+      .details-toolbar { grid-template-columns: minmax(0, 1fr) auto; }
+      .period-filter { justify-self: end; }
     }
     @media (max-width: 600px) {
       .page-shell { width: min(100% - 16px, 1180px); }
       .hero { border-radius: 18px; padding: 22px 16px; }
       .chart-wrap { height: 220px; }
+      .details-sticky { top: 8px; padding: 10px; }
+      .period-filter { width: min(100%, 210px); }
+      .tab-panel { padding: 12px; }
       .daily-table thead { display: none; }
       .daily-table, .daily-table tbody, .daily-table tr, .daily-table td { display: block; width: 100%; }
       .daily-table tr { margin-bottom: 10px; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
@@ -185,61 +242,27 @@
       </article>
     </section>
 
-    <h2 class="section-title">الرسوم البيانية</h2>
-    <section class="charts-grid">
-      <article class="chart-card">
-        <h3>سير الخطة</h3><p>المخطط والمنجز عبر أيام الخطة</p>
-        <div class="chart-wrap"><canvas id="planChart"></canvas><div class="chart-empty" id="planEmpty">لا توجد خطة قابلة للرسم</div></div>
-        {% if summary.plan.total_pages %}
-          <p class="mt-2 mb-0">عدد صفحات الخطة: {{ summary.plan.total_pages }} صفحة — المتبقي {{ summary.plan.remaining_pages }} صفحة</p>
-        {% endif %}
-      </article>
-      <article class="chart-card">
-        <h3>تقدم الطالب في الحفظ</h3><p>الصفحات أو الآيات المنجزة بحسب التاريخ</p>
-        <div class="chart-wrap"><canvas id="memorizationChart"></canvas><div class="chart-empty" id="memorizationEmpty">لا توجد بيانات حفظ في الفترة</div></div>
-      </article>
-      <article class="chart-card">
-        <h3>الحضور</h3><p>حاضر، معذور، أو غائب كما سُجل فعليًا</p>
-        <div class="chart-wrap"><canvas id="attendanceChart"></canvas><div class="chart-empty" id="attendanceEmpty">لا توجد سجلات حضور في الفترة</div></div>
-      </article>
-      <article class="chart-card">
-        <h3>النقاط</h3><p>المجموع التراكمي للنقاط بمرور الوقت</p>
-        <div class="chart-wrap"><canvas id="pointsChart"></canvas><div class="chart-empty" id="pointsEmpty">لا توجد نقاط في الفترة</div></div>
-      </article>
-      <article class="chart-card performance">
-        <h3>الأداء العام</h3><p>مؤشرات مستقلة بلا نسبة مركبة أو أوزان مفترضة</p>
-        <div class="chart-wrap"><canvas id="performanceChart"></canvas><div class="chart-empty" id="performanceEmpty">لا توجد مؤشرات كافية</div></div>
-      </article>
-    </section>
-
-    <h2 class="section-title">السجل اليومي</h2>
-    <form class="filter-card" method="get">
-      <div class="filter-grid">
-        <div>
-          <label class="form-label" for="scope">الفترة</label>
-          <select class="form-select" id="scope" name="scope">
-            <option value="recent" {% if parent_dashboard.scope == "recent" %}selected{% endif %}>آخر {{ parent_dashboard.recent_days }} يومًا</option>
-            <option value="all" {% if parent_dashboard.scope == "all" %}selected{% endif %}>إظهار الكل</option>
-          </select>
+    <section class="details-card mt-4">
+      <div class="details-sticky">
+        <div class="details-toolbar">
+          <div class="tabs" role="tablist" aria-label="تفاصيل متابعة الطالب">
+            <button class="tab-button {% if parent_dashboard.active_tab == 'memorization' %}active{% endif %}" type="button" data-tab="memorization">التسميع والحفظ</button>
+            <button class="tab-button {% if parent_dashboard.active_tab == 'plan' %}active{% endif %}" type="button" data-tab="plan">الخطة</button>
+            <button class="tab-button {% if parent_dashboard.active_tab == 'attendance' %}active{% endif %}" type="button" data-tab="attendance" aria-label="عرض سجل الحضور">الحضور</button>
+            <button class="tab-button {% if parent_dashboard.active_tab == 'homework' %}active{% endif %}" type="button" data-tab="homework">الواجبات</button>
+            <button class="tab-button {% if parent_dashboard.active_tab == 'points' %}active{% endif %}" type="button" data-tab="points">النقاط</button>
+            <button class="tab-button {% if parent_dashboard.active_tab == 'charts' %}active{% endif %}" type="button" data-tab="charts">الرسوم البيانية</button>
+          </div>
+          <div class="period-filter">
+            <label class="period-label" for="periodSelect">الفترة</label>
+            <select class="period-select" id="periodSelect" name="period">
+              {% for option in parent_dashboard.period_options %}
+                <option value="{{ option.value }}" {% if parent_dashboard.period == option.value %}selected{% endif %}>{{ option.label }}</option>
+              {% endfor %}
+            </select>
+            <input type="hidden" id="activeTabInput" value="{{ parent_dashboard.active_tab }}">
+          </div>
         </div>
-        <div><label class="form-label" for="start_date">من تاريخ</label><input class="form-control" id="start_date" name="start_date" type="date" value="{{ parent_dashboard.from_date }}"></div>
-        <div><label class="form-label" for="end_date">إلى تاريخ</label><input class="form-control" id="end_date" name="end_date" type="date" value="{{ parent_dashboard.to_date }}"></div>
-        <div class="filter-actions">
-          <input type="hidden" name="range" value="custom">
-          <input type="hidden" name="tab" id="activeTabInput" value="{{ parent_dashboard.active_tab }}">
-          <button class="btn btn-primary" type="submit">تطبيق</button>
-          <a class="btn btn-outline-secondary" href="?scope=recent">مسح الفلتر</a>
-        </div>
-      </div>
-    </form>
-
-    <section class="details-card mt-3">
-      <div class="tabs" role="tablist" aria-label="تفاصيل متابعة الطالب">
-        <button class="tab-button {% if parent_dashboard.active_tab == 'memorization' %}active{% endif %}" type="button" data-tab="memorization">التسميع والحفظ</button>
-        <button class="tab-button {% if parent_dashboard.active_tab == 'plan' %}active{% endif %}" type="button" data-tab="plan">الخطة</button>
-        <button class="tab-button {% if parent_dashboard.active_tab == 'attendance' %}active{% endif %}" type="button" data-tab="attendance" aria-label="عرض سجل الحضور">الحضور</button>
-        <button class="tab-button {% if parent_dashboard.active_tab == 'homework' %}active{% endif %}" type="button" data-tab="homework">الواجبات</button>
-        <button class="tab-button {% if parent_dashboard.active_tab == 'points' %}active{% endif %}" type="button" data-tab="points">النقاط</button>
       </div>
 
       {% if parent_dashboard.is_empty %}
@@ -247,36 +270,170 @@
       {% endif %}
 
       <div class="tab-panel" data-panel="memorization" {% if parent_dashboard.active_tab != 'memorization' %}hidden{% endif %}>
-        <table class="daily-table"><thead><tr><th>التاريخ</th><th>التسميع والحفظ</th></tr></thead><tbody>
-          {% for row in parent_dashboard.rows %}<tr><td>{{ row.date|date:"Y-m-d" }}</td><td>{% if row.memorization %}<ul class="record-list">{% for item in row.memorization %}<li>{{ item.recitation_title }}{% if item.recitation_range %} ({{ item.recitation_range }}){% endif %} — {% if item.evaluation %}{{ item.get_evaluation_display }}{% else %}دون تقييم{% endif %}{% if item.notes %}<br><small>{{ item.notes }}</small>{% endif %}</li>{% endfor %}</ul>{% else %}<span class="{% if row.is_absent %}absence{% else %}missing{% endif %}">{{ row.memorization_message }}</span>{% endif %}</td></tr>{% endfor %}
-        </tbody></table>
+        <div class="daily-table-wrap">
+          <table class="daily-table">
+            <thead><tr><th>التاريخ</th><th>التسميع والحفظ</th></tr></thead>
+            <tbody>
+              {% for row in parent_dashboard.rows %}
+                <tr>
+                  <td>{{ row.date|date:"Y-m-d" }}</td>
+                  <td>
+                    {% if row.memorization %}
+                      <ul class="record-list">
+                        {% for item in row.memorization %}
+                          <li>{{ item.recitation_title }}{% if item.recitation_range %} ({{ item.recitation_range }}){% endif %} — {% if item.evaluation %}{{ item.get_evaluation_display }}{% else %}دون تقييم{% endif %}{% if item.notes %}<br><small>{{ item.notes }}</small>{% endif %}</li>
+                        {% endfor %}
+                      </ul>
+                    {% else %}
+                      <span class="{% if row.is_absent %}absence{% else %}missing{% endif %}">{{ row.memorization_message }}</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
+
       <div class="tab-panel" data-panel="plan" {% if parent_dashboard.active_tab != 'plan' %}hidden{% endif %}>
-        <table class="daily-table"><thead><tr><th>التاريخ</th><th>الخطة</th></tr></thead><tbody>
-          {% for row in parent_dashboard.rows %}<tr><td>{{ row.date|date:"Y-m-d" }}</td><td>{% if row.plans %}<ul class="record-list">{% for item in row.plans %}<li>{{ item.target }} — من {{ item.start_date|date:"Y-m-d" }} إلى {{ item.end_date|date:"Y-m-d" }}{% if item.notes %}<br><small>{{ item.notes }}</small>{% endif %}</li>{% endfor %}</ul>{% else %}<span class="{% if row.is_absent %}absence{% else %}missing{% endif %}">{{ row.plan_message }}</span>{% endif %}</td></tr>{% endfor %}
-        </tbody></table>
+        <div class="daily-table-wrap">
+          <table class="daily-table">
+            <thead><tr><th>التاريخ</th><th>الخطة</th></tr></thead>
+            <tbody>
+              {% for row in parent_dashboard.rows %}
+                <tr>
+                  <td>{{ row.date|date:"Y-m-d" }}</td>
+                  <td>
+                    {% if row.plans %}
+                      <ul class="record-list">
+                        {% for item in row.plans %}
+                          <li>{{ item.target }} — من {{ item.start_date|date:"Y-m-d" }} إلى {{ item.end_date|date:"Y-m-d" }}{% if item.notes %}<br><small>{{ item.notes }}</small>{% endif %}</li>
+                        {% endfor %}
+                      </ul>
+                    {% else %}
+                      <span class="{% if row.is_absent %}absence{% else %}missing{% endif %}">{{ row.plan_message }}</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
+
       <div class="tab-panel" data-panel="attendance" {% if parent_dashboard.active_tab != 'attendance' %}hidden{% endif %}>
-        <table class="daily-table"><thead><tr><th>التاريخ</th><th>الحضور</th></tr></thead><tbody>
-          {% for row in parent_dashboard.rows %}<tr><td>{{ row.date|date:"Y-m-d" }}</td><td>{% if row.attendance %}<span class="badge-soft">{{ row.attendance_status }}</span>{% for item in row.attendance %}{% if item.recorded_by_role %}<div class="mt-2"><small>المصدر: {{ item.get_recorded_by_role_display }}</small></div>{% endif %}{% if item.notes %}<div class="mt-2">{{ item.notes }}</div>{% endif %}{% endfor %}{% else %}<span class="missing">{{ row.attendance_message }}</span>{% endif %}</td></tr>{% endfor %}
-        </tbody></table>
+        <div class="daily-table-wrap">
+          <table class="daily-table">
+            <thead><tr><th>التاريخ</th><th>الحضور</th></tr></thead>
+            <tbody>
+              {% for row in parent_dashboard.rows %}
+                <tr>
+                  <td>{{ row.date|date:"Y-m-d" }}</td>
+                  <td>
+                    {% if row.attendance %}
+                      <span class="badge-soft">{{ row.attendance_status }}</span>
+                      {% for item in row.attendance %}
+                        {% if item.recorded_by_role %}<div class="mt-2"><small>المصدر: {{ item.get_recorded_by_role_display }}</small></div>{% endif %}
+                        {% if item.notes %}<div class="mt-2">{{ item.notes }}</div>{% endif %}
+                      {% endfor %}
+                    {% else %}
+                      <span class="missing">{{ row.attendance_message }}</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
+
       <div class="tab-panel" data-panel="homework" {% if parent_dashboard.active_tab != 'homework' %}hidden{% endif %}>
-        <table class="daily-table"><thead><tr><th>التاريخ</th><th>الواجبات</th></tr></thead><tbody>
-          {% for row in parent_dashboard.rows %}<tr><td>{{ row.date|date:"Y-m-d" }}</td><td>{% if row.homeworks %}<ul class="record-list">{% for event in row.homeworks %}<li>{{ event.label }}: {{ event.record.assignment_text }}{% if event.record.assignment_notes %}<br><small>{{ event.record.assignment_notes }}</small>{% endif %}</li>{% endfor %}</ul>{% else %}<span class="{% if row.is_absent %}absence{% else %}missing{% endif %}">{{ row.homework_message }}</span>{% endif %}</td></tr>{% endfor %}
-        </tbody></table>
+        <div class="daily-table-wrap">
+          <table class="daily-table">
+            <thead><tr><th>التاريخ</th><th>الواجبات</th></tr></thead>
+            <tbody>
+              {% for row in parent_dashboard.rows %}
+                <tr>
+                  <td>{{ row.date|date:"Y-m-d" }}</td>
+                  <td>
+                    {% if row.homeworks %}
+                      <ul class="record-list">
+                        {% for event in row.homeworks %}
+                          <li>{{ event.label }}: {{ event.record.assignment_text }}{% if event.record.assignment_notes %}<br><small>{{ event.record.assignment_notes }}</small>{% endif %}</li>
+                        {% endfor %}
+                      </ul>
+                    {% else %}
+                      <span class="{% if row.is_absent %}absence{% else %}missing{% endif %}">{{ row.homework_message }}</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
+
       <div class="tab-panel" data-panel="points" {% if parent_dashboard.active_tab != 'points' %}hidden{% endif %}>
-        <table class="daily-table"><thead><tr><th>التاريخ</th><th>النقاط</th></tr></thead><tbody>
-          {% for row in parent_dashboard.rows %}<tr><td>{{ row.date|date:"Y-m-d" }}</td><td>{% if row.points %}<strong>المجموع: {{ row.points_total }}</strong><ul class="record-list">{% for item in row.points %}<li>{{ item.value }} — {{ item.reason|default:"دون ملاحظة" }}</li>{% endfor %}</ul>{% else %}<span class="{% if row.is_absent %}absence{% else %}missing{% endif %}">{{ row.points_message }}</span>{% endif %}</td></tr>{% endfor %}
-        </tbody></table>
+        <div class="daily-table-wrap">
+          <table class="daily-table">
+            <thead><tr><th>التاريخ</th><th>النقاط</th></tr></thead>
+            <tbody>
+              {% for row in parent_dashboard.rows %}
+                <tr>
+                  <td>{{ row.date|date:"Y-m-d" }}</td>
+                  <td>
+                    {% if row.points %}
+                      <strong>المجموع: {{ row.points_total }}</strong>
+                      <ul class="record-list">
+                        {% for item in row.points %}
+                          <li>{{ item.value }} — {{ item.reason|default:"دون ملاحظة" }}</li>
+                        {% endfor %}
+                      </ul>
+                    {% else %}
+                      <span class="{% if row.is_absent %}absence{% else %}missing{% endif %}">{{ row.points_message }}</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-panel tab-panel--charts" data-panel="charts" {% if parent_dashboard.active_tab != 'charts' %}hidden{% endif %}>
+        <p class="tab-panel-copy">تعرض هذه الرسوم البيانات الحالية نفسها ضمن الفترة المختارة، دون تغيير في الحسابات أو مصدر البيانات.</p>
+        <section class="charts-grid">
+          <article class="chart-card">
+            <h3>سير الخطة</h3><p>المخطط والمنجز عبر أيام الخطة</p>
+            <div class="chart-wrap"><canvas id="planChart"></canvas><div class="chart-empty" id="planEmpty">لا توجد خطة قابلة للرسم</div></div>
+            {% if summary.plan.total_pages %}
+              <p class="mt-2 mb-0">عدد صفحات الخطة: {{ summary.plan.total_pages }} صفحة — المتبقي {{ summary.plan.remaining_pages }} صفحة</p>
+            {% endif %}
+          </article>
+          <article class="chart-card">
+            <h3>تقدم الطالب في الحفظ</h3><p>الصفحات أو الآيات المنجزة بحسب التاريخ</p>
+            <div class="chart-wrap"><canvas id="memorizationChart"></canvas><div class="chart-empty" id="memorizationEmpty">لا توجد بيانات حفظ في الفترة</div></div>
+          </article>
+          <article class="chart-card">
+            <h3>الحضور</h3><p>حاضر، معذور، أو غائب كما سُجل فعليًا</p>
+            <div class="chart-wrap"><canvas id="attendanceChart"></canvas><div class="chart-empty" id="attendanceEmpty">لا توجد سجلات حضور في الفترة</div></div>
+          </article>
+          <article class="chart-card">
+            <h3>النقاط</h3><p>المجموع التراكمي للنقاط بمرور الوقت</p>
+            <div class="chart-wrap"><canvas id="pointsChart"></canvas><div class="chart-empty" id="pointsEmpty">لا توجد نقاط في الفترة</div></div>
+          </article>
+          <article class="chart-card performance">
+            <h3>الأداء العام</h3><p>مؤشرات مستقلة بلا نسبة مركبة أو أوزان مفترضة</p>
+            <div class="chart-wrap"><canvas id="performanceChart"></canvas><div class="chart-empty" id="performanceEmpty">لا توجد مؤشرات كافية</div></div>
+          </article>
+        </section>
       </div>
 
       {% if parent_dashboard.page_obj.paginator.num_pages > 1 %}
-        <nav class="pagination-wrap" aria-label="صفحات السجل اليومي">
-          {% if parent_dashboard.page_obj.has_previous %}<a class="btn btn-outline-primary btn-sm" href="?{{ parent_dashboard.filter_query }}&page={{ parent_dashboard.page_obj.previous_page_number }}">الأحدث</a>{% endif %}
+        <nav class="pagination-wrap" data-pagination-wrap {% if parent_dashboard.active_tab == 'charts' %}hidden{% endif %} aria-label="صفحات السجل اليومي">
+          {% if parent_dashboard.page_obj.has_previous %}<a class="btn btn-outline-primary btn-sm" data-page-link href="?{{ parent_dashboard.filter_query }}&page={{ parent_dashboard.page_obj.previous_page_number }}">الأحدث</a>{% endif %}
           <span>صفحة {{ parent_dashboard.page_obj.number }} من {{ parent_dashboard.page_obj.paginator.num_pages }}</span>
-          {% if parent_dashboard.page_obj.has_next %}<a class="btn btn-outline-primary btn-sm" href="?{{ parent_dashboard.filter_query }}&page={{ parent_dashboard.page_obj.next_page_number }}">الأقدم</a>{% endif %}
+          {% if parent_dashboard.page_obj.has_next %}<a class="btn btn-outline-primary btn-sm" data-page-link href="?{{ parent_dashboard.filter_query }}&page={{ parent_dashboard.page_obj.next_page_number }}">الأقدم</a>{% endif %}
         </nav>
       {% endif %}
     </section>
@@ -345,17 +502,55 @@
         options: { responsive: true, maintainAspectRatio: false, plugins: { tooltip: arabicTooltip, legend: { display: false } }, scales: { y: { beginAtZero: true } } }
       });
     }
-    document.querySelectorAll('[data-tab]').forEach(button => {
+    const activeTabInput = document.getElementById('activeTabInput');
+    const periodSelect = document.getElementById('periodSelect');
+    const paginationWrap = document.querySelector('[data-pagination-wrap]');
+    const pageLinks = document.querySelectorAll('[data-page-link]');
+
+    function updatePaginationState(tab) {
+      if (!paginationWrap) return;
+      paginationWrap.hidden = tab === 'charts';
+      pageLinks.forEach((link) => {
+        const url = new URL(link.href, window.location.origin);
+        url.searchParams.set('tab', tab);
+        if (periodSelect?.value) {
+          url.searchParams.set('period', periodSelect.value);
+        }
+        link.href = `${url.pathname}${url.search}`;
+      });
+    }
+
+    document.querySelectorAll('[data-tab]').forEach((button) => {
       button.addEventListener('click', () => {
         const tab = button.dataset.tab;
-        document.querySelectorAll('[data-tab]').forEach(item => item.classList.toggle('active', item === button));
-        document.querySelectorAll('[data-panel]').forEach(panel => panel.hidden = panel.dataset.panel !== tab);
-        document.getElementById('activeTabInput').value = tab;
+        document.querySelectorAll('[data-tab]').forEach((item) => item.classList.toggle('active', item === button));
+        document.querySelectorAll('[data-panel]').forEach((panel) => {
+          panel.hidden = panel.dataset.panel !== tab;
+        });
+        if (activeTabInput) {
+          activeTabInput.value = tab;
+        }
         const url = new URL(window.location.href);
         url.searchParams.set('tab', tab);
-        history.replaceState({}, '', url);
+        if (periodSelect?.value) {
+          url.searchParams.set('period', periodSelect.value);
+        }
+        history.replaceState({}, '', `${url.pathname}${url.search}`);
+        updatePaginationState(tab);
       });
     });
+
+    periodSelect?.addEventListener('change', () => {
+      const url = new URL(window.location.href);
+      url.searchParams.set('period', periodSelect.value);
+      url.searchParams.set('tab', activeTabInput?.value || 'memorization');
+      ['page', 'scope', 'range', 'start_date', 'end_date', 'from_date', 'to_date'].forEach((param) => {
+        url.searchParams.delete(param);
+      });
+      window.location.assign(`${url.pathname}${url.search}`);
+    });
+
+    updatePaginationState(activeTabInput?.value || 'memorization');
   </script>
 </body>
 </html>
